@@ -594,7 +594,8 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .tickets .ticket:last-child:nth-child(odd):not(.ticket-gold) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 15px); }
 .gets-eyebrow { margin-top: 0; font-size: clamp(16px, 1.7vw, 22px); letter-spacing: .24em; }
 .s-gets .gets-title { margin-top: 18px; max-width: 24ch; text-wrap: balance; }
-.s-gets .soft { margin-top: 18px; max-width: 620px; text-wrap: balance; }
+.s-gets .soft { margin-top: 18px; max-width: 820px; text-wrap: balance; }
+.ticket.ticket-gold p { max-width: none; }
 .s-gets .tickets:not(.tickets-lead) { margin-top: 48px; }
 .tickets .ticket:hover { rotate: 0deg; translate: var(--dx, 0) calc(var(--dy, 0px) - 8px); z-index: 2; }
 .ticket-gold { --stub: var(--mint); --stub-ink: #04130b; grid-column: 1 / -1; --cut: 30%; min-height: 220px; }
