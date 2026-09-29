@@ -222,6 +222,13 @@ h1, h2, h3, p { margin: 0; }
 .countdown-item span { font-family: var(--f-label); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-50); }
 
 .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 60px; }
+/* ThreeUI liquid-chrome Register button: the frame is taller than the button so its drop shadow fits */
+.hero-register {
+  width: 360px; height: 320px; margin: -115px -45px; flex: none; cursor: pointer;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 82%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 82%, transparent 100%);
+}
+.actions:has(.hero-register) { align-items: center; }
 
 .stats { display: flex; justify-content: center; gap: clamp(40px, 8vw, 125px); margin-top: clamp(100px, 12vw, 180px); }
 .stat-v { font-family: var(--f-display); font-weight: 800; font-size: clamp(44px, 5vw, 72px); line-height: 1.05; letter-spacing: -.03em; }
@@ -349,6 +356,62 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 }
 .footer a:hover { text-decoration: underline; }
 
+/* ── Hero: floating fact chips ──────────────────────────── */
+.s-hero { position: relative; }
+.hero-chips { --mx: 0; --my: 0; position: absolute; inset: -70px 0 -140px; pointer-events: none; }
+.hero-chip {
+  position: absolute; display: block;
+  transform: translate3d(calc(var(--mx) * var(--depth) * 1px), calc(var(--my) * var(--depth) * 1px), 0);
+  transition: transform .9s var(--ease);
+}
+.hero-chip-in {
+  display: inline-flex; align-items: center; gap: 10px; white-space: nowrap;
+  padding: 10px 16px 10px 12px; border-radius: 999px;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .16);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .35);
+  font-family: var(--f-label); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-70);
+  animation: chip-float 7s ease-in-out infinite;
+}
+.hero-chip-in strong { font-family: var(--f-display); font-size: 15px; font-weight: 700; letter-spacing: -.01em; text-transform: none; color: var(--ink); }
+.hero-chip-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px var(--mint); }
+.hero-chip-1 { --depth: 38; top: 4%; left: 9%; }
+.hero-chip-2 { --depth: -30; top: 0; right: 10%; }
+.hero-chip-2 .hero-chip-in { animation-delay: -2s; }
+.hero-chip-3 { --depth: 26; bottom: 4%; left: 14%; }
+.hero-chip-3 .hero-chip-in { animation-delay: -4s; }
+.hero-chip-4 { --depth: -42; bottom: 0; right: 13%; }
+.hero-chip-4 .hero-chip-in { animation-delay: -5.5s; }
+@keyframes chip-float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-12px) rotate(1deg); } }
+
+/* ── FAQ ─────────────────────────────────────────────────── */
+.s-faq { display: flex; flex-wrap: wrap; justify-content: center; gap: 50px 8%; text-align: left !important; }
+.faq-head { flex: 1 1 340px; max-width: 480px; align-self: flex-start; position: sticky; top: 170px; }
+.faq-head .soft a { color: var(--ink); border-bottom: 1px solid var(--line); }
+.faq-head .soft a:hover { border-color: var(--mint); color: var(--mint); }
+.faq-list { flex: 1 1 420px; max-width: 640px; border-top: 1px solid var(--line); }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-item summary {
+  list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 26px 0; font-family: var(--f-display); font-weight: 600; font-size: clamp(18px, 1.8vw, 24px); letter-spacing: -.02em;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:hover { color: var(--mint); }
+.faq-plus { position: relative; flex: none; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); transition: transform .4s var(--ease), background .3s, border-color .3s; }
+.faq-plus::before, .faq-plus::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 1.5px; background: currentColor; transform: translate(-50%, -50%); }
+.faq-plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+.faq-item[open] .faq-plus { transform: rotate(45deg); background: var(--mint); border-color: var(--mint); color: var(--black); }
+.faq-item p { margin: -6px 0 28px; max-width: 58ch; font-size: 16px; line-height: 1.8; color: var(--ink-70); }
+
+/* ── Giant closing wordmark ──────────────────────────────── */
+.giant-mark {
+  margin: 0; padding: 0 16px; text-align: center; overflow: hidden;
+  font-family: var(--f-display); font-weight: 800; line-height: .8; letter-spacing: -.06em;
+  font-size: clamp(90px, 27vw, 420px);
+  color: rgba(255, 255, 255, .92);
+  user-select: none;
+}
+
 /* ── Overlays (track / invitation briefs, registration) ──── */
 .overlay {
   position: fixed; inset: 0; z-index: 70; overflow: auto;
@@ -444,6 +507,11 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   .detail-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 40px; }
 }
 @media (max-width: 760px) {
+  .hero-chips { inset: -90px 0 -100px; }
+  .hero-chip-in { padding: 7px 12px 7px 10px; font-size: 9px; gap: 7px; }
+  .hero-chip-in strong { font-size: 12px; }
+  .hero-chip-1 { left: 2%; } .hero-chip-2 { right: 2%; } .hero-chip-3 { left: 4%; } .hero-chip-4 { right: 4%; }
+  .faq-head { position: static; }
   .nav { --lb-h: 56px; }
   .lb-inner { width: calc(100% - 32px); }
   .lb-dpiit { height: 36px; } .lb-cars24 { height: 19px; } .lb-spf { height: 34px; }
@@ -470,6 +538,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-chip-in { animation: none; }
   .rise { opacity: 1; transform: none; }
   .live-dot { animation: none; }
   .overlay { transition: none; transform: none; }

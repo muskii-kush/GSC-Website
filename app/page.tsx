@@ -1,3 +1,5 @@
+import { GetStartedButton } from "@/components/GetStartedButton";
+import HeroChips from "@/components/HeroChips";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollProgress from "@/components/ScrollProgress";
 import Nav from "@/components/Nav";
@@ -10,7 +12,7 @@ import DetailDrawer from "@/components/DetailDrawer";
 import Registration from "@/components/Registration";
 import { asset } from "@/lib/asset";
 import {
-  CONTACT, gmailLink, challenge, closing, footer, gallery, hero, invites, invitesIntro, journey, room, timeline, tracks, tracksIntro,
+  CONTACT, gmailLink, challenge, closing, faq, footer, gallery, hero, invites, invitesIntro, journey, room, timeline, tracks, tracksIntro,
 } from "@/lib/content";
 
 const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
@@ -27,6 +29,7 @@ export default function Page() {
         <div className="chapter chapter-one">
           <section className="s-hero">
             <Reveal as="p" className="statement" text={hero.statement} immediate stagger={0.08} />
+            <HeroChips />
           </section>
 
           <section className="glass invitation" data-grow>
@@ -45,7 +48,7 @@ export default function Page() {
             <p className="when">{hero.when}</p>
             <Countdown />
             <div className="actions">
-              <a className="btn" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
+              <GetStartedButton className="hero-register" />
               <a className="btn ghost" href="#partners">partner with us</a>
             </div>
           </section>
@@ -141,6 +144,25 @@ export default function Page() {
           </div>
         </section>
 
+        <section className="s-faq" id="faq">
+          <div className="faq-head">
+            <p className="label rise">{faq.eyebrow}</p>
+            <Reveal className="h-dare" text={faq.title} />
+            <p className="soft rise">Anything else? Write to <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.</p>
+          </div>
+          <div className="faq-list">
+            {faq.items.map((f) => (
+              <details className="faq-item rise" key={f.q}>
+                <summary>
+                  <span>{f.q}</span>
+                  <span className="faq-plus" aria-hidden="true" />
+                </summary>
+                <p>{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
         {/* Chapter two: the way in. The page ends in the brand glow. */}
         <div className="chapter chapter-two">
           <section className="s-invites" id="partners">
@@ -188,6 +210,7 @@ export default function Page() {
               <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="p-spf" />
             </div>
           </div>
+          <p className="giant-mark" aria-hidden="true">GSC&rsquo;27</p>
           <footer className="footer">
             <span>{footer}</span>
             <a href="#top">Back to top ↑</a>

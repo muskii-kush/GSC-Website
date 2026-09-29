@@ -15,6 +15,14 @@ export const hero = {
   when: "January 2027. New Delhi",
 };
 
+// Floating chips around the hero statement. Every fact here is repeated elsewhere on the page.
+export const heroChips = [
+  { value: "₹1 Cr", label: "prize pool" },
+  { value: "4", label: "problem tracks" },
+  { value: "1 Oct", label: "applications open" },
+  { value: "16 Jan 2027", label: "Bharat Mandapam" },
+];
+
 export const challenge = {
   title: "about the event",
   // From the GSC 2027 concept note (objective, format and outcomes).
@@ -264,6 +272,42 @@ export const invites: {
     action: "Discuss sponsorship",
   },
 ];
+
+// FAQ. Answers only restate what the site and application form already say.
+export const faq = {
+  eyebrow: "Questions",
+  title: "curious? ask away",
+  items: [
+    {
+      q: "Who can apply?",
+      a: "Early-stage startups incorporated in India, as a private limited company or an LLP, with at least one founder working on it full time. If you have raised more than ₹50 crore in equity, the challenge is not for you.",
+    },
+    {
+      q: "When do applications open and close?",
+      a: "Applications open on 1 October 2026 and close on 31 October 2026, IST. The deadline is firm and will not be extended.",
+    },
+    {
+      q: "What do I need to apply?",
+      a: "Details on your company, team, product, market and traction, a link to your deck and a short video of the founders. The application takes about thirty minutes, and you can save your progress and come back to it.",
+    },
+    {
+      q: "Which track should I apply to?",
+      a: "Pick the one closest to the problem you solve: lending and fintech, mobility and road safety, logistics and supply chain, or sovereign AI. Open a track brief to see what we are looking for.",
+    },
+    {
+      q: "What happens after I apply?",
+      a: "Applications are screened and shortlisted startups are interviewed through November and December. You hear back either way. Shortlisted teams spend December with a Cars24 mentor, refine their solution in early January and pitch at the finale.",
+    },
+    {
+      q: "Where and when is the finale?",
+      a: "At Bharat Mandapam, New Delhi, on 16 January 2027, National Startup Day. Startups pitch and demo to the jury in their track room, and track winners re-pitch in the main auditorium.",
+    },
+    {
+      q: "What do startups get?",
+      a: "A shot at the ₹1 crore prize pool, plus real deployment, mentorship, investor visibility and national recognition.",
+    },
+  ],
+};
 
 export const closing = {
   eyebrow: "The next build starts here",
