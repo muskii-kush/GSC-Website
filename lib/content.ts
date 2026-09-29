@@ -9,10 +9,6 @@ export const hero = {
   lede:
     "A four-month startup challenge for early-stage teams building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
   when: "January 2027. New Delhi",
-  stats: [
-    { value: "4", label: "Tracks" },
-    { value: "₹1 Cr", label: "Prize pool" },
-  ],
 };
 
 export const challenge = {
@@ -22,11 +18,10 @@ export const challenge = {
     "Cars24’s Grand Startup Challenge puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
   lede:
     "Over a four-month journey, startups move from applications and shortlisting to a month of immersion and refinement, and a final showcase in New Delhi.",
-  facts: [
-    { value: "4", label: "Problem tracks", text: "Applications come in against set problem statements in lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI." },
-    { value: "20", label: "Startups shortlisted", text: "Five startups are shortlisted per track, selected by Cars24 leadership, knowledge partners and subject-matter experts." },
-    { value: "1 month", label: "Of mentorship", text: "Shortlisted startups test their actual solution inside live environments, with mentors assigned to help refine it." },
-    { value: "1+", label: "Investable startup per track", text: "The goal of the challenge, with two or three startups that Cars24 could incubate through AI Labs." },
+  metrics: [
+    { value: "1,000+", label: "Applications" },
+    { value: "₹1 Cr", label: "Prize pool" },
+    { value: "4", label: "Problem tracks" },
   ],
 };
 
