@@ -177,6 +177,16 @@ export default function Page() {
             </div>
           </section>
 
+          <div className="footer-logos">
+            <p className="footer-by">brought to you by</p>
+            <div className="partners" aria-label="DPIIT, Cars24 and Startup Policy Forum">
+              <img src="/media/dpiit.webp" alt="DPIIT Startup India" className="p-dpiit" />
+              <span className="p-div" />
+              <img src="/media/cars24.webp" alt="Cars24" className="p-cars24" />
+              <span className="p-div" />
+              <img src="/media/spf.webp" alt="Startup Policy Forum" className="p-spf" />
+            </div>
+          </div>
           <footer className="footer">
             <span>{footer}</span>
             <a href="#top">Back to top ↑</a>

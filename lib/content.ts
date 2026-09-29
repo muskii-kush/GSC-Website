@@ -1,5 +1,5 @@
 // All copy is carried over from Grand-Startup-Challenge-v5.html.
-export const CONTACT = "hello@grandstartupchallenge.in";
+export const CONTACT = "grandstartupchallenge@cars24.com";
 export const APPLICATIONS_OPEN = "2026-10-01T00:00:00+05:30";
 // The source gives the deadline as a date; end of day IST is assumed here.
 export const APPLICATIONS_CLOSE = "2026-10-31T23:59:59+05:30";
