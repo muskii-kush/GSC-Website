@@ -53,7 +53,7 @@ export default function Page() {
         <Film />
 
         <section className="s-challenge" id="challenge">
-          <Reveal className="h-center" text={challenge.title} accent={["challenge"]} />
+          <Reveal className="h-center" text={challenge.title} accent={["event"]} />
           <p className="statement-sm rise">{challenge.statement}</p>
           <p className="soft center rise">{challenge.lede}</p>
           <div className="stats metrics" data-stagger>

@@ -15,7 +15,7 @@ export const hero = {
 };
 
 export const challenge = {
-  title: "the challenge",
+  title: "about the event",
   // From the GSC 2027 concept note (objective, format and outcomes).
   statement:
     "Cars24’s Grand Startup Challenge puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
