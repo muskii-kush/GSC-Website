@@ -126,8 +126,15 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
               trigger: grid.closest<HTMLElement>(".fan-wrap") ?? grid,
               start: "top 72px", end: "+=110%", scrub: 0.8, invalidateOnRefresh: true,
               // Light the circuit only once every card has landed in its slot.
-              onUpdate: (st) => grid.closest(".circuit-host")?.classList.toggle("is-dealt", st.progress > 0.97),
-              onLeave: () => grid.closest(".circuit-host")?.classList.add("is-dealt"),
+              onUpdate: (st) => {
+                const host = grid.closest(".circuit-host");
+                host?.classList.toggle("is-dealt", st.progress > 0.97);
+                // Show the "keep scrolling" hint only while the deck is still (mostly) stacked
+                host?.classList.toggle("is-stacked", st.progress < 0.12);
+              },
+              onEnter: () => grid.closest(".circuit-host")?.classList.add("is-stacked"),
+              onLeave: () => { const h = grid.closest(".circuit-host"); h?.classList.add("is-dealt"); h?.classList.remove("is-stacked"); },
+              onLeaveBack: () => grid.closest(".circuit-host")?.classList.remove("is-stacked"),
             },
           });
           cards.forEach((card, i) => {

@@ -430,6 +430,15 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .circuit-spark-trace { stroke-width: 2.4; stroke-dasharray: 22 78; animation: spark-run 2.7s cubic-bezier(.5, 0, .5, 1) infinite; }
 @keyframes spark-run { to { stroke-dashoffset: 0; } }
 @keyframes pad-blink { 0%, 100% { opacity: .45; } 12% { opacity: 1; } 30% { opacity: .45; } }
+/* Quiet "scroll to continue" label beside the stacked deck (desktop only; fades as the cards deal) */
+.deck-hint {
+  position: absolute; z-index: 11; left: calc(33.4% + 100px); top: 150px; margin: 0;
+  display: flex; align-items: center; gap: 14px; padding-left: 18px; border-left: 1px solid var(--line);
+  font-family: var(--f-label); font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-50);
+  white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .4s;
+}
+.circuit-host.is-stacked .deck-hint { opacity: 1; }
+.deck-hint-arrow { letter-spacing: 0; font-size: 13px; }
 /* Keep cards still on hover so their borders stay on the circuit */
 .circuit-host .fan-grid .room-card:hover { translate: none; border-color: rgba(99, 255, 177, .45); }
 /* Room stays on screen while the deck deals: the wrapper adds scroll room (same 110vh as the
@@ -769,6 +778,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   .detail-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 40px; }
 }
 @media (max-width: 760px) {
+  .deck-hint { display: none; }
   .tickets { grid-template-columns: 1fr; gap: 22px; }
   .tickets .ticket:last-child:nth-child(odd):not(.ticket-gold) { width: 100%; }
   .tickets .ticket { --dx: 0 !important; --dy: 0 !important; }
@@ -815,6 +825,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .deck-hint { display: none; }
   .invite::before { animation: none; opacity: .5; }
   .circuit { opacity: 1; }
   .circuit-spark { display: none; }

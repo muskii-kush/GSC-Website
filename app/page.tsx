@@ -210,6 +210,8 @@ export default function Page() {
               </article>
             ))}
           </div>
+          {/* Hint beside the stacked deck: the cards deal out with scroll, not with a click */}
+          <p className="deck-hint" aria-hidden="true">Scroll to continue <span className="deck-hint-arrow">↓</span></p>
           {/* Mint circuit between the cards; lights up once the deck has dealt out */}
           <CircuitOverlay gridSelector=".fan-grid" />
           </div>
