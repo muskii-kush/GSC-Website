@@ -25,8 +25,9 @@ export default function Nav() {
             <a href="#top">home</a>
             <a href="#challenge">about the event</a>
             <a href="#tracks">tracks</a>
-            <a href="#timeline">key dates</a>
+            <a href="#timeline">how it works</a>
             <a href="#partners">partners</a>
+            <a href="#faq">faq</a>
           </nav>
           <a className="btn btn-xs" href="#register" data-register>register <span aria-hidden="true">→</span></a>
         </div>

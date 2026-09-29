@@ -20,7 +20,7 @@ export const heroChips = [
   { value: "₹1 Cr", label: "prize pool" },
   { value: "4", label: "problem tracks" },
   { value: "1 Oct", label: "applications open" },
-  { value: "16 Jan 2027", label: "Bharat Mandapam" },
+  { value: "Jan 2027", label: "New Delhi finale" },
 ];
 
 export const challenge = {
@@ -37,26 +37,51 @@ export const challenge = {
   ],
 };
 
+// Scrolling proof strip under the hero. From the concept note and the partnership deck.
+export const proof = [
+  "₹1 Cr prize pool",
+  "4 problem tracks",
+  "1,000+ applications expected",
+  "20 startups shortlisted",
+  "12 winning startups",
+  "Finale in New Delhi, January 2027",
+  "With DPIIT and Startup India",
+];
+
+// Why Cars24 runs the challenge. From the partnership deck ("Why we are doing this").
+export const why = {
+  eyebrow: "Why we are doing this",
+  items: [
+    { title: "We are a product of India’s startup ecosystem", text: "Cars24 was founded in 2015, the same year Startup India was announced, and grew up inside the ecosystem it built." },
+    { title: "We scaled with support from founders and investors", text: "Peak XV, SoftBank, DST Global, Tencent and Alpha Wave believed in our vision, backed us and became part of our growth story." },
+    { title: "Now we want to back the next generation", text: "We are putting real problems, our own data, ₹1 crore in prize money and a national stage behind the next generation of founders." },
+  ],
+};
+
+// What shortlisted and winning startups get.
+export const gets = {
+  eyebrow: "What startups get",
+  title: "more than a prize",
+  lede: "The challenge is built so the best teams leave with a working solution, the right people in their corner and a national stage.",
+  items: [
+    { title: "₹1 crore prize pool", text: "Shared across twelve winning startups." },
+    { title: "Real problems, real data", text: "Live problem statements from inside Cars24’s operations, with our data behind them." },
+    { title: "A month with Cars24 mentors", text: "Shortlisted startups spend December refining their solution with an assigned Cars24 mentor." },
+    { title: "A chance at real deployment", text: "Solutions are built for the context where the problem actually lives, not for a demo day." },
+    { title: "Investors in the room", text: "Pitch to a jury with Cars24 leadership, DPIIT and invited investors, and meet them in the lounge." },
+    { title: "A national stage", text: "Pitch at the finale in New Delhi on National Startup Day, January 2027." },
+  ],
+};
+
 export const gallery = [
   { src: asset("/media/band-founders.jpg"), alt: "Founders and operators in conversation", caption: "Access to people who can help the work move." },
   { src: asset("/media/band-inspection.jpg"), alt: "Vehicle inspection in a Cars24 environment", caption: "Build in the context where the problem actually lives." },
 ];
 
-export const journey = {
-  title: "the journey",
-  lede: "A structured journey from applications and selection to mentorship, refinement and the national showcase.",
-  steps: [
-    { n: "01", title: "Apply", text: "Submit your deck and a five-minute video before applications close." },
-    { n: "02", title: "Shortlist", text: "Startups are selected across four tracks based on the strength of the problem, traction and team." },
-    { n: "03", title: "Build", text: "Structured mentorship, solution development and feedback from operators and subject-matter experts." },
-    { n: "04", title: "Pitch", text: "Shortlisted startups pitch and demo their solutions at the finale." },
-  ],
-};
-
 export const timeline = {
-  eyebrow: "Key dates",
-  title: "what happens when",
-  lede: "All dates are in IST.",
+  eyebrow: "How it works",
+  title: "from application to the finale",
+  lede: "Four months, from applications and shortlisting to a month of mentorship and a final pitch in New Delhi. All dates are in IST.",
   items: [
     { date: "1 October 2026", title: "Applications open", text: "Problem statements for each track are published on the same day." },
     { date: "31 October 2026", title: "Applications close", text: "Hard deadline. We do not extend it." },
@@ -228,7 +253,7 @@ export const invites: {
     points: [
       "Your faculty or incubator leads sit on the jury and the selection committee",
       "Your incubated startups can apply, compete for the ₹1 crore prize pool and pitch to the full jury",
-      "Your team leads a panel at Bharat Mandapam on the question you most want India to debate",
+      "Your team leads a panel at the finale on the question you most want India to debate",
       "A seat in the Investor Lounge, alongside every investor invited to the challenge",
       "A stall to meet students and campus delegates from India’s leading institutions",
       "Case studies from the challenge, co-authored with your team",
@@ -240,7 +265,7 @@ export const invites: {
     id: "investor",
     label: "Investor partnership",
     card: "Meet the next generation of India's builders",
-    cardText: "Access a screened pipeline, the Founders’ Lounge, selected pitch decks and the final showcase at Bharat Mandapam.",
+    cardText: "Access a screened pipeline, the Founders’ Lounge, selected pitch decks and the final showcase in New Delhi.",
     link: "Open investor partnership",
     image: asset("/media/invite-investor.jpg"),
     kicker: "Investor access",
@@ -303,7 +328,7 @@ export const faq = {
     },
     {
       q: "Where and when is the finale?",
-      a: "At Bharat Mandapam, New Delhi, on 16 January 2027, National Startup Day. Startups pitch and demo to the jury in their track room, and track winners re-pitch in the main auditorium.",
+      a: "In New Delhi in January 2027, on National Startup Day. Startups pitch and demo to the jury in their track room, and track winners re-pitch in the main auditorium.",
     },
     {
       q: "What do startups get?",
@@ -313,7 +338,7 @@ export const faq = {
 };
 
 export const closing = {
-  eyebrow: "The next build starts here",
+  eyebrow: "Still deciding?",
   title: "make the hard problems worth solving",
 };
 

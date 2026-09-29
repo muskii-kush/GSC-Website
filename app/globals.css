@@ -153,7 +153,7 @@ h1, h2, h3, p { margin: 0; }
 /* ── Chapters: gradient rising from below ────────────────── */
 .chapter { position: relative; overflow: hidden; isolation: isolate; }
 .chapter-one {
-  padding: 240px 0 200px;
+  padding: 170px 0 200px;
   background:
     linear-gradient(to bottom, rgba(0, 0, 0, 0) 74%, var(--black) 100%),
     radial-gradient(124.75% 92% at 50% 90%, var(--blue-light) 0%, #8F84FF 9%, var(--blue) 24%, var(--blue-dark) 60%, var(--base) 86%, var(--black) 100%);
@@ -176,8 +176,9 @@ h1, h2, h3, p { margin: 0; }
 /* The invitation card */
 .glass { background: var(--glass); border: 1px solid rgba(255, 255, 255, .06); }
 .invitation {
+  position: relative;
   width: min(85%, var(--max));
-  margin: 140px auto 0;
+  margin: 0 auto;
   border-radius: var(--r-card);
   padding: 120px 48px 110px;
   display: flex; flex-direction: column; align-items: center; text-align: center;
@@ -192,8 +193,8 @@ h1, h2, h3, p { margin: 0; }
 .gsc-mark img { width: 100%; height: 100%; object-fit: cover; }
 .wordmark {
   font-family: var(--f-display); font-weight: 800;
-  font-size: clamp(30px, 5vw, 70px); line-height: .95; letter-spacing: -.02em;
-  margin-top: 40px;
+  font-size: clamp(20px, 2.4vw, 32px); line-height: 1; letter-spacing: -.02em;
+  margin-top: 36px;
   text-transform: none;
 }
 .partners {
@@ -206,7 +207,10 @@ h1, h2, h3, p { margin: 0; }
 .p-cars24 { height: 32px; }
 .p-spf { height: 50px; }
 .p-div { width: 1px; height: 34px; background: rgba(0, 0, 0, .15); }
-.invitation .soft { margin-top: 70px; max-width: 1080px; font-size: clamp(15px, 1.4vw, 20px); text-wrap: balance; }
+.invitation .statement { margin-top: 28px; }
+.hero-with { margin-top: 70px; font-family: var(--f-label); font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-50); }
+.hero-with + .partners { margin-top: 16px; }
+.invitation .soft { margin-top: 44px; max-width: 1080px; font-size: clamp(15px, 1.4vw, 20px); text-wrap: balance; }
 .when { font-family: var(--f-display); font-weight: 700; font-size: clamp(20px, 2.2vw, 30px); letter-spacing: -.01em; margin-top: 36px; }
 
 .countdown-wrap { margin-top: 56px; }
@@ -255,6 +259,27 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   text-wrap: balance;
 }
 .metrics { flex-wrap: wrap; margin-top: clamp(64px, 7vw, 100px); gap: clamp(40px, 7vw, 110px); text-align: center; }
+
+/* Proof strip: the numbers scroll past under the hero */
+.proof { overflow: hidden; border-block: 1px solid var(--line); padding: 26px 0; margin-top: -40px; background: var(--black); }
+.proof-track { display: flex; width: max-content; animation: proof-scroll 38s linear infinite; }
+.proof ul { display: flex; flex: none; list-style: none; margin: 0; padding: 0; }
+.proof li {
+  display: flex; align-items: center; gap: 28px; padding-right: 28px; white-space: nowrap;
+  font-family: var(--f-display); font-weight: 700; font-size: clamp(18px, 2vw, 26px); letter-spacing: -.02em; color: var(--ink-90);
+}
+.proof li::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px var(--mint); }
+.proof:hover .proof-track { animation-play-state: paused; }
+@keyframes proof-scroll { to { transform: translateX(-50%); } }
+
+/* Why we are doing this: three reasons under the event summary */
+.why-label { margin-top: clamp(80px, 9vw, 120px); }
+.why-grid { margin-top: 30px !important; }
+
+/* Timeline call to action */
+.dates-head .btn { margin-top: 40px; }
+.s-closing .actions { margin-top: 60px; }
+.s-closing .actions .btn { margin-top: 0; }
 
 /* Gallery: two photos, equal size, captions on one baseline */
 .s-gallery { padding-top: 0 !important; }
@@ -358,7 +383,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 
 /* ── Hero: floating fact chips ──────────────────────────── */
 .s-hero { position: relative; }
-.hero-chips { --mx: 0; --my: 0; position: absolute; inset: -70px 0 -140px; pointer-events: none; }
+.hero-chips { --mx: 0; --my: 0; position: absolute; inset: 0; pointer-events: none; }
 .hero-chip {
   position: absolute; display: block;
   transform: translate3d(calc(var(--mx) * var(--depth) * 1px), calc(var(--my) * var(--depth) * 1px), 0);
@@ -375,12 +400,12 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 }
 .hero-chip-in strong { font-family: var(--f-display); font-size: 15px; font-weight: 700; letter-spacing: -.01em; text-transform: none; color: var(--ink); }
 .hero-chip-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px var(--mint); }
-.hero-chip-1 { --depth: 38; top: 4%; left: 9%; }
-.hero-chip-2 { --depth: -30; top: 0; right: 10%; }
+.hero-chip-1 { --depth: 38; top: 20%; left: -3%; }
+.hero-chip-2 { --depth: -30; top: 13%; right: -3%; }
 .hero-chip-2 .hero-chip-in { animation-delay: -2s; }
-.hero-chip-3 { --depth: 26; bottom: 4%; left: 14%; }
+.hero-chip-3 { --depth: 26; top: 38%; left: 1%; }
 .hero-chip-3 .hero-chip-in { animation-delay: -4s; }
-.hero-chip-4 { --depth: -42; bottom: 0; right: 13%; }
+.hero-chip-4 { --depth: -42; top: 33%; right: 0; }
 .hero-chip-4 .hero-chip-in { animation-delay: -5.5s; }
 @keyframes chip-float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-12px) rotate(1deg); } }
 
@@ -507,7 +532,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   .detail-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 40px; }
 }
 @media (max-width: 760px) {
-  .hero-chips { inset: -90px 0 -100px; }
+  .hero-chips { display: none; }
   .hero-chip-in { padding: 7px 12px 7px 10px; font-size: 9px; gap: 7px; }
   .hero-chip-in strong { font-size: 12px; }
   .hero-chip-1 { left: 2%; } .hero-chip-2 { right: 2%; } .hero-chip-3 { left: 4%; } .hero-chip-4 { right: 4%; }
@@ -518,8 +543,8 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   .link-inner { width: calc(100% - 32px); gap: 12px; }
   .nav-links { gap: 18px; overflow-x: auto; scrollbar-width: none; font-size: 10px; letter-spacing: .1em; }
   .nav-links::-webkit-scrollbar { display: none; }
-  .chapter-one { padding: 170px 0 120px; }
-  .invitation { width: calc(100% - 32px); border-radius: 24px; padding: 70px 20px 70px; margin-top: 90px; }
+  .chapter-one { padding: 150px 0 120px; }
+  .invitation { width: calc(100% - 32px); border-radius: 24px; padding: 60px 20px 70px; margin-top: 0; }
   .partners { gap: 8px; padding: 5px 10px; }
   .p-dpiit { height: 38px; } .p-cars24 { height: 20px; } .p-spf { height: 32px; }
   .stats { flex-direction: column; gap: 40px; }
@@ -538,6 +563,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .proof-track { animation: none; }
   .hero-chip-in { animation: none; }
   .rise { opacity: 1; transform: none; }
   .live-dot { animation: none; }

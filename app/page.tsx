@@ -12,7 +12,7 @@ import DetailDrawer from "@/components/DetailDrawer";
 import Registration from "@/components/Registration";
 import { asset } from "@/lib/asset";
 import {
-  CONTACT, gmailLink, challenge, closing, faq, footer, gallery, hero, invites, invitesIntro, journey, room, timeline, tracks, tracksIntro,
+  CONTACT, gmailLink, challenge, closing, faq, footer, gallery, gets, hero, invites, invitesIntro, proof, room, timeline, tracks, tracksIntro, why,
 } from "@/lib/content";
 
 const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
@@ -25,25 +25,15 @@ export default function Page() {
       <Nav />
 
       <main id="top">
-        {/* Chapter one: the invitation. Gradient rises from the bottom edge. */}
+        {/* 1. Hero: one block. Who we are, the promise, the date, the way in. */}
         <div className="chapter chapter-one">
-          <section className="s-hero">
-            <Reveal as="p" className="statement" text={hero.statement} immediate stagger={0.08} />
-            <HeroChips />
-          </section>
-
           <section className="glass invitation" data-grow>
+            <HeroChips />
             <div className="gsc-mark" aria-hidden="true">
               <img src={asset("/media/gsc-logo.jpg")} alt="" />
             </div>
-            <h1 className="wordmark">Grand Startup Challenge</h1>
-            <div className="partners" aria-label="DPIIT, Cars24 and Startup Policy Forum">
-              <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="p-dpiit" />
-              <span className="p-div" />
-              <img src={asset("/media/cars24.webp")} alt="Cars24" className="p-cars24" />
-              <span className="p-div" />
-              <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="p-spf" />
-            </div>
+            <p className="wordmark">Grand Startup Challenge</p>
+            <Reveal as="h1" className="statement" text={hero.statement} immediate stagger={0.08} />
             <p className="soft">{hero.lede}</p>
             <p className="when">{hero.when}</p>
             <Countdown />
@@ -51,43 +41,48 @@ export default function Page() {
               <GetStartedButton className="hero-register" />
               <a className="btn ghost" href="#partners">partner with us</a>
             </div>
+            <p className="hero-with">in partnership with</p>
+            <div className="partners" aria-label="DPIIT, Cars24 and Startup Policy Forum">
+              <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="p-dpiit" />
+              <span className="p-div" />
+              <img src={asset("/media/cars24.webp")} alt="Cars24" className="p-cars24" />
+              <span className="p-div" />
+              <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="p-spf" />
+            </div>
           </section>
+        </div>
+
+        {/* 2. Proof: the numbers, at a glance. */}
+        <div className="proof" aria-label="The challenge at a glance">
+          <div className="proof-track">
+            {[0, 1].map((copy) => (
+              <ul key={copy} aria-hidden={copy === 1 ? true : undefined}>
+                {proof.map((p) => <li key={p}>{p}</li>)}
+              </ul>
+            ))}
+          </div>
         </div>
 
         <Film />
 
+        {/* 3. What this is, and why Cars24 is doing it. */}
         <section className="s-challenge" id="challenge">
           <Reveal className="h-center" text={challenge.title} accent={["event"]} />
           <p className="statement-sm rise">{challenge.statement}</p>
           <p className="soft center rise">{challenge.lede}</p>
-          <div className="stats metrics" data-stagger>
-            {challenge.metrics.map((m) => (
-              <div key={m.label}>
-                <p className="stat-v">{m.value}</p>
-                <p className="stat-l">{m.label}</p>
-              </div>
+          <p className="label accent why-label rise">{why.eyebrow}</p>
+          <div className="room-grid why-grid" data-stagger>
+            {why.items.map((w, i) => (
+              <article className="room-card" key={w.title}>
+                <span className="room-n">{String(i + 1).padStart(2, "0")}</span>
+                <h3>{w.title}</h3>
+                <p>{w.text}</p>
+              </article>
             ))}
           </div>
         </section>
 
-        <section className="s-journey">
-          <div className="dare">
-            <Reveal className="h-dare" text={journey.title} accent={["journey"]} />
-            <p className="soft rise">{journey.lede}</p>
-          </div>
-          <ol className="steps" data-stagger>
-            {journey.steps.map((s) => (
-              <li key={s.n}>
-                <span className="step-n">{s.n}</span>
-                <div>
-                  <h3>{s.title}</h3>
-                  <p>{s.text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
-
+        {/* 4. The problems to solve. */}
         <section className="s-tracks" id="tracks">
           <Reveal className="h-center" text={tracksIntro.title} accent={["problem", "tracks"]} />
           <p className="soft center rise">{tracksIntro.lede}</p>
@@ -111,11 +106,13 @@ export default function Page() {
           </div>
         </section>
 
+        {/* 5. How it works: the journey and the key dates, as one timeline. */}
         <section className="s-dates" id="timeline">
           <div className="dates-head">
             <p className="label rise">{timeline.eyebrow}</p>
-            <Reveal className="h-dare" text={timeline.title} />
+            <Reveal className="h-dare" text={timeline.title} accent={["finale"]} />
             <p className="soft rise">{timeline.lede}</p>
+            <a className="btn rise" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
           </div>
           <ol className="dates">
             <span className="dates-line" data-draw aria-hidden="true" />
@@ -129,6 +126,34 @@ export default function Page() {
           </ol>
         </section>
 
+        {/* 6. What startups get. */}
+        <section className="s-gets" id="benefits">
+          <p className="label rise">{gets.eyebrow}</p>
+          <Reveal className="h-center" text={gets.title} accent={["prize"]} />
+          <p className="soft center rise">{gets.lede}</p>
+          <div className="room-grid" data-stagger>
+            {gets.items.map((g, i) => (
+              <article className="room-card" key={g.title}>
+                <span className="room-n">{String(i + 1).padStart(2, "0")}</span>
+                <h3>{g.title}</h3>
+                <p>{g.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="s-gallery" aria-label="Gallery">
+          <div className="gallery" data-stagger>
+            {gallery.map((g) => (
+              <figure key={g.src} className="gallery-fig">
+                <div className="gallery-img"><img src={g.src} alt={g.alt} /></div>
+                <figcaption>{g.caption}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
+        {/* 7. Who will be in the room. */}
         <section className="s-room" id="community">
           <p className="label rise">{room.eyebrow}</p>
           <Reveal className="h-center" text={room.title} />
@@ -144,27 +169,9 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="s-faq" id="faq">
-          <div className="faq-head">
-            <p className="label rise">{faq.eyebrow}</p>
-            <Reveal className="h-dare" text={faq.title} />
-            <p className="soft rise">Anything else? Write to <a href={`mailto:${CONTACT}`}>{CONTACT}</a>.</p>
-          </div>
-          <div className="faq-list">
-            {faq.items.map((f) => (
-              <details className="faq-item rise" key={f.q}>
-                <summary>
-                  <span>{f.q}</span>
-                  <span className="faq-plus" aria-hidden="true" />
-                </summary>
-                <p>{f.a}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-
         {/* Chapter two: the way in. The page ends in the brand glow. */}
         <div className="chapter chapter-two">
+          {/* 8. Partner with us. */}
           <section className="s-invites" id="partners">
             <p className="label rise">{invitesIntro.eyebrow}</p>
             <Reveal className="h-center" text={invitesIntro.title} accent={["room"]} />
@@ -181,23 +188,35 @@ export default function Page() {
             </div>
           </section>
 
+          {/* 9. Questions. */}
+          <section className="s-faq" id="faq">
+            <div className="faq-head">
+              <p className="label rise">{faq.eyebrow}</p>
+              <Reveal className="h-dare" text={faq.title} />
+              <p className="soft rise">Anything else? Write to <a href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a>.</p>
+            </div>
+            <div className="faq-list">
+              {faq.items.map((f) => (
+                <details className="faq-item rise" key={f.q}>
+                  <summary>
+                    <span>{f.q}</span>
+                    <span className="faq-plus" aria-hidden="true" />
+                  </summary>
+                  <p>{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
 
+          {/* 10. Last call, then the sign-off. */}
           <section className="s-closing">
             <p className="label rise">{closing.eyebrow}</p>
             <Reveal className="statement" text={closing.title} accent={["worth", "solving"]} />
-            <a className="btn rise" href={gmailLink()} target="_blank" rel="noopener noreferrer">talk to the team <span aria-hidden="true">↗</span></a>
-            <p className="contact rise"><a className="contact-link" href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a></p>
-          </section>
-
-          <section className="s-gallery" aria-label="Gallery">
-            <div className="gallery" data-stagger>
-              {gallery.map((g) => (
-                <figure key={g.src} className="gallery-fig">
-                  <div className="gallery-img"><img src={g.src} alt={g.alt} /></div>
-                  <figcaption>{g.caption}</figcaption>
-                </figure>
-              ))}
+            <div className="actions rise">
+              <a className="btn" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
+              <a className="btn ghost" href={gmailLink()} target="_blank" rel="noopener noreferrer">talk to the team <span aria-hidden="true">↗</span></a>
             </div>
+            <p className="contact rise"><a className="contact-link" href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a></p>
           </section>
 
           <div className="footer-logos">
