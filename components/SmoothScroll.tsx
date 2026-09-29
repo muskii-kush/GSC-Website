@@ -94,6 +94,9 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       gsap.utils.toArray<HTMLElement>("[data-stagger]").forEach((group) =>
         gsap.from(group.children, {
           y: 40, opacity: 0, duration: 0.8, ease: "power3.out", stagger: 0.08,
+          // Hand the cards back to CSS once they land, so hover lifts and transitions
+          // do not fight a leftover inline transform and leave a row out of line.
+          clearProps: "transform,opacity",
           scrollTrigger: { trigger: group, start: "top 85%" },
         }),
       );

@@ -331,8 +331,8 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 
 /* Invitations */
 .invite-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: min(1300px, 100%); margin: 90px auto 0; text-align: left; }
-.invite { border-radius: 40px; padding: 44px 36px; display: flex; flex-direction: column; min-height: 440px; transition: transform .5s var(--ease), border-color .4s, background .4s; }
-.invite:hover { transform: translateY(-6px); border-color: rgba(255, 255, 255, .2); background: linear-gradient(to bottom, rgba(71, 54, 254, .22), rgba(71, 54, 254, 0)); }
+.invite { border-radius: 40px; padding: 44px 36px; display: flex; flex-direction: column; min-height: 440px; transition: border-color .4s, background .4s, translate .5s var(--ease); }
+.invite:hover { translate: 0 -6px; border-color: rgba(255, 255, 255, .2); background: linear-gradient(to bottom, rgba(71, 54, 254, .22), rgba(71, 54, 254, 0)); }
 .invite h3 { font-family: var(--f-display); font-weight: 700; font-size: clamp(26px, 2.4vw, 34px); line-height: 1.05; letter-spacing: -.03em; margin-top: 60px; }
 .invite p:not(.label) { font-size: 15px; line-height: 1.75; color: var(--ink-70); margin-top: 18px; }
 .invite-link { margin-top: auto; padding-top: 40px; font-family: var(--f-label); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; }
