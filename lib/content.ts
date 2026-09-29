@@ -192,12 +192,12 @@ export const room = {
   ],
 };
 
-export type InviteId = "investor" | "partner" | "sponsor";
+export type InviteId = "academic" | "investor" | "sponsor";
 
 export const invitesIntro = {
   eyebrow: "Invitations",
   title: "choose your way into the room",
-  lede: "Investors can meet and evaluate the next generation of builders. Partners can help create the platform and shape the agenda.",
+  lede: "Academic partners help pick and grow the builders. Investors meet them early. Sponsors put their brand behind them.",
 };
 
 export const invites: {
@@ -215,11 +215,33 @@ export const invites: {
   action: string;
 }[] = [
   {
+    // From the Academic & Incubation Partnership deck, generalised beyond IIMA Ventures.
+    id: "academic",
+    label: "Academic partnership",
+    card: "Bring your founders, faculty and students into the challenge",
+    cardText: "Join as a Founding Knowledge Partner. Help pick the winners, send your incubated startups and student founders, and put your institution beside Startup India.",
+    link: "Open academic partnership",
+    image: asset("/media/invite-partner.jpg"),
+    kicker: "Academic & incubation partnership",
+    title: "Become a Founding Knowledge Partner.",
+    lede: "For universities, business schools and incubators that stand with founders at the earliest stage. Help shape the challenge, and meet the best of 1,000+ applicants while they are still early.",
+    points: [
+      "Your faculty or incubator leads sit on the jury and the selection committee",
+      "Your incubated startups can apply, compete for the ₹1 crore prize pool and pitch to the full jury",
+      "Your team leads a panel at Bharat Mandapam on the question you most want India to debate",
+      "A seat in the Investor Lounge, alongside every investor invited to the challenge",
+      "A stall to meet students and campus delegates from India’s leading institutions",
+      "Case studies from the challenge, co-authored with your team",
+    ],
+    signals: "Founding Knowledge Partners are named on the microsite, the press kit, the stage backdrop and every certificate, alongside DPIIT, Startup India, Cars24 and Startup Policy Forum. We would also love to visit your campus for a session on the problem statements with your founders and students.",
+    action: "Discuss an academic partnership",
+  },
+  {
     id: "investor",
-    label: "Investor invitation",
+    label: "Investor partnership",
     card: "Meet the next generation of India's builders",
     cardText: "Access a screened pipeline, the Founders’ Lounge, selected pitch decks and the final showcase at Bharat Mandapam.",
-    link: "Open investor invitation",
+    link: "Open investor partnership",
     image: asset("/media/invite-investor.jpg"),
     kicker: "Investor access",
     title: "Meet the next generation of India’s builders.",
@@ -234,32 +256,13 @@ export const invites: {
     action: "Request investor invitation",
   },
   {
-    id: "partner",
-    label: "Partner invitation",
-    card: "Put your organisation behind the challenge",
-    cardText: "Support the prize pool, contribute as an industry or knowledge partner, or sponsor one of the four tracks.",
-    link: "Open partner invitation",
-    image: asset("/media/invite-partner.jpg"),
-    kicker: "Partner access",
-    title: "Help create the platform for what comes next.",
-    lede: "Back the challenge as a sponsor, track partner or founding knowledge partner, with your organisation present across the season.",
-    points: [
-      "Be present across the season, from applications to the final showcase in New Delhi",
-      "Support the ₹1 crore prize pool",
-      "Sponsor one of the four tracks",
-      "Participate as an industry or knowledge partner alongside Cars24, DPIIT and Startup Policy Forum",
-    ],
-    signals: "Partner visibility can include the microsite, communications, stage presence, showcase programming and founder access, with the final package shaped around the partnership.",
-    action: "Discuss a partnership",
-  },
-  {
     id: "sponsor",
-    label: "Sponsorship invitation",
+    label: "Sponsor partnership",
     card: "Put your brand behind meaningful progress",
     cardText: "Support the challenge through a sponsorship package designed around visibility, founder access and the themes shaping India’s next chapter.",
-    link: "Open sponsorship invitation",
+    link: "Open sponsor partnership",
     image: asset("/media/environment.jpg"),
-    kicker: "Sponsorship access",
+    kicker: "Sponsor access",
     title: "Put your brand behind the builders.",
     lede: "Support the challenge with a sponsorship package that connects your organisation to the founders, ideas and problem spaces shaping India’s next chapter.",
     points: [
@@ -314,4 +317,4 @@ export const closing = {
   title: "make the hard problems worth solving",
 };
 
-export const footer = "© Grand Startup Challenge · Cars24 × Startup Policy Forum";
+export const footer = "© Grand Startup Challenge · DPIIT, Startup India × Cars24 × Startup Policy Forum";
