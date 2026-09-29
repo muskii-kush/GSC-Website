@@ -116,9 +116,11 @@ export default function DetailDrawer() {
                   </p>
                 </>
               )}
-              <a className="btn" href={gmailLink(invite ? invite.label : `${track!.name} track`)} target="_blank" rel="noopener noreferrer">
-                {invite ? invite.action : "Discuss this track"} <span aria-hidden="true">↗</span>
-              </a>
+              {invite && (
+                <a className="btn" href={gmailLink(invite.label)} target="_blank" rel="noopener noreferrer">
+                  {invite.action} <span aria-hidden="true">↗</span>
+                </a>
+              )}
             </div>
           </div>
         </div>
