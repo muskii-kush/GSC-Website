@@ -1,5 +1,8 @@
 // All copy is carried over from Grand-Startup-Challenge-v5.html.
 export const CONTACT = "grandstartupchallenge@cars24.com";
+// Opens a Gmail compose window addressed to the team.
+export const gmailLink = (subject = "Grand Startup Challenge") =>
+  `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACT)}&su=${encodeURIComponent(subject)}`;
 export const APPLICATIONS_OPEN = "2026-10-01T00:00:00+05:30";
 // The source gives the deadline as a date; end of day IST is assumed here.
 export const APPLICATIONS_CLOSE = "2026-10-31T23:59:59+05:30";
@@ -44,14 +47,14 @@ export const journey = {
 export const timeline = {
   eyebrow: "Key dates",
   title: "what happens when",
-  lede: "All dates are in IST. The application deadline is firm.",
+  lede: "All dates are in IST.",
   items: [
     { date: "1 October 2026", title: "Applications open", text: "Problem statements for each track are published on the same day." },
     { date: "31 October 2026", title: "Applications close", text: "Hard deadline. We do not extend it." },
     { date: "November to December 2026", title: "Screening and interviews", text: "Applications are read and shortlisted startups are interviewed. You hear back either way." },
     { date: "December 2026", title: "Mentorship month", text: "Shortlisted startups work with an assigned Cars24 mentor to refine their solution." },
     { date: "1 to 15 January 2027", title: "Final refinement", text: "Startups finish the solution they will demo." },
-    { date: "16 January 2027", title: "Finale, Bharat Mandapam", text: "National Startup Day. Shortlisted startups pitch to the jury in their track room, with a demo. Track winners re-pitch in the main auditorium, followed by felicitation." },
+    { date: "January 2027", title: "Finale, New Delhi", text: "National Startup Day. Shortlisted startups pitch to the jury in their track room, with a demo. Track winners re-pitch in the main auditorium, followed by felicitation." },
   ],
 };
 

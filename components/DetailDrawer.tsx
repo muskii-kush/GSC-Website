@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { CONTACT, invites, tracks } from "@/lib/content";
+import { CONTACT, gmailLink, invites, tracks } from "@/lib/content";
 
 type Open = { kind: "track" | "invite"; id: string } | null;
 
@@ -76,9 +76,11 @@ export default function DetailDrawer() {
               <p className="label accent">{item.kicker}</p>
               <h2>{item.title}</h2>
               <p className="detail-lede">{item.lede}</p>
-              <figure className="detail-image" style={briefStyle(track?.briefAspect)}>
-                <img src={track?.briefImage ?? item.image} alt={invite ? invite.label : "Cars24 operating environment"} />
-              </figure>
+              {track && (
+                <figure className="detail-image" style={briefStyle(track.briefAspect)}>
+                  <img src={track.briefImage ?? track.image} alt="Cars24 operating environment" />
+                </figure>
+              )}
             </div>
             <div className="detail-side">
               <h3>{track ? "What we are looking for" : "What you can expect"}</h3>
@@ -106,7 +108,15 @@ export default function DetailDrawer() {
                   </ul>
                 </>
               )}
-              <a className="btn" href={`mailto:${CONTACT}`}>
+              {invite && (
+                <>
+                  <h3>Reach out</h3>
+                  <p>
+                    <a className="contact-link" href={gmailLink(invite.label)} target="_blank" rel="noopener noreferrer">{CONTACT}</a>
+                  </p>
+                </>
+              )}
+              <a className="btn" href={gmailLink(invite ? invite.label : `${track!.name} track`)} target="_blank" rel="noopener noreferrer">
                 {invite ? invite.action : "Discuss this track"} <span aria-hidden="true">↗</span>
               </a>
             </div>

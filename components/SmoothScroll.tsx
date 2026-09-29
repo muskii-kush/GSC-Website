@@ -1,14 +1,54 @@
 "use client";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useCallback, useEffect, useRef } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
+// Where a section link should land: its heading (or eyebrow) just below the sticky nav bar.
+function sectionOffset(section: HTMLElement): number {
+  const anchor = section.querySelector<HTMLElement>(".label, h2") ?? section;
+  const bar = document.querySelector<HTMLElement>(".link-bar");
+  const gap = (bar?.offsetHeight ?? 0) + 32;
+  return anchor.getBoundingClientRect().top + window.scrollY - gap;
+}
+
+// In-page section links (#tracks, #partners…) scroll to the section instead of
+// jumping. #register, #track/… and #invite/… are handled by their own panels.
+function useSectionLinks(scrollTo: (y: number) => void) {
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
+      if (!a || a.hasAttribute("data-register")) return;
+      const hash = a.getAttribute("href")!;
+      if (hash.includes("/") || hash === "#register") return;
+      const id = hash.slice(1);
+      const target = id === "top" || id === "" ? null : document.getElementById(id);
+      if (id !== "top" && id !== "" && !target) return;
+      e.preventDefault();
+      try { history.pushState({}, "", hash); } catch { location.hash = hash; }
+      scrollTo(target ? Math.max(0, sectionOffset(target)) : 0);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [scrollTo]);
+}
+
+const nativeScroll = (y: number) =>
+  window.scrollTo({ top: y, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+
 export default function SmoothScroll({ children }: { children: ReactNode }) {
+  const lenisRef = useRef<Lenis | null>(null);
+  const scrollTo = useCallback((y: number) => {
+    if (lenisRef.current) lenisRef.current.scrollTo(y, { duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 3) });
+    else nativeScroll(y);
+  }, []);
+  useSectionLinks(scrollTo);
+
   useEffect(() => {
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+    lenisRef.current = lenis;
     lenis.on("scroll", ScrollTrigger.update);
     const raf = (t: number) => lenis.raf(t * 1000);
     gsap.ticker.add(raf);
@@ -65,6 +105,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       gsap.ticker.remove(raf);
       window.removeEventListener("gsc:lock", onLock);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
   return <>{children}</>;

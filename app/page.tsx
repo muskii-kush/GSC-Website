@@ -9,7 +9,7 @@ import { ShapeName, shapePath } from "@/lib/trapezoid";
 import DetailDrawer from "@/components/DetailDrawer";
 import Registration from "@/components/Registration";
 import {
-  CONTACT, challenge, closing, footer, gallery, hero, invites, invitesIntro, journey, room, timeline, tracks, tracksIntro,
+  CONTACT, gmailLink, challenge, closing, footer, gallery, hero, invites, invitesIntro, journey, room, timeline, tracks, tracksIntro,
 } from "@/lib/content";
 
 const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
@@ -45,7 +45,7 @@ export default function Page() {
             <Countdown />
             <div className="actions">
               <a className="btn" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
-              <a className="btn ghost" href="#invite/partner">partner with us</a>
+              <a className="btn ghost" href="#partners">partner with us</a>
             </div>
           </section>
         </div>
@@ -162,8 +162,8 @@ export default function Page() {
           <section className="s-closing">
             <p className="label rise">{closing.eyebrow}</p>
             <Reveal className="statement" text={closing.title} accent={["worth", "solving"]} />
-            <a className="btn rise" href={`mailto:${CONTACT}`}>talk to the team <span aria-hidden="true">↗</span></a>
-            <p className="contact rise">{CONTACT}</p>
+            <a className="btn rise" href={gmailLink()} target="_blank" rel="noopener noreferrer">talk to the team <span aria-hidden="true">↗</span></a>
+            <p className="contact rise"><a className="contact-link" href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a></p>
           </section>
 
           <section className="s-gallery" aria-label="Gallery">
