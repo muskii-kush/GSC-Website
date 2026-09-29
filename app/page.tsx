@@ -1,4 +1,3 @@
-import { GetStartedButton } from "@/components/GetStartedButton";
 import HeroChips from "@/components/HeroChips";
 import FloatingDock from "@/components/FloatingDock";
 import RotatingWord from "@/components/RotatingWord";
@@ -68,7 +67,7 @@ export default function Page() {
             <p className="when">{hero.when}</p>
             <Countdown />
             <div className="actions">
-              <GetStartedButton className="hero-register" />
+              <a className="reg-link" href="#register" data-register>register now <span className="reg-arrow" aria-hidden="true">→</span></a>
               <a className="btn ghost" href="#partners">partner with us</a>
             </div>
             <p className="hero-with">in partnership with</p>

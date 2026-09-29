@@ -67,9 +67,10 @@ export default function DetailDrawer() {
     <aside className={`detail overlay${item ? " open" : ""}`} aria-hidden={!item} data-lenis-prevent onClick={(e) => e.target === e.currentTarget && close()}>
       {item && (
         <div className="detail-inner">
-          <div className="overlay-head">
+          {/* Close sits top left, and the bar stays pinned while the brief scrolls */}
+          <div className="overlay-head detail-head">
+            <button className="close" type="button" onClick={close}>× close</button>
             <span className="label">{invite ? invite.label : "Track brief"}</span>
-            <button className="close" type="button" onClick={close}>close ×</button>
           </div>
           <div className="detail-layout">
             <div>

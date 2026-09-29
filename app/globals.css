@@ -239,13 +239,24 @@ main {
 .countdown-item span { font-family: var(--f-label); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-50); }
 
 .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 60px; }
-/* ThreeUI liquid-chrome Register button: the frame is taller than the button so its drop shadow fits */
-.hero-register {
-  width: 360px; height: 320px; margin: -115px -45px; flex: none; cursor: pointer;
-  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 82%, transparent 100%);
-  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 82%, transparent 100%);
+/* Hero Register: a sober text link with a soft glow and a lit underline */
+.actions:has(.reg-link) { align-items: center; gap: 44px; }
+.reg-link {
+  position: relative; display: inline-flex; align-items: center; gap: 12px; padding: 6px 2px 10px;
+  font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 2.2vw, 30px); letter-spacing: -.01em;
+  color: var(--ink); text-shadow: 0 0 22px rgba(185, 178, 255, .55), 0 0 2px rgba(255, 255, 255, .4);
+  transition: color .3s, text-shadow .4s;
 }
-.actions:has(.hero-register) { align-items: center; }
+.reg-link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px;
+  background: currentColor; box-shadow: 0 0 12px rgba(185, 178, 255, .9);
+  transform-origin: left; transition: background .3s, box-shadow .4s, transform .5s var(--ease);
+}
+.reg-arrow { display: inline-block; transition: transform .4s var(--ease); }
+.reg-link:hover, .reg-link:focus-visible { color: var(--mint); text-shadow: 0 0 26px rgba(99, 255, 177, .55); }
+.reg-link:hover::after, .reg-link:focus-visible::after { box-shadow: 0 0 16px rgba(99, 255, 177, .9); animation: reg-redraw .6s var(--ease); }
+.reg-link:hover .reg-arrow, .reg-link:focus-visible .reg-arrow { transform: translateX(6px); }
+@keyframes reg-redraw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 .stats { display: flex; justify-content: center; gap: clamp(40px, 8vw, 125px); margin-top: clamp(100px, 12vw, 180px); }
 .stat-v { font-family: var(--f-display); font-weight: 800; font-size: clamp(44px, 5vw, 72px); line-height: 1.05; letter-spacing: -.03em; }
@@ -604,6 +615,10 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .overlay-head, .registration-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 22px; }
 .close { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 10px 16px; cursor: pointer; font-family: var(--f-label); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
 .close:hover { border-color: var(--mint); color: var(--mint); }
+.detail-head {
+  position: sticky; top: 0; z-index: 3; margin-top: -22px; padding-top: 22px;
+  background: rgba(11, 8, 38, .92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
 
 .detail-inner { width: min(1240px, calc(100% - 48px)); margin: auto; padding: 110px 0 80px; }
 .detail-layout { display: grid; grid-template-columns: 1fr .8fr; gap: 80px; padding-top: 60px; }
@@ -733,6 +748,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .reg-link::after { animation: none !important; }
   .ticket-rocket-body { transition: none; }
   .ticket-rocket-flame, .ticket:hover .ticket-rocket-flame { animation: none; }
   .ticket { transition: none; }
