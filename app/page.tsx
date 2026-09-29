@@ -169,7 +169,7 @@ export default function Page() {
             <p className="label rise">{invitesIntro.eyebrow}</p>
             <Reveal className="h-center" text={invitesIntro.title} accent={["room"]} />
             <p className="soft center rise">{invitesIntro.lede}</p>
-            <div className="invite-grid" data-stagger>
+            <div className="invite-grid" data-stagger="together">
               {invites.map((v) => (
                 <a className="glass invite" href={`#invite/${v.id}`} key={v.id}>
                   <p className="label accent">{v.label}</p>
