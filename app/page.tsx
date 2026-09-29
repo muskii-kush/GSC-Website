@@ -47,14 +47,6 @@ export default function Page() {
               <a className="btn" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
               <a className="btn ghost" href="#invite/partner">partner with us</a>
             </div>
-            <div className="stats">
-              {hero.stats.map((s) => (
-                <div key={s.label}>
-                  <p className="stat-v">{s.value}</p>
-                  <p className="stat-l">{s.label}</p>
-                </div>
-              ))}
-            </div>
           </section>
         </div>
 
@@ -64,13 +56,12 @@ export default function Page() {
           <Reveal className="h-center" text={challenge.title} accent={["challenge"]} />
           <p className="statement-sm rise">{challenge.statement}</p>
           <p className="soft center rise">{challenge.lede}</p>
-          <div className="facts" data-stagger>
-            {challenge.facts.map((f) => (
-              <article className="fact" key={f.label}>
-                <p className="fact-v">{f.value}</p>
-                <p className="fact-l">{f.label}</p>
-                <p className="fact-t">{f.text}</p>
-              </article>
+          <div className="stats metrics" data-stagger>
+            {challenge.metrics.map((m) => (
+              <div key={m.label}>
+                <p className="stat-v">{m.value}</p>
+                <p className="stat-l">{m.label}</p>
+              </div>
             ))}
           </div>
         </section>
