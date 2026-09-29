@@ -5,11 +5,14 @@ import Reveal from "@/components/Reveal";
 import Countdown from "@/components/Countdown";
 import Film from "@/components/Film";
 import { ShapeDefs } from "@/components/Shape";
+import { ShapeName, shapePath } from "@/lib/trapezoid";
 import DetailDrawer from "@/components/DetailDrawer";
 import Registration from "@/components/Registration";
 import {
-  CONTACT, challenge, closing, footer, hero, invites, invitesIntro, journey, room, timeline, tracks, tracksIntro,
+  CONTACT, challenge, closing, footer, gallery, hero, invites, invitesIntro, journey, room, timeline, tracks, tracksIntro,
 } from "@/lib/content";
+
+const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
 
 export default function Page() {
   return (
@@ -22,7 +25,6 @@ export default function Page() {
         {/* Chapter one: the invitation. Gradient rises from the bottom edge. */}
         <div className="chapter chapter-one">
           <section className="s-hero">
-            <p className="label rise">grand startup challenge · 2027</p>
             <Reveal as="p" className="statement" text={hero.statement} immediate stagger={0.08} />
           </section>
 
@@ -59,24 +61,23 @@ export default function Page() {
         <Film />
 
         <section className="s-challenge" id="challenge">
-          <p className="label rise">{challenge.eyebrow}</p>
-          <Reveal className="h-center" text={challenge.title} accent={["serious"]} />
+          <Reveal className="h-center" text={challenge.title} accent={["challenge"]} />
           <p className="statement-sm rise">{challenge.statement}</p>
           <p className="soft center rise">{challenge.lede}</p>
-          <div className="band">
-            {challenge.band.map((b, i) => (
-              <figure key={b.src} className={`band-fig b${i}`} data-speed={i ? -40 : 40}>
-                <div className="band-img"><img src={b.src} alt={b.alt} /></div>
-                <figcaption>{b.caption}</figcaption>
-              </figure>
+          <div className="facts" data-stagger>
+            {challenge.facts.map((f) => (
+              <article className="fact" key={f.label}>
+                <p className="fact-v">{f.value}</p>
+                <p className="fact-l">{f.label}</p>
+                <p className="fact-t">{f.text}</p>
+              </article>
             ))}
           </div>
         </section>
 
         <section className="s-journey">
           <div className="dare">
-            <p className="label rise">{journey.eyebrow}</p>
-            <Reveal className="h-dare" text={journey.title} accent={["working"]} />
+            <Reveal className="h-dare" text={journey.title} accent={["journey"]} />
             <p className="soft rise">{journey.lede}</p>
           </div>
           <ol className="steps" data-stagger>
@@ -93,14 +94,16 @@ export default function Page() {
         </section>
 
         <section className="s-tracks" id="tracks">
-          <p className="label rise">{tracksIntro.eyebrow}</p>
-          <Reveal className="h-center" text={tracksIntro.title} accent={["impact"]} />
+          <Reveal className="h-center" text={tracksIntro.title} accent={["problem", "tracks"]} />
           <p className="soft center rise">{tracksIntro.lede}</p>
           <div className="track-grid" data-stagger>
             {tracks.map((t, i) => (
               <a className="track" href={`#track/${t.id}`} key={t.id}>
-                <div className={`track-img shape-${["base", "expressive", "motion", "soft"][i]}`}>
+                <div className={`track-img shape-${TRACK_SHAPES[i]}`}>
                   <img src={t.image} alt="" />
+                  <svg className="track-line" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
+                    <path d={shapePath(TRACK_SHAPES[i])} />
+                  </svg>
                   <span className="track-go" aria-hidden="true">↗</span>
                 </div>
                 <p className="label">{t.num}</p>
@@ -169,6 +172,17 @@ export default function Page() {
             <Reveal className="statement" text={closing.title} accent={["worth", "solving"]} />
             <a className="btn rise" href={`mailto:${CONTACT}`}>talk to the team <span aria-hidden="true">↗</span></a>
             <p className="contact rise">{CONTACT}</p>
+          </section>
+
+          <section className="s-gallery" aria-label="Gallery">
+            <div className="gallery" data-stagger>
+              {gallery.map((g) => (
+                <figure key={g.src} className="gallery-fig">
+                  <div className="gallery-img"><img src={g.src} alt={g.alt} /></div>
+                  <figcaption>{g.caption}</figcaption>
+                </figure>
+              ))}
+            </div>
           </section>
 
           <footer className="footer">

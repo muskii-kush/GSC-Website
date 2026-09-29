@@ -16,32 +16,38 @@ export const hero = {
 };
 
 export const challenge = {
-  eyebrow: "01 / The challenge",
-  title: "real problems. serious builders.",
-  lede:
-    "Shortlisted startups move through structured mentorship, solution development and a final showcase at Bharat Mandapam, New Delhi.",
+  title: "the challenge",
+  // From the GSC 2027 concept note (objective, format and outcomes).
   statement:
-    "India is moving fast. The next generation of infrastructure will be built by teams that understand both the complexity of the system and the people inside it.",
-  band: [
-    { src: "/media/band-founders.jpg", alt: "Founders and operators in conversation", caption: "Access to people who can help the work move." },
-    { src: "/media/band-inspection.jpg", alt: "Vehicle inspection in a Cars24 environment", caption: "Build in the context where the problem actually lives." },
+    "Cars24’s Grand Startup Challenge puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
+  lede:
+    "Over a four-month journey, startups move from applications and shortlisting to a month of immersion and refinement, and a final showcase in New Delhi.",
+  facts: [
+    { value: "4", label: "Problem tracks", text: "Applications come in against set problem statements in lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI." },
+    { value: "20", label: "Startups shortlisted", text: "Five startups are shortlisted per track, selected by Cars24 leadership, knowledge partners and subject-matter experts." },
+    { value: "1 month", label: "Of mentorship", text: "Shortlisted startups test their actual solution inside live environments, with mentors assigned to help refine it." },
+    { value: "1+", label: "Investable startup per track", text: "The goal of the challenge, with two or three startups that Cars24 could incubate through AI Labs." },
   ],
 };
 
+export const gallery = [
+  { src: "/media/band-founders.jpg", alt: "Founders and operators in conversation", caption: "Access to people who can help the work move." },
+  { src: "/media/band-inspection.jpg", alt: "Vehicle inspection in a Cars24 environment", caption: "Build in the context where the problem actually lives." },
+];
+
 export const journey = {
-  eyebrow: "04 / The journey",
-  title: "from a problem statement to a working solution",
+  title: "the journey",
   lede: "A structured journey from applications and selection to mentorship, refinement and the national showcase.",
   steps: [
-    { n: "01", title: "Apply", text: "Submit your deck and a five-minute video before applications close on 31 October 2026." },
+    { n: "01", title: "Apply", text: "Submit your deck and a five-minute video before applications close." },
     { n: "02", title: "Shortlist", text: "Startups are selected across four tracks based on the strength of the problem, traction and team." },
     { n: "03", title: "Build", text: "Structured mentorship, solution development and feedback from operators and subject-matter experts." },
-    { n: "04", title: "Pitch", text: "Shortlisted startups pitch and demo their solutions on 16 January 2027." },
+    { n: "04", title: "Pitch", text: "Shortlisted startups pitch and demo their solutions at the finale." },
   ],
 };
 
 export const timeline = {
-  eyebrow: "02 / Key dates",
+  eyebrow: "Key dates",
   title: "what happens when",
   lede: "All dates are in IST. The application deadline is firm.",
   items: [
@@ -57,8 +63,7 @@ export const timeline = {
 export type TrackId = "fintech" | "mobility" | "logistics" | "sovereign-ai";
 
 export const tracksIntro = {
-  eyebrow: "03 / Problem tracks",
-  title: "four tracks, chosen for impact",
+  title: "the 4 problem tracks",
   lede: "Open a brief to see the problem space, the opportunity and the kind of startup we want to meet.",
 };
 
@@ -156,7 +161,7 @@ export const tracks: {
 ];
 
 export const room = {
-  eyebrow: "03 / The room",
+  eyebrow: "The room",
   title: "who will be joining",
   lede: "A high-signal room of people who can make a good idea more useful, more tested and more ready for the real world.",
   people: [
@@ -172,7 +177,7 @@ export const room = {
 export type InviteId = "investor" | "partner" | "sponsor";
 
 export const invitesIntro = {
-  eyebrow: "05 / Invitations",
+  eyebrow: "Invitations",
   title: "choose your way into the room",
   lede: "Investors can meet and evaluate the next generation of builders. Partners can help create the platform and shape the agenda.",
 };
@@ -205,9 +210,9 @@ export const invites: {
       "Join startup mixers from October to December",
       "Receive the shortlisted decks in December",
       "Meet the teams you choose in the Investor Lounge and in the weeks that follow",
-      "On 16 January, join the final pitch day and the jury alongside Cars24 leadership and DPIIT",
+      "Join the final pitch day and the jury alongside Cars24 leadership and DPIIT",
     ],
-    signals: "Shortlisted startups across four tracks, with decks, demos, mentorship outcomes and a final pitch on 16 January 2027.",
+    signals: "Shortlisted startups across four tracks, with decks, demos, mentorship outcomes and a final pitch.",
     action: "Request investor invitation",
   },
   {
@@ -221,7 +226,7 @@ export const invites: {
     title: "Help create the platform for what comes next.",
     lede: "Back the challenge as a sponsor, track partner or founding knowledge partner, with your organisation present across the season.",
     points: [
-      "The programme runs from applications opening on 1 October 2026 to the final showcase on 16 January 2027 at Bharat Mandapam, New Delhi",
+      "Be present across the season, from applications to the final showcase in New Delhi",
       "Support the ₹1 crore prize pool",
       "Sponsor one of the four tracks",
       "Participate as an industry or knowledge partner alongside Cars24, DPIIT and Startup Policy Forum",
