@@ -1,0 +1,919 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "meta": {
+    "title": "Grand Startup Challenge microsite — user journey map",
+    "description": "Landing to end of scroll, in page order, with every interaction, overlay, call to action and the registration flow. Mapped from the code, not from the design.",
+    "repository": "github.com/muskii-kush/GSC-Website",
+    "branch": "main",
+    "mappedAtCommit": "02ec700",
+    "mappedOn": "2026-09-30",
+    "pageFile": "app/page.tsx",
+    "copySource": "lib/content.ts",
+    "stack": {
+      "framework": "Next.js 14.2 (App Router), React 18",
+      "motion": "GSAP 3 + ScrollTrigger, Lenis smooth scroll",
+      "fonts": "Geist Sans (display), IBM Plex Sans / Mono via @fontsource (bundled)",
+      "backend": "Next.js route handlers under app/api, Postgres (DATABASE_URL) or PGlite locally"
+    },
+    "builds": [
+      {
+        "id": "static",
+        "name": "GitHub Pages",
+        "trigger": "push to main (.github/workflows/pages.yml)",
+        "env": {
+          "NEXT_PUBLIC_STATIC_SITE": "true",
+          "NEXT_PUBLIC_BASE_PATH": "/GSC-Website"
+        },
+        "output": "static export, no server",
+        "registration": "Register opens a 'Registration opens soon' panel with an email link (components/Registration.tsx → RegistrationSoon)"
+      },
+      {
+        "id": "server",
+        "name": "Node server (next start)",
+        "registration": "Register opens the full account + 7-step application panel (components/Registration.tsx → RegistrationPanel, lib/registration.js)"
+      }
+    ],
+    "keyDates": {
+      "applicationsOpen": "2026-10-01T00:00:00+05:30",
+      "applicationsClose": "2026-10-31T23:59:59+05:30",
+      "finale": "January 2027, New Delhi (exact date intentionally not published)"
+    },
+    "contact": "grandstartupchallenge@cars24.com"
+  },
+  "globalLayer": {
+    "description": "Elements present for the whole journey, independent of scroll position.",
+    "elements": [
+      {
+        "id": "scroll-progress",
+        "component": "components/ScrollProgress.tsx",
+        "behaviour": "3px bar fixed to the top of the viewport; fills left to right with scroll position (blue → mint gradient)."
+      },
+      {
+        "id": "nav",
+        "component": "components/Nav.tsx",
+        "parts": [
+          {
+            "id": "logo-bar",
+            "content": [
+              "DPIIT Startup India logo",
+              "Cars24 logo (centre)",
+              "Startup Policy Forum logo"
+            ],
+            "click": "#top",
+            "behaviour": "White bar; slides up out of view once scrollY > 24px (.nav.scrolled)."
+          },
+          {
+            "id": "link-bar",
+            "behaviour": "Stays pinned to the top at all times; background darkens on scroll.",
+            "links": [
+              {
+                "label": "home",
+                "target": "#top"
+              },
+              {
+                "label": "about the event",
+                "target": "#challenge"
+              },
+              {
+                "label": "tracks",
+                "target": "#tracks"
+              },
+              {
+                "label": "how it works",
+                "target": "#timeline"
+              },
+              {
+                "label": "partners",
+                "target": "#partners"
+              },
+              {
+                "label": "faq",
+                "target": "#faq"
+              }
+            ],
+            "cta": {
+              "label": "register →",
+              "action": "open-registration"
+            }
+          }
+        ],
+        "linkBehaviour": "Section links smooth-scroll (Lenis, 1.4s ease-out) so the section heading lands just below the link bar (components/SmoothScroll.tsx → useSectionLinks)."
+      },
+      {
+        "id": "floating-dock",
+        "component": "components/FloatingDock.tsx",
+        "visibility": "Hidden on load. Slides up once the hero card's bottom is above 25% of the viewport; hides again when the closing section's top reaches 85% of the viewport.",
+        "content": {
+          "headline": {
+            "beforeOpen": "Applications open 1 October",
+            "duringWindow": "Applications close 31 October",
+            "afterClose": "Applications are closed"
+          },
+          "subline": "Register now or email the team"
+        },
+        "ctas": [
+          {
+            "label": "register →",
+            "action": "open-registration"
+          },
+          {
+            "label": "email icon",
+            "action": "open-gmail-compose",
+            "to": "grandstartupchallenge@cars24.com"
+          }
+        ]
+      },
+      {
+        "id": "smooth-scroll",
+        "component": "components/SmoothScroll.tsx",
+        "behaviour": "Lenis smooth scrolling drives GSAP ScrollTrigger. Scroll is locked while any overlay is open (gsc:lock event)."
+      }
+    ],
+    "accessibility": {
+      "reducedMotion": "prefers-reduced-motion disables Lenis, reveals, fan-out, floating chips drift, marquee, rotating word, flicker and hover sweeps; content renders in place.",
+      "keyboard": "Esc closes any open overlay. FAQ uses native <details>/<summary>."
+    }
+  },
+  "hashRoutes": [
+    {
+      "hash": "#top",
+      "result": "scroll to page top"
+    },
+    {
+      "hash": "#challenge | #tracks | #timeline | #benefits | #community | #partners | #faq",
+      "result": "scroll to section"
+    },
+    {
+      "hash": "#track/{fintech|mobility|logistics|sovereign-ai}",
+      "result": "open track brief overlay",
+      "component": "components/DetailDrawer.tsx"
+    },
+    {
+      "hash": "#invite/{academic|investor|sponsor}",
+      "result": "open partnership brief overlay",
+      "component": "components/DetailDrawer.tsx"
+    },
+    {
+      "hash": "#register",
+      "result": "open registration overlay",
+      "component": "components/Registration.tsx"
+    }
+  ],
+  "journey": [
+    {
+      "step": 1,
+      "id": "hero",
+      "anchor": "#top",
+      "chapter": "chapter-one (bright violet glow rising from the bottom)",
+      "purpose": "Who this is, the promise, when, and the two ways in.",
+      "trigger": "page load",
+      "content": {
+        "mark": "GSC logo (trapezoid clip)",
+        "name": "Grand Startup Challenge",
+        "headline": "build what moves india forward",
+        "lede": "A four-month startup challenge for early-stage teams building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
+        "when": "January 2027, New Delhi",
+        "countdown": {
+          "component": "components/Countdown.tsx",
+          "phases": [
+            "Applications open in (to 1 Oct 2026)",
+            "Applications close in (to 31 Oct 2026)",
+            "Applications are closed"
+          ],
+          "units": [
+            "Days",
+            "Hours",
+            "Minutes",
+            "Seconds"
+          ]
+        },
+        "partnerStrip": {
+          "label": "in partnership with",
+          "logos": [
+            "DPIIT Startup India",
+            "Cars24",
+            "Startup Policy Forum"
+          ]
+        }
+      },
+      "decorations": {
+        "floatingChips": {
+          "component": "components/HeroChips.tsx",
+          "items": [
+            "₹1 Cr · prize pool",
+            "4 · problem tracks",
+            "1 Oct · applications open",
+            "Jan 2027 · New Delhi finale"
+          ],
+          "behaviour": "Float gently and drift with the pointer (parallax). Hidden below 760px."
+        }
+      },
+      "motion": [
+        "Headline words blur into focus on load",
+        "Card scales/fades in as it enters (data-grow)"
+      ],
+      "ctas": [
+        {
+          "label": "register now →",
+          "style": "text link, soft glow, lit underline (redraws + mint on hover)",
+          "action": "open-registration"
+        },
+        {
+          "label": "partner with us",
+          "style": "ghost pill",
+          "action": "scroll",
+          "target": "#partners"
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "id": "proof-strip",
+      "purpose": "The numbers at a glance.",
+      "content": [
+        "With DPIIT and Startup India, Government of India",
+        "₹1 Cr prize pool",
+        "4 problem tracks",
+        "1,000+ applications expected",
+        "12 winning startups",
+        "Finale in New Delhi, January 2027"
+      ],
+      "motion": [
+        "Continuous horizontal marquee (38s loop), pauses on hover"
+      ],
+      "ctas": []
+    },
+    {
+      "step": 3,
+      "id": "film",
+      "component": "components/Film.tsx",
+      "purpose": "Motion intro.",
+      "content": {
+        "video": "/media/hero.mp4",
+        "poster": "/media/hero-poster.jpg",
+        "playback": "autoplay, muted, loop, inline"
+      },
+      "motion": [
+        "Frame tilts from a trapezoid into a flat screen as it scrolls in (data-tilt, scrubbed)"
+      ],
+      "ctas": []
+    },
+    {
+      "step": 4,
+      "id": "about",
+      "anchor": "#challenge",
+      "navLabel": "about the event",
+      "purpose": "What the event is, and why it exists.",
+      "content": {
+        "heading": "about the event",
+        "statement": "The Grand Startup Challenge, run with DPIIT and Startup India, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
+        "lede": "Over a four-month journey, startups move from applications and shortlisting to a month of immersion and refinement, and a final showcase in New Delhi.",
+        "why": {
+          "eyebrow": "Why this challenge",
+          "cards": [
+            "1 · Built with the Government of India",
+            "2 · Hosted by a company born in the startup boom",
+            "3 · For the next generation of Indian founders"
+          ]
+        }
+      },
+      "motion": [
+        "Heading blurs in word by word",
+        "Statement and description rise in",
+        "Why cards: numbers lit in mint; cards tilt towards the cursor on hover"
+      ],
+      "ctas": []
+    },
+    {
+      "step": 5,
+      "id": "tracks",
+      "anchor": "#tracks",
+      "navLabel": "tracks",
+      "purpose": "The four problem spaces to apply against.",
+      "content": {
+        "heading": "the 4 problem tracks",
+        "lede": "Open a brief to see the problem space, the opportunity and the kind of startup we want to meet.",
+        "cards": [
+          {
+            "id": "fintech",
+            "label": "Track 1 · Fintech",
+            "name": "Lending & Fintech"
+          },
+          {
+            "id": "mobility",
+            "label": "Track 2 · Mobility",
+            "name": "Mobility & Road Safety"
+          },
+          {
+            "id": "logistics",
+            "label": "Track 3 · Logistics",
+            "name": "Logistics & Supply Chain"
+          },
+          {
+            "id": "sovereign-ai",
+            "label": "Track 4 · Sovereign AI",
+            "name": "Sovereign AI"
+          }
+        ]
+      },
+      "motion": [
+        "Cards rise in one after another",
+        "Photos are black and white; turn colour and scale up on hover"
+      ],
+      "ctas": [
+        {
+          "label": "explore the brief ↘ (whole card)",
+          "action": "open-overlay",
+          "target": "#track/{id}",
+          "overlay": "trackBrief"
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "id": "how-it-works",
+      "anchor": "#timeline",
+      "navLabel": "how it works",
+      "purpose": "The journey and key dates in one timeline.",
+      "content": {
+        "eyebrow": "How it works",
+        "heading": "from application to the finale",
+        "lede": "Four months, from applications and shortlisting to a month of mentorship and a final pitch in New Delhi. All dates are in IST.",
+        "timeline": [
+          {
+            "date": "1 October 2026",
+            "title": "Applications open"
+          },
+          {
+            "date": "31 October 2026",
+            "title": "Applications close"
+          },
+          {
+            "date": "November to December 2026",
+            "title": "Screening and interviews"
+          },
+          {
+            "date": "December 2026",
+            "title": "Mentorship month"
+          },
+          {
+            "date": "Early January 2027",
+            "title": "Final refinement"
+          },
+          {
+            "date": "January 2027",
+            "title": "Finale, New Delhi",
+            "highlight": true
+          }
+        ]
+      },
+      "layout": "Heading block sticky on the left, timeline on the right (stacks on mobile).",
+      "motion": [
+        "Timeline line draws down with scroll (scrubbed)",
+        "Each date rises in"
+      ],
+      "ctas": [
+        {
+          "label": "register now →",
+          "action": "open-registration"
+        }
+      ]
+    },
+    {
+      "step": 7,
+      "id": "what-startups-get",
+      "anchor": "#benefits",
+      "purpose": "Benefits, led by the prize.",
+      "content": {
+        "leadTicket": {
+          "stamp": "₹1 Cr",
+          "title": "₹1 crore prize pool",
+          "text": "Shared across twelve winning startups.",
+          "style": "full-width golden (mint) pass"
+        },
+        "eyebrow": "What startups get",
+        "heading": "and the prize is only the beginning",
+        "lede": "₹1 crore goes to twelve winning teams. But every startup that makes the shortlist also signs up for all of this.",
+        "passes": [
+          {
+            "stamp": "Live",
+            "title": "Real problems, real data"
+          },
+          {
+            "stamp": "1:1",
+            "title": "A month with mentors"
+          },
+          {
+            "stamp": "Deploy",
+            "title": "A chance at real deployment"
+          },
+          {
+            "stamp": "Pitch",
+            "title": "Investors in the room"
+          },
+          {
+            "stamp": "Delhi",
+            "title": "A national stage",
+            "layout": "centred under the row above"
+          }
+        ]
+      },
+      "design": "Each benefit is an event pass: coloured stub (Admit one · label, stamp, Pass n of 6, rocket), perforated tear line with notches, cream body with barcode.",
+      "motion": [
+        "Passes sharpen in one after another",
+        "Slight alternating tilt; straighten and lift on hover",
+        "Rocket flame flickers continuously; rocket lifts and flame burns longer on hover"
+      ],
+      "ctas": []
+    },
+    {
+      "step": 8,
+      "id": "who-will-be-joining",
+      "anchor": "#community",
+      "purpose": "Who is in the room.",
+      "content": {
+        "eyebrow": "The room",
+        "heading": "who will be joining",
+        "lede": "A high-signal room of people who can make a good idea more useful, more tested and more ready for the real world.",
+        "cards": [
+          "1 · Startups and founders",
+          "2 · Investors",
+          "3 · Policymakers",
+          "4 · Students and campus delegates",
+          "5 · Media and industry press",
+          "6 · Corporate innovation and CVC teams"
+        ]
+      },
+      "motion": [
+        "Desktop (>760px): heading and cards hold on screen (CSS position: sticky, ~110vh of scroll) while the cards deal out from a splayed deck at the top left into the 3×2 grid, one after another (GSAP timeline, scrubbed, data-fan). Reverses on scroll up.",
+        "Mobile: cards rise in one after another."
+      ],
+      "ctas": []
+    },
+    {
+      "step": 9,
+      "id": "partnerships",
+      "anchor": "#partners",
+      "navLabel": "partners",
+      "chapter": "chapter-two begins (violet glow rising towards the page end)",
+      "purpose": "Ways in for institutions, investors and sponsors.",
+      "content": {
+        "eyebrow": "Invitations",
+        "heading": "choose your way into the room",
+        "lede": "Academic partners help pick and grow the builders. Investors meet them early. Sponsors put their brand behind them.",
+        "cards": [
+          {
+            "id": "academic",
+            "label": "Academic partnership",
+            "card": "Bring your founders, faculty and students into the challenge"
+          },
+          {
+            "id": "investor",
+            "label": "Investor partnership",
+            "card": "Meet the next generation of India's builders"
+          },
+          {
+            "id": "sponsor",
+            "label": "Sponsor partnership",
+            "card": "Put your brand behind meaningful progress"
+          }
+        ]
+      },
+      "motion": [
+        "Cards rise together as one row",
+        "Lift and violet tint on hover"
+      ],
+      "ctas": [
+        {
+          "label": "open {type} partnership ↗ (whole card)",
+          "action": "open-overlay",
+          "target": "#invite/{id}",
+          "overlay": "partnershipBrief"
+        }
+      ]
+    },
+    {
+      "step": 10,
+      "id": "faq",
+      "anchor": "#faq",
+      "navLabel": "faq",
+      "purpose": "Answer the last objections before the ask.",
+      "content": {
+        "eyebrow": "Questions",
+        "heading": "curious? ask away",
+        "contactLine": "Anything else? Write to grandstartupchallenge@cars24.com.",
+        "questions": [
+          "Who can apply?",
+          "When do applications open and close?",
+          "What do I need to apply?",
+          "Which track should I apply to?",
+          "What happens after I apply?",
+          "Where and when is the finale?",
+          "What do startups get?"
+        ]
+      },
+      "interaction": "Accordion (native <details>); + icon rotates to × and fills mint when open. Heading sticky on the left on desktop.",
+      "ctas": [
+        {
+          "label": "grandstartupchallenge@cars24.com",
+          "action": "open-gmail-compose"
+        }
+      ]
+    },
+    {
+      "step": 11,
+      "id": "closing",
+      "purpose": "Final ask.",
+      "content": {
+        "eyebrow": "Still deciding?",
+        "heading": "make the hard problems worth solving",
+        "contact": "grandstartupchallenge@cars24.com"
+      },
+      "notes": "Floating dock hides here because this section carries the same actions.",
+      "ctas": [
+        {
+          "label": "register now →",
+          "action": "open-registration"
+        },
+        {
+          "label": "talk to the team ↗",
+          "action": "open-gmail-compose"
+        }
+      ]
+    },
+    {
+      "step": 12,
+      "id": "sign-off",
+      "purpose": "Brand close.",
+      "content": {
+        "line": "let's {build | pitch | scale | deploy} what moves india forward",
+        "brand": {
+          "label": "brought to you by",
+          "logos": [
+            "DPIIT Startup India",
+            "Cars24",
+            "Startup Policy Forum"
+          ]
+        },
+        "wordmark": "GSC'27 (full-width)"
+      },
+      "motion": [
+        "Verb rotates every 2.2s, blurring in and out; slot width fits the current word"
+      ],
+      "ctas": []
+    },
+    {
+      "step": 13,
+      "id": "footer",
+      "purpose": "End of scroll.",
+      "content": {
+        "credit": "© Grand Startup Challenge · DPIIT, Startup India × Cars24 × Startup Policy Forum"
+      },
+      "ctas": [
+        {
+          "label": "Back to top ↑",
+          "action": "scroll",
+          "target": "#top"
+        }
+      ]
+    }
+  ],
+  "overlays": {
+    "common": {
+      "component": "components/DetailDrawer.tsx",
+      "open": "Click a track or partnership card (hash is pushed to history), or land on the hash directly.",
+      "close": [
+        "× close button (top left, header pinned while scrolling)",
+        "Esc key",
+        "Browser back"
+      ],
+      "onClose": "Returns to #tracks (track brief) or #partners (partnership brief).",
+      "scroll": "Page scroll is locked; the overlay scrolls on its own."
+    },
+    "trackBrief": {
+      "hash": "#track/{id}",
+      "sections": [
+        "Kicker (Track n · name) and title",
+        "Lede",
+        "Photo (per-track brief image and frame aspect where set)",
+        "What we are looking for",
+        "Good signals",
+        "Why it matters + 3 stats",
+        "What startups would build (6 chips)"
+      ],
+      "ctas": []
+    },
+    "partnershipBrief": {
+      "hash": "#invite/{academic|investor|sponsor}",
+      "sections": [
+        "Kicker and title",
+        "Lede",
+        "What you can expect (points)",
+        "Programme details",
+        "Reach out (email)"
+      ],
+      "ctas": [
+        {
+          "id": "academic",
+          "label": "Discuss an academic partnership ↗",
+          "action": "open-gmail-compose"
+        },
+        {
+          "id": "investor",
+          "label": "Request investor invitation ↗",
+          "action": "open-gmail-compose"
+        },
+        {
+          "id": "sponsor",
+          "label": "Discuss sponsorship ↗",
+          "action": "open-gmail-compose"
+        }
+      ]
+    }
+  },
+  "registration": {
+    "entryPoints": [
+      "nav link-bar: register →",
+      "hero: register now →",
+      "how it works: register now →",
+      "floating dock: register →",
+      "closing: register now →",
+      "direct link: #register"
+    ],
+    "mechanism": "Any element with [data-register] opens the panel; the hash becomes #register. Close via Close ×, backdrop click, Esc or browser back (hash returns to #top).",
+    "staticBuild": {
+      "panel": "Registration opens soon",
+      "copy": "The online application for the Grand Startup Challenge will open here shortly. For questions in the meantime, write to us.",
+      "cta": {
+        "label": "Email grandstartupchallenge@cars24.com ↗",
+        "action": "open-gmail-compose"
+      }
+    },
+    "serverBuild": {
+      "files": [
+        "lib/registration.js",
+        "lib/registration-markup.ts",
+        "app/api/**",
+        "lib/server/**"
+      ],
+      "flow": [
+        {
+          "stage": "session-check",
+          "api": "GET /api/auth/me",
+          "result": {
+            "signedIn": "skip to application (resume)",
+            "signedOut": "show account gate"
+          }
+        },
+        {
+          "stage": "account-details",
+          "heading": "Create your account",
+          "fields": [
+            {
+              "name": "email",
+              "type": "email",
+              "required": true
+            },
+            {
+              "name": "phone",
+              "type": "tel",
+              "prefix": "+91",
+              "required": true,
+              "validation": "10-digit Indian mobile starting 6–9"
+            }
+          ],
+          "action": {
+            "label": "Send OTP",
+            "api": "POST /api/auth/send-otp"
+          },
+          "rules": [
+            "An email already tied to a different phone is rejected (409)",
+            "Resend cooldown 30s",
+            "Max 5 OTP requests per phone per hour, 20 per IP per hour"
+          ]
+        },
+        {
+          "stage": "otp-verify",
+          "fields": [
+            {
+              "name": "code",
+              "type": "text",
+              "pattern": "6 digits",
+              "required": true
+            }
+          ],
+          "action": {
+            "label": "Verify and create account",
+            "api": "POST /api/auth/verify-otp"
+          },
+          "secondary": [
+            "Resend OTP (after countdown)",
+            "Change email or number"
+          ],
+          "rules": [
+            "OTP valid 10 minutes",
+            "Max 5 attempts",
+            "Session cookie gsc_session: httpOnly, SameSite=Lax, 30 days"
+          ],
+          "note": "SMS provider is a mock today (lib/server/sms.ts); in non-production the OTP is echoed on screen as 'Test mode'."
+        },
+        {
+          "stage": "application",
+          "loadApi": "GET /api/application",
+          "resume": "Prefills from the server draft (or a local draft keyed by phone) and opens at the first step with an unanswered question. Submitted applications open read-only.",
+          "chrome": [
+            "Signed in as {email} · {phone}",
+            "Not you? Switch account (POST /api/auth/logout)",
+            "Progress: Step n of 7, % complete, clickable step pills up to the furthest step reached"
+          ],
+          "steps": [
+            {
+              "n": 1,
+              "title": "Eligibility",
+              "fields": [
+                "email",
+                "incorporated",
+                "funding",
+                "fulltime",
+                "cars24employee"
+              ]
+            },
+            {
+              "n": 2,
+              "title": "The company",
+              "fields": [
+                "track",
+                "company",
+                "registration",
+                "dpiit (optional)",
+                "location",
+                "website (optional)",
+                "company_summary",
+                "revenue_model",
+                "family_cars24"
+              ]
+            },
+            {
+              "n": 3,
+              "title": "The team",
+              "fields": [
+                "team_size",
+                "founder_count",
+                "founders",
+                "linkedin",
+                "founder_history",
+                "technical_ownership",
+                "equity",
+                "runway"
+              ]
+            },
+            {
+              "n": 4,
+              "title": "The problem and the market",
+              "fields": [
+                "problem",
+                "competition",
+                "market"
+              ]
+            },
+            {
+              "n": 5,
+              "title": "The product",
+              "fields": [
+                "product_stage",
+                "customers",
+                "tech_stack",
+                "performance (optional)",
+                "demo (optional)"
+              ]
+            },
+            {
+              "n": 6,
+              "title": "Traction",
+              "fields": [
+                "using_product",
+                "users",
+                "revenue_1 … revenue_6 (last six months)",
+                "acquisition",
+                "customer_value",
+                "retention",
+                "reference"
+              ]
+            },
+            {
+              "n": 7,
+              "title": "Scalability and materials",
+              "fields": [
+                "unit_cost",
+                "scale_numbers",
+                "bottleneck",
+                "deck (url)",
+                "founder_video (url, 2 to 5 minutes)",
+                "source",
+                "anything_else (optional)",
+                "declaration_1–4 (required checkboxes)"
+              ]
+            }
+          ],
+          "navigation": [
+            "← Back",
+            "Save and continue → (validates the current step first)",
+            "Save and exit (saves, closes the panel)"
+          ],
+          "autosave": {
+            "trigger": "1.2s after typing stops, and on every step change",
+            "api": "PUT /api/application",
+            "fallback": "localStorage (gsc-application-draft-v2:{phone}) if the server save fails"
+          },
+          "sessionExpiry": "A 401 on save or submit returns the user to the account gate with a message; answers stay on the device."
+        },
+        {
+          "stage": "submit",
+          "action": {
+            "label": "Submit application ↗",
+            "api": "POST /api/application/submit"
+          },
+          "validation": "Jumps to the first step with an invalid field and shows the browser's message.",
+          "success": "Form locks read-only; status: 'Your application has been submitted. We will be in touch by email.'"
+        }
+      ]
+    }
+  },
+  "ctaInventory": [
+    {
+      "location": "nav",
+      "label": "register →",
+      "action": "open-registration"
+    },
+    {
+      "location": "hero",
+      "label": "register now →",
+      "action": "open-registration"
+    },
+    {
+      "location": "hero",
+      "label": "partner with us",
+      "action": "scroll",
+      "target": "#partners"
+    },
+    {
+      "location": "tracks (×4)",
+      "label": "explore the brief ↘",
+      "action": "open-overlay",
+      "target": "#track/{id}"
+    },
+    {
+      "location": "how it works",
+      "label": "register now →",
+      "action": "open-registration"
+    },
+    {
+      "location": "partnerships (×3)",
+      "label": "open {type} partnership ↗",
+      "action": "open-overlay",
+      "target": "#invite/{id}"
+    },
+    {
+      "location": "partnership briefs (×3)",
+      "label": "Discuss… / Request… ↗",
+      "action": "open-gmail-compose"
+    },
+    {
+      "location": "faq",
+      "label": "grandstartupchallenge@cars24.com",
+      "action": "open-gmail-compose"
+    },
+    {
+      "location": "closing",
+      "label": "register now →",
+      "action": "open-registration"
+    },
+    {
+      "location": "closing",
+      "label": "talk to the team ↗",
+      "action": "open-gmail-compose"
+    },
+    {
+      "location": "floating dock",
+      "label": "register →",
+      "action": "open-registration"
+    },
+    {
+      "location": "floating dock",
+      "label": "email icon",
+      "action": "open-gmail-compose"
+    },
+    {
+      "location": "footer",
+      "label": "Back to top ↑",
+      "action": "scroll",
+      "target": "#top"
+    }
+  ],
+  "reviewNotes": [
+    "Registration only works on a server build; the GitHub Pages build shows a 'Registration opens soon' panel.",
+    "SMS OTP uses a mock provider; a real provider (Twilio Verify, MSG91…) must be wired before launch.",
+    "npm audit flags Next.js 14.2.35 (critical) and its bundled PostCSS (high). Server-side advisories do not affect the static build but apply once the registration backend is hosted; the fix is a major upgrade to Next.js 16, to be done on its own branch.",
+    "No analytics or event tracking is instrumented yet; the ctaInventory above is the suggested event list."
+  ]
+}

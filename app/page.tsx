@@ -1,5 +1,7 @@
 import HeroChips from "@/components/HeroChips";
 import FloatingDock from "@/components/FloatingDock";
+import CircuitOverlay from "@/components/CircuitOverlay";
+import TiltCards from "@/components/TiltCards";
 import RotatingWord from "@/components/RotatingWord";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollProgress from "@/components/ScrollProgress";
@@ -13,10 +15,26 @@ import DetailDrawer from "@/components/DetailDrawer";
 import Registration from "@/components/Registration";
 import { asset } from "@/lib/asset";
 import {
-  CONTACT, gmailLink, challenge, closing, faq, footer, gallery, gets, hero, invites, invitesIntro, proof, room, timeline, tracks, tracksIntro, why,
+  CONTACT, gmailLink, challenge, closing, faq, footer, gets, hero, invites, invitesIntro, proof, room, timeline, tracks, tracksIntro, why,
 } from "@/lib/content";
 
 const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
+
+// Wrap the given phrases of a sentence in <span className="it-soft"> (lilac accent, like the headings).
+function accentPhrases(text: string, phrases: string[]) {
+  const parts: (string | JSX.Element)[] = [];
+  let rest = text;
+  let key = 0;
+  while (rest) {
+    const hits = phrases.map((p) => ({ p, i: rest.indexOf(p) })).filter((h) => h.i >= 0).sort((a, b) => a.i - b.i);
+    if (!hits.length) { parts.push(rest); break; }
+    const { p, i } = hits[0];
+    if (i > 0) parts.push(rest.slice(0, i));
+    parts.push(<span className="it-soft" key={key++}>{p}</span>);
+    rest = rest.slice(i + p.length);
+  }
+  return parts;
+}
 
 // One benefit as an event pass: a stamped stub, a perforated tear line, the details.
 function ticket(g: (typeof gets.items)[number], i: number, total: number) {
@@ -97,17 +115,20 @@ export default function Page() {
         {/* 3. What this is, and why it matters. */}
         <section className="s-challenge" id="challenge">
           <Reveal className="h-center" text={challenge.title} accent={["event"]} />
-          <p className="statement-sm rise">{challenge.statement}</p>
+          <p className="statement-sm rise">{accentPhrases(challenge.statement, ["DPIIT and Startup India", "real problems", "national recognition"])}</p>
           <p className="soft center rise">{challenge.lede}</p>
           <p className="label accent why-label rise">{why.eyebrow}</p>
+          {/* Numbers lit in mint; the cards tilt towards the cursor. */}
+          <div className="why-wrap">
           <div className="room-grid why-grid" data-stagger>
             {why.items.map((w, i) => (
-              <article className="room-card" key={w.title}>
+              <article className="room-card" data-tiltcard key={w.title}>
                 <span className="room-n">{i + 1}</span>
                 <h3>{w.title}</h3>
                 <p>{w.text}</p>
               </article>
             ))}
+          </div>
           </div>
         </section>
 
@@ -157,11 +178,11 @@ export default function Page() {
 
         {/* 6. What startups get. */}
         <section className="s-gets" id="benefits">
-          {/* The headline prize comes first, as a golden ticket; the write-up and the other five passes follow. */}
+          {/* Eyebrow, then the headline prize as a golden ticket, then the write-up and the other five passes. */}
+          <p className="label rise gets-eyebrow">{gets.eyebrow}</p>
           <div className="tickets tickets-lead" data-stagger>
             {gets.items.slice(0, 1).map((g, i) => ticket(g, i, gets.items.length))}
           </div>
-          <p className="label rise gets-eyebrow">{gets.eyebrow}</p>
           <Reveal className="h-center gets-title" text={gets.title} accent={["beginning"]} />
           <p className="soft center rise">{gets.lede}</p>
           <div className="tickets" data-stagger>
@@ -169,16 +190,6 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="s-gallery" aria-label="Gallery">
-          <div className="gallery" data-stagger>
-            {gallery.map((g) => (
-              <figure key={g.src} className="gallery-fig">
-                <div className="gallery-img"><img src={g.src} alt={g.alt} /></div>
-                <figcaption>{g.caption}</figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
 
         {/* 7. Who will be in the room. */}
         <section className="s-room" id="community">
@@ -189,6 +200,7 @@ export default function Page() {
           <p className="label rise">{room.eyebrow}</p>
           <Reveal className="h-center" text={room.title} accent={["joining"]} />
           <p className="soft center rise">{room.lede}</p>
+          <div className="circuit-host">
           <div className="room-grid fan-grid" data-fan>
             {room.people.map((p, i) => (
               <article className="room-card" key={p.title}>
@@ -197,6 +209,9 @@ export default function Page() {
                 <p>{p.text}</p>
               </article>
             ))}
+          </div>
+          {/* Mint circuit between the cards; lights up once the deck has dealt out */}
+          <CircuitOverlay gridSelector=".fan-grid" />
           </div>
           </div>
           </div>
@@ -225,7 +240,7 @@ export default function Page() {
           <section className="s-faq" id="faq">
             <div className="faq-head">
               <p className="label rise">{faq.eyebrow}</p>
-              <Reveal className="h-dare" text={faq.title} accent={["ask", "away"]} />
+              <Reveal className="h-dare faq-title" text={faq.title} accent={["ask", "away"]} />
               <p className="soft rise">Anything else? Write to <a href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a>.</p>
             </div>
             <div className="faq-list">
@@ -276,6 +291,7 @@ export default function Page() {
       <DetailDrawer />
       <Registration />
       <FloatingDock />
+      <TiltCards />
     </SmoothScroll>
   );
 }

@@ -276,6 +276,8 @@ main {
 
 /* ── Section rhythm ──────────────────────────────────────── */
 section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align: center; }
+/* Key phrases in the about statement, in the same lilac as the heading accents */
+.it-soft { color: #B9B2FF; }
 .s-challenge .statement-sm {
   font-family: var(--f-display); font-weight: 500;
   font-size: clamp(22px, 2.6vw, 36px); line-height: 1.3; letter-spacing: -.02em;
@@ -311,8 +313,30 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 @keyframes proof-scroll { to { transform: translateX(-50%); } }
 
 /* Why we are doing this: three reasons under the event summary */
-.why-label { margin-top: clamp(80px, 9vw, 120px); }
-.why-grid { margin-top: 30px !important; }
+.why-label { margin-top: clamp(80px, 9vw, 120px); font-size: clamp(16px, 1.7vw, 22px); letter-spacing: .24em; }
+.why-grid { margin-top: 0 !important; position: relative; z-index: 1; }
+.why-wrap { position: relative; margin-top: 30px; width: min(1200px, 100%); margin-inline: auto; }
+/* The numbers stay lit in mint */
+.why-grid .room-n {
+  color: rgba(99, 255, 177, .14); -webkit-text-stroke-color: var(--mint);
+  text-shadow: 0 0 24px rgba(99, 255, 177, .55);
+}
+/* Gentle 3D tilt towards the cursor; content floats a little above the card */
+.why-grid .room-card {
+  position: relative; transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: border-color .4s, transform .6s var(--ease);
+}
+.why-grid .room-card.is-tilting { transition: border-color .4s, transform .12s linear; border-color: rgba(99, 255, 177, .35); }
+.why-grid .room-card:hover, .why-grid .room-card.is-tilting { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
+.why-grid .room-card > * { transform: translateZ(26px); }
+.why-grid .room-card .room-n { transform: translateZ(44px); }
+.why-grid .room-card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, .10), transparent 55%);
+  transition: opacity .4s;
+}
+.why-grid .room-card.is-tilting::after { opacity: 1; }
 
 /* Timeline call to action */
 .dates-head .btn { margin-top: 40px; }
@@ -387,7 +411,27 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .room-card:hover { border-color: rgba(99, 255, 177, .35); transform: translateY(-4px); }
 /* "More than a prize" and "Who will be joining": cards fan out from a stack as you scroll (see SmoothScroll data-fan).
    Solid faces so the stack reads as cards, and hover uses translate so it never fights the scrub. */
-.fan-grid { position: relative; margin-top: 50px !important; }
+.fan-grid { position: relative; margin-top: 0 !important; }
+/* ── Circuit over the "who will be joining" cards ──────────── */
+.circuit-host { position: relative; margin-top: 50px; }
+.circuit {
+  position: absolute; left: 0; top: 0; z-index: 10; overflow: visible; pointer-events: none;
+  opacity: 0; transition: opacity .8s var(--ease);
+}
+.circuit-host.is-dealt .circuit { opacity: 1; }
+.circuit-edge { fill: none; stroke: rgba(99, 255, 177, .18); stroke-width: 1; }
+.circuit-trace { fill: none; stroke: rgba(99, 255, 177, .45); stroke-width: 1.5; stroke-linejoin: round; }
+.circuit-pad { fill: var(--mint); filter: drop-shadow(0 0 4px var(--mint)); animation: pad-blink 3.6s ease-in-out infinite; }
+.circuit-spark {
+  fill: none; stroke: var(--mint); stroke-linecap: round; filter: drop-shadow(0 0 6px var(--mint));
+  stroke-dasharray: 10 90; stroke-dashoffset: 100;
+}
+.circuit-spark-edge { stroke-width: 2; animation: spark-run 6.6s linear infinite; }
+.circuit-spark-trace { stroke-width: 2.4; stroke-dasharray: 22 78; animation: spark-run 2.7s cubic-bezier(.5, 0, .5, 1) infinite; }
+@keyframes spark-run { to { stroke-dashoffset: 0; } }
+@keyframes pad-blink { 0%, 100% { opacity: .45; } 12% { opacity: 1; } 30% { opacity: .45; } }
+/* Keep cards still on hover so their borders stay on the circuit */
+.circuit-host .fan-grid .room-card:hover { translate: none; border-color: rgba(99, 255, 177, .45); }
 /* Room stays on screen while the deck deals: the wrapper adds scroll room (same 110vh as the
    scroll trigger's end) and the content sticks just under the nav bar. */
 /* A spacer inside the wrapper, not padding: sticky can only travel through the content box. */
@@ -414,6 +458,21 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .invite p:not(.label) { font-size: 15px; line-height: 1.75; color: var(--ink-70); margin-top: 18px; }
 .invite-link { margin-top: auto; padding-top: 40px; font-family: var(--f-label); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; }
 .invite:hover .invite-link { color: var(--mint); }
+/* Partnership cards: a faint mint edge with a spark of light running round it, like the room cards */
+@property --spark { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.invite { position: relative; border-color: rgba(99, 255, 177, .18); }
+.invite::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px; pointer-events: none;
+  background: conic-gradient(from var(--spark), transparent 0 78%, rgba(99, 255, 177, .15) 84%, var(--mint) 92%, transparent 97%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  filter: drop-shadow(0 0 6px rgba(99, 255, 177, .7));
+  animation: spark-orbit 7s linear infinite;
+}
+.invite:nth-child(2)::before { animation-delay: -2.3s; }
+.invite:nth-child(3)::before { animation-delay: -4.6s; }
+.invite:hover { border-color: rgba(99, 255, 177, .45); }
+@keyframes spark-orbit { to { --spark: 360deg; } }
 
 /* Closing */
 .s-closing { padding-bottom: 140px !important; }
@@ -464,6 +523,9 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 /* ── FAQ ─────────────────────────────────────────────────── */
 .s-faq { display: flex; flex-wrap: wrap; justify-content: center; gap: 50px 8%; text-align: left !important; }
 .faq-head { flex: 1 1 340px; max-width: 480px; align-self: flex-start; position: sticky; top: 170px; }
+/* "curious?" on the first line, "ask away" together on the second */
+.faq-title > .rw-mask:first-child { display: block; width: fit-content; }
+.faq-title { white-space: nowrap; }
 .faq-head .soft a { color: var(--ink); border-bottom: 1px solid var(--line); }
 .faq-head .soft a:hover { border-color: var(--mint); color: var(--mint); }
 .faq-list { flex: 1 1 420px; max-width: 640px; border-top: 1px solid var(--line); }
@@ -495,7 +557,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   width: min(1120px, 100%); margin: 70px auto 0; text-align: left;
 }
 .ticket {
-  --paper: #F3EFE6; --ink-t: #14121c; --stub: var(--blue); --stub-ink: #fff; --cut: 34%;
+  --paper: #F3EFE6; --ink-t: #14121c; --stub: var(--blue); --stub-ink: #fff; --cut: 40%;
   position: relative; display: grid; grid-template-columns: var(--cut) 1fr; min-height: 190px;
   background: var(--paper); color: var(--ink-t); border-radius: 18px;
   /* Two notches where the tear line meets the top and bottom edges */
@@ -509,19 +571,23 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   rotate: var(--tilt, 0deg);
   transition: rotate .5s var(--ease), translate .5s var(--ease);
 }
-/* Only a hint of tilt, so the rows still read as aligned */
-.ticket:nth-child(odd) { --tilt: -.6deg; }
-.ticket:nth-child(even) { --tilt: .6deg; }
-.tickets .ticket-gold { --tilt: 0deg; }
+/* Scattered like passes dropped on a table: each at its own angle and a little off its line */
+.tickets .ticket { translate: var(--dx, 0) var(--dy, 0); }
+.tickets .ticket:nth-child(1) { --tilt: -3deg;   --dx: -6px; --dy: 6px; }
+.tickets .ticket:nth-child(2) { --tilt: 2.4deg;  --dx: 8px;  --dy: 22px; }
+.tickets .ticket:nth-child(3) { --tilt: 1.8deg;  --dx: 4px;  --dy: -4px; }
+.tickets .ticket:nth-child(4) { --tilt: -2.6deg; --dx: -10px; --dy: 16px; }
+.tickets .ticket:nth-child(5) { --tilt: -1.6deg; --dx: 0px;  --dy: 8px; }
+.tickets .ticket.ticket-gold { --tilt: 0deg; --dx: 0; --dy: 0; }
 /* Tight, centred rhythm: golden ticket → heading block → the five passes */
-.tickets-lead { margin: 0 auto 64px; }
+.tickets-lead { margin: 28px auto 64px; }
 /* An odd last pass sits centred under the row above instead of alone on the left */
 .tickets .ticket:last-child:nth-child(odd):not(.ticket-gold) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 15px); }
-.gets-eyebrow { margin-top: 0; }
+.gets-eyebrow { margin-top: 0; font-size: clamp(16px, 1.7vw, 22px); letter-spacing: .24em; }
 .s-gets .gets-title { margin-top: 18px; max-width: 24ch; text-wrap: balance; }
 .s-gets .soft { margin-top: 18px; max-width: 620px; text-wrap: balance; }
 .s-gets .tickets:not(.tickets-lead) { margin-top: 48px; }
-.ticket:hover { rotate: 0deg; translate: 0 -6px; }
+.tickets .ticket:hover { rotate: 0deg; translate: var(--dx, 0) calc(var(--dy, 0px) - 8px); z-index: 2; }
 .ticket-gold { --stub: var(--mint); --stub-ink: #04130b; grid-column: 1 / -1; --cut: 30%; min-height: 220px; }
 
 .ticket-stub {
@@ -550,7 +616,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 @keyframes rocket-flicker { from { transform: scaleY(.85); } to { transform: scaleY(1.1); } }
 @keyframes rocket-flicker-hot { from { transform: scaleY(1.1); } to { transform: scaleY(1.45); } }
 .ticket-admit { padding-right: 38px; font-family: var(--f-label); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; opacity: .8; }
-.ticket-stamp { font-family: var(--f-display); font-weight: 800; letter-spacing: -.04em; line-height: .9; font-size: clamp(38px, 4.4vw, 60px); }
+.ticket-stamp { font-family: var(--f-display); font-weight: 800; letter-spacing: -.04em; line-height: .9; font-size: clamp(32px, 3.4vw, 48px); white-space: nowrap; }
 .ticket-gold .ticket-stamp { font-size: clamp(52px, 6vw, 92px); white-space: nowrap; }
 .ticket-no { font-family: var(--f-label); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; opacity: .7; }
 
@@ -705,6 +771,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 @media (max-width: 760px) {
   .tickets { grid-template-columns: 1fr; gap: 22px; }
   .tickets .ticket:last-child:nth-child(odd):not(.ticket-gold) { width: 100%; }
+  .tickets .ticket { --dx: 0 !important; --dy: 0 !important; }
   .ticket, .ticket-gold { --cut: 30%; min-height: 0; }
   .ticket-body { padding: 18px 50px 18px 20px; }
   .ticket-code { right: 16px; width: 16px; }
@@ -748,6 +815,10 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .invite::before { animation: none; opacity: .5; }
+  .circuit { opacity: 1; }
+  .circuit-spark { display: none; }
+  .circuit-pad { animation: none; opacity: .8; }
   .reg-link::after { animation: none !important; }
   .ticket-rocket-body { transition: none; }
   .ticket-rocket-flame, .ticket:hover .ticket-rocket-flame { animation: none; }

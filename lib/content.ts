@@ -43,7 +43,6 @@ export const proof = [
   "₹1 Cr prize pool",
   "4 problem tracks",
   "1,000+ applications expected",
-  "20 startups shortlisted",
   "12 winning startups",
   "Finale in New Delhi, January 2027",
   ];
@@ -61,14 +60,14 @@ export const why = {
 // What shortlisted and winning startups get.
 export const gets = {
   eyebrow: "What startups get",
-  title: "the prize is only the beginning",
+  title: "and the prize is only the beginning",
   lede: "₹1 crore goes to twelve winning teams. But every startup that makes the shortlist also signs up for all of this.",
   items: [
     { stamp: "₹1 Cr", admit: "Prize", title: "₹1 crore prize pool", text: "Shared across twelve winning startups." },
     { stamp: "Live", admit: "Data", title: "Real problems, real data", text: "Live problem statements drawn from real operations, with real data behind them." },
     { stamp: "1:1", admit: "Mentor", title: "A month with mentors", text: "Shortlisted startups spend December refining their solution with an assigned mentor." },
-    { stamp: "Go", admit: "Deploy", title: "A chance at real deployment", text: "Solutions are built for the context where the problem actually lives, not for a demo day." },
-    { stamp: "VIP", admit: "Lounge", title: "Investors in the room", text: "Pitch to a jury with DPIIT, industry leaders and invited investors, and meet them in the lounge." },
+    { stamp: "Deploy", admit: "Launch", title: "A chance at real deployment", text: "Solutions are built for the context where the problem actually lives, not for a demo day." },
+    { stamp: "Pitch", admit: "Lounge", title: "Investors in the room", text: "Pitch to a jury with DPIIT, industry leaders and invited investors, and meet them in the lounge." },
     { stamp: "Delhi", admit: "Finale", title: "A national stage", text: "Pitch at the finale in New Delhi in January 2027." },
   ],
 };
@@ -316,7 +315,7 @@ export const faq = {
     },
     {
       q: "What do I need to apply?",
-      a: "Details on your company, team, product, market and traction, a link to your deck and a short video of the founders. The application takes about thirty minutes, and you can save your progress and come back to it.",
+      a: "Details on your company, team, product, market and traction, a link to your deck and a 2 to 5 minute video of the founders. The application takes about thirty minutes, and you can save your progress and come back to it.",
     },
     {
       q: "Which track should I apply to?",

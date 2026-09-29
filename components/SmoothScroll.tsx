@@ -125,6 +125,9 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
               // for the deal without GSAP pinning (which would re-parent React's DOM).
               trigger: grid.closest<HTMLElement>(".fan-wrap") ?? grid,
               start: "top 72px", end: "+=110%", scrub: 0.8, invalidateOnRefresh: true,
+              // Light the circuit only once every card has landed in its slot.
+              onUpdate: (st) => grid.closest(".circuit-host")?.classList.toggle("is-dealt", st.progress > 0.97),
+              onLeave: () => grid.closest(".circuit-host")?.classList.add("is-dealt"),
             },
           });
           cards.forEach((card, i) => {
@@ -136,6 +139,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
         });
       });
       mm.add("(max-width: 760px)", () => {
+        gsap.utils.toArray<HTMLElement>("[data-fan]").forEach((grid) => grid.closest(".circuit-host")?.classList.add("is-dealt"));
         gsap.utils.toArray<HTMLElement>("[data-fan]").forEach((grid) =>
           gsap.from(grid.children, {
             y: 40, opacity: 0, duration: 0.8, ease: "power3.out", stagger: 0.08, clearProps: "transform,opacity",
