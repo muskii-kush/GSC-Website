@@ -17,7 +17,7 @@ export default function Countdown() {
   const target = phase === "open" ? OPEN : CLOSE;
   const left = now === null ? 0 : Math.max(0, target - now);
   const parts = [
-    [String(Math.floor(left / 86400000)).padStart(3, "0"), "Days"],
+    [String(Math.floor(left / 86400000)), "Days"],
     [String(Math.floor((left % 86400000) / 3600000)).padStart(2, "0"), "Hours"],
     [String(Math.floor((left % 3600000) / 60000)).padStart(2, "0"), "Minutes"],
     [String(Math.floor((left % 60000) / 1000)).padStart(2, "0"), "Seconds"],

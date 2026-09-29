@@ -7,6 +7,7 @@
  *   the host opens the registration panel through lib/registration.js
  */
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { asset } from "@/lib/asset";
 
 export type GetStartedButtonProps = {
   className?: string;
@@ -75,7 +76,8 @@ export function GetStartedButton({ className = "", style }: GetStartedButtonProp
         <iframe
           ref={frameRef}
           title="Register"
-          src="/threeui/get-started-button.html"
+          // ?v bumps the cache when the scene changes; asset() adds the GitHub Pages base path.
+          src={asset("/threeui/get-started-button.html?v=2")}
           sandbox="allow-scripts"
           loading="eager"
           onLoad={() => setReady(true)}

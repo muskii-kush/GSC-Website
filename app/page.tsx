@@ -1,5 +1,7 @@
 import { GetStartedButton } from "@/components/GetStartedButton";
 import HeroChips from "@/components/HeroChips";
+import FloatingDock from "@/components/FloatingDock";
+import RotatingWord from "@/components/RotatingWord";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollProgress from "@/components/ScrollProgress";
 import Nav from "@/components/Nav";
@@ -16,6 +18,34 @@ import {
 } from "@/lib/content";
 
 const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
+
+// One benefit as an event pass: a stamped stub, a perforated tear line, the details.
+function ticket(g: (typeof gets.items)[number], i: number, total: number) {
+  return (
+    <article className={`ticket${i === 0 ? " ticket-gold" : ""}`} key={g.title}>
+      <div className="ticket-stub">
+        <span className="ticket-admit">Admit one · {g.admit}</span>
+        {/* A small rocket: the startup mark on every pass. It lifts off when the pass is hovered. */}
+        <svg className="ticket-rocket" viewBox="0 0 32 32" aria-hidden="true">
+          <g className="ticket-rocket-body">
+            <path d="M16 3c4.4 3 6.6 7.6 6.6 13.2V21H9.4v-4.8C9.4 10.6 11.6 6 16 3z" />
+            <circle cx="16" cy="13" r="2.4" />
+            <path d="M9.4 17.5 6 21.5V24h3.4M22.6 17.5 26 21.5V24h-3.4" />
+            <path className="ticket-rocket-flame" d="M13.4 21.5c0 3 1.2 5 2.6 6.8 1.4-1.8 2.6-3.8 2.6-6.8" />
+          </g>
+        </svg>
+        <strong className="ticket-stamp">{g.stamp}</strong>
+        <span className="ticket-no">Pass {i + 1} of {total}</span>
+      </div>
+      <div className="ticket-body">
+        <span className="ticket-event">GSC · New Delhi · Jan 2027</span>
+        <h3>{g.title}</h3>
+        <p>{g.text}</p>
+        <span className="ticket-code" aria-hidden="true" />
+      </div>
+    </article>
+  );
+}
 
 export default function Page() {
   return (
@@ -65,7 +95,7 @@ export default function Page() {
 
         <Film />
 
-        {/* 3. What this is, and why Cars24 is doing it. */}
+        {/* 3. What this is, and why it matters. */}
         <section className="s-challenge" id="challenge">
           <Reveal className="h-center" text={challenge.title} accent={["event"]} />
           <p className="statement-sm rise">{challenge.statement}</p>
@@ -74,7 +104,7 @@ export default function Page() {
           <div className="room-grid why-grid" data-stagger>
             {why.items.map((w, i) => (
               <article className="room-card" key={w.title}>
-                <span className="room-n">{String(i + 1).padStart(2, "0")}</span>
+                <span className="room-n">{i + 1}</span>
                 <h3>{w.title}</h3>
                 <p>{w.text}</p>
               </article>
@@ -128,17 +158,15 @@ export default function Page() {
 
         {/* 6. What startups get. */}
         <section className="s-gets" id="benefits">
-          <p className="label rise">{gets.eyebrow}</p>
-          <Reveal className="h-center" text={gets.title} accent={["prize"]} />
+          {/* The headline prize comes first, as a golden ticket; the write-up and the other five passes follow. */}
+          <div className="tickets tickets-lead" data-stagger>
+            {gets.items.slice(0, 1).map((g, i) => ticket(g, i, gets.items.length))}
+          </div>
+          <p className="label rise gets-eyebrow">{gets.eyebrow}</p>
+          <Reveal className="h-center gets-title" text={gets.title} accent={["beginning"]} />
           <p className="soft center rise">{gets.lede}</p>
-          <div className="room-grid" data-stagger>
-            {gets.items.map((g, i) => (
-              <article className="room-card" key={g.title}>
-                <span className="room-n">{String(i + 1).padStart(2, "0")}</span>
-                <h3>{g.title}</h3>
-                <p>{g.text}</p>
-              </article>
-            ))}
+          <div className="tickets" data-stagger>
+            {gets.items.slice(1).map((g, i) => ticket(g, i + 1, gets.items.length))}
           </div>
         </section>
 
@@ -155,17 +183,23 @@ export default function Page() {
 
         {/* 7. Who will be in the room. */}
         <section className="s-room" id="community">
+          {/* Heading and cards stay on screen (CSS sticky) while the deck deals out.
+              Sticky, not a GSAP pin: a pin re-parents React's DOM and breaks removeChild on reloads. */}
+          <div className="fan-wrap">
+          <div className="fan-pin">
           <p className="label rise">{room.eyebrow}</p>
-          <Reveal className="h-center" text={room.title} />
+          <Reveal className="h-center" text={room.title} accent={["joining"]} />
           <p className="soft center rise">{room.lede}</p>
-          <div className="room-grid" data-stagger>
+          <div className="room-grid fan-grid" data-fan>
             {room.people.map((p, i) => (
               <article className="room-card" key={p.title}>
-                <span className="room-n">{String(i + 1).padStart(2, "0")}</span>
+                <span className="room-n">{i + 1}</span>
                 <h3>{p.title}</h3>
                 <p>{p.text}</p>
               </article>
             ))}
+          </div>
+          </div>
           </div>
         </section>
 
@@ -192,7 +226,7 @@ export default function Page() {
           <section className="s-faq" id="faq">
             <div className="faq-head">
               <p className="label rise">{faq.eyebrow}</p>
-              <Reveal className="h-dare" text={faq.title} />
+              <Reveal className="h-dare" text={faq.title} accent={["ask", "away"]} />
               <p className="soft rise">Anything else? Write to <a href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a>.</p>
             </div>
             <div className="faq-list">
@@ -219,6 +253,9 @@ export default function Page() {
             <p className="contact rise"><a className="contact-link" href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a></p>
           </section>
 
+          <p className="signoff rise">
+            let&rsquo;s <RotatingWord words={["build", "pitch", "scale", "deploy"]} /> what moves india forward
+          </p>
           <div className="footer-logos">
             <p className="footer-by">brought to you by</p>
             <div className="partners" aria-label="DPIIT, Cars24 and Startup Policy Forum">
@@ -239,6 +276,7 @@ export default function Page() {
 
       <DetailDrawer />
       <Registration />
+      <FloatingDock />
     </SmoothScroll>
   );
 }

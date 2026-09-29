@@ -27,7 +27,7 @@ export const challenge = {
   title: "about the event",
   // From the GSC 2027 concept note (objective, format and outcomes).
   statement:
-    "Cars24’s Grand Startup Challenge puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
+    "The Grand Startup Challenge, run with DPIIT and Startup India, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
   lede:
     "Over a four-month journey, startups move from applications and shortlisting to a month of immersion and refinement, and a final showcase in New Delhi.",
   metrics: [
@@ -39,43 +39,43 @@ export const challenge = {
 
 // Scrolling proof strip under the hero. From the concept note and the partnership deck.
 export const proof = [
+  "With DPIIT and Startup India, Government of India",
   "₹1 Cr prize pool",
   "4 problem tracks",
   "1,000+ applications expected",
   "20 startups shortlisted",
   "12 winning startups",
   "Finale in New Delhi, January 2027",
-  "With DPIIT and Startup India",
-];
+  ];
 
-// Why Cars24 runs the challenge. From the partnership deck ("Why we are doing this").
+// Why this challenge. Leads with the Government of India collaboration; the host's 2015 roots are the credential.
 export const why = {
-  eyebrow: "Why we are doing this",
+  eyebrow: "Why this challenge",
   items: [
-    { title: "We are a product of India’s startup ecosystem", text: "Cars24 was founded in 2015, the same year Startup India was announced, and grew up inside the ecosystem it built." },
-    { title: "We scaled with support from founders and investors", text: "Peak XV, SoftBank, DST Global, Tencent and Alpha Wave believed in our vision, backed us and became part of our growth story." },
-    { title: "Now we want to back the next generation", text: "We are putting real problems, our own data, ₹1 crore in prize money and a national stage behind the next generation of founders." },
+    { title: "Built with the Government of India", text: "The challenge runs with DPIIT and Startup India, with its finale in New Delhi. It is a national platform for founders, not a company contest." },
+    { title: "Hosted by a company born in the startup boom", text: "Cars24 was founded in 2015, the year Startup India began, and scaled on the belief of founders and investors. This is that support, passed on." },
+    { title: "For the next generation of Indian founders", text: "Real problems, real data, ₹1 crore in prize money and a national stage, open to early-stage teams building for India’s next decade." },
   ],
 };
 
 // What shortlisted and winning startups get.
 export const gets = {
   eyebrow: "What startups get",
-  title: "more than a prize",
-  lede: "The challenge is built so the best teams leave with a working solution, the right people in their corner and a national stage.",
+  title: "the prize is only the beginning",
+  lede: "₹1 crore goes to twelve winning teams. But every startup that makes the shortlist also signs up for all of this.",
   items: [
-    { title: "₹1 crore prize pool", text: "Shared across twelve winning startups." },
-    { title: "Real problems, real data", text: "Live problem statements from inside Cars24’s operations, with our data behind them." },
-    { title: "A month with Cars24 mentors", text: "Shortlisted startups spend December refining their solution with an assigned Cars24 mentor." },
-    { title: "A chance at real deployment", text: "Solutions are built for the context where the problem actually lives, not for a demo day." },
-    { title: "Investors in the room", text: "Pitch to a jury with Cars24 leadership, DPIIT and invited investors, and meet them in the lounge." },
-    { title: "A national stage", text: "Pitch at the finale in New Delhi on National Startup Day, January 2027." },
+    { stamp: "₹1 Cr", admit: "Prize", title: "₹1 crore prize pool", text: "Shared across twelve winning startups." },
+    { stamp: "Live", admit: "Data", title: "Real problems, real data", text: "Live problem statements drawn from real operations, with real data behind them." },
+    { stamp: "1:1", admit: "Mentor", title: "A month with mentors", text: "Shortlisted startups spend December refining their solution with an assigned mentor." },
+    { stamp: "Go", admit: "Deploy", title: "A chance at real deployment", text: "Solutions are built for the context where the problem actually lives, not for a demo day." },
+    { stamp: "VIP", admit: "Lounge", title: "Investors in the room", text: "Pitch to a jury with DPIIT, industry leaders and invited investors, and meet them in the lounge." },
+    { stamp: "Delhi", admit: "Finale", title: "A national stage", text: "Pitch at the finale in New Delhi in January 2027." },
   ],
 };
 
 export const gallery = [
   { src: asset("/media/band-founders.jpg"), alt: "Founders and operators in conversation", caption: "Access to people who can help the work move." },
-  { src: asset("/media/band-inspection.jpg"), alt: "Vehicle inspection in a Cars24 environment", caption: "Build in the context where the problem actually lives." },
+  { src: asset("/media/band-inspection.jpg"), alt: "Vehicle inspection in a real operating environment", caption: "Build in the context where the problem actually lives." },
 ];
 
 export const timeline = {
@@ -86,9 +86,9 @@ export const timeline = {
     { date: "1 October 2026", title: "Applications open", text: "Problem statements for each track are published on the same day." },
     { date: "31 October 2026", title: "Applications close", text: "Hard deadline. We do not extend it." },
     { date: "November to December 2026", title: "Screening and interviews", text: "Applications are read and shortlisted startups are interviewed. You hear back either way." },
-    { date: "December 2026", title: "Mentorship month", text: "Shortlisted startups work with an assigned Cars24 mentor to refine their solution." },
-    { date: "1 to 15 January 2027", title: "Final refinement", text: "Startups finish the solution they will demo." },
-    { date: "January 2027", title: "Finale, New Delhi", text: "National Startup Day. Shortlisted startups pitch to the jury in their track room, with a demo. Track winners re-pitch in the main auditorium, followed by felicitation." },
+    { date: "December 2026", title: "Mentorship month", text: "Shortlisted startups work with an assigned mentor to refine their solution." },
+    { date: "Early January 2027", title: "Final refinement", text: "Startups finish the solution they will demo." },
+    { date: "January 2027", title: "Finale, New Delhi", text: "Shortlisted startups pitch to the jury in their track room, with a demo. Track winners re-pitch in the main auditorium, followed by felicitation." },
   ],
 };
 
@@ -122,12 +122,12 @@ export const tracks: {
 }[] = [
   {
     id: "fintech",
-    num: "01 · Fintech",
+    num: "Track 1 · Fintech",
     name: "Lending & Fintech",
     summary: "Better credit, underwriting and fraud intelligence for the next 400 million Indians.",
     image: asset("/media/track-fintech-card.jpg"),
     briefImage: asset("/media/track-fintech-brief.jpg"),
-    kicker: "01 · Fintech & lending",
+    kicker: "Track 1 · Fintech & lending",
     title: "Credit that meets people where they are.",
     lede: "Build the next generation of underwriting, access and trust for India’s new-to-credit population.",
     body: "We are interested in products that make financial decisions more useful and more equitable: alternative data, contextual credit, fraud intelligence, collections and tools that help people build a financial life.",
@@ -142,14 +142,14 @@ export const tracks: {
   },
   {
     id: "mobility",
-    num: "02 · Mobility",
+    num: "Track 2 · Mobility",
     name: "Mobility & Road Safety",
     summary: "Vehicle health, driver risk and safety systems made for Indian road conditions.",
     image: asset("/media/track-mobility.jpg"),
     briefImage: asset("/media/track-mobility-brief.jpg"),
     hoverImage: asset("/media/track-mobility-brief.jpg"),
     briefAspect: "1052 / 1495",
-    kicker: "02 · Mobility & road safety",
+    kicker: "Track 2 · Mobility & road safety",
     title: "Make every journey safer.",
     lede: "Build for the realities of Indian roads, drivers and vehicles — including the transition to EV.",
     body: "Think beyond the dashboard: vehicle health, driver risk scoring, safety systems, maintenance intelligence and tools that help people move with greater confidence.",
@@ -164,12 +164,12 @@ export const tracks: {
   },
   {
     id: "logistics",
-    num: "03 · Logistics",
+    num: "Track 3 · Logistics",
     name: "Logistics & Supply Chain",
     summary: "Route, load and hub optimisation across a live fleet and distributed network.",
     image: asset("/media/track-logistics-warehouse.jpg"),
     briefAspect: "2 / 1",
-    kicker: "03 · Logistics & supply chain",
+    kicker: "Track 3 · Logistics & supply chain",
     title: "Make the network work harder.",
     lede: "Help a distributed fleet, its hubs and its people make better decisions every day.",
     body: "We are looking for route and load optimisation, hub operations, robotics, damage detection, valuation from images and the intelligence layer connecting it all.",
@@ -184,11 +184,11 @@ export const tracks: {
   },
   {
     id: "sovereign-ai",
-    num: "04 · Sovereign AI",
+    num: "Track 4 · Sovereign AI",
     name: "Sovereign AI",
     summary: "Practical, trusted intelligence for the systems that power a more self-reliant India.",
     image: asset("/media/track-sovereign-ai.jpg"),
-    kicker: "04 · Sovereign AI",
+    kicker: "Track 4 · Sovereign AI",
     title: "Build intelligence we can trust.",
     lede: "Create practical AI systems for the infrastructure and services that India depends on.",
     body: "The opportunity spans applied models, privacy-aware infrastructure, evaluation, multilingual systems and dependable tools for high-consequence operating environments.",
@@ -209,7 +209,7 @@ export const room = {
   lede: "A high-signal room of people who can make a good idea more useful, more tested and more ready for the real world.",
   people: [
     { title: "Startups and founders", text: "Shortlisted early-stage founders across the four tracks, many DPIIT recognised." },
-    { title: "Investors", text: "Venture capital funds, Cars24 leadership and invited investors, with access to the Founders’ Lounge." },
+    { title: "Investors", text: "Venture capital funds, industry leaders and invited investors, with access to the Founders’ Lounge." },
     { title: "Policymakers", text: "DPIIT, Startup India and other government representatives shaping India's next decade." },
     { title: "Students and campus delegates", text: "Students and delegates from participating academic and knowledge partner institutions." },
     { title: "Media and industry press", text: "Media and industry voices covering the founders, solutions and national showcase." },
@@ -275,7 +275,7 @@ export const invites: {
       "Join startup mixers from October to December",
       "Receive the shortlisted decks in December",
       "Meet the teams you choose in the Investor Lounge and in the weeks that follow",
-      "Join the final pitch day and the jury alongside Cars24 leadership and DPIIT",
+      "Join the final pitch day and the jury alongside DPIIT and industry leaders",
     ],
     signals: "Shortlisted startups across four tracks, with decks, demos, mentorship outcomes and a final pitch.",
     action: "Request investor invitation",
@@ -324,11 +324,11 @@ export const faq = {
     },
     {
       q: "What happens after I apply?",
-      a: "Applications are screened and shortlisted startups are interviewed through November and December. You hear back either way. Shortlisted teams spend December with a Cars24 mentor, refine their solution in early January and pitch at the finale.",
+      a: "Applications are screened and shortlisted startups are interviewed through November and December. You hear back either way. Shortlisted teams spend December with a mentor, refine their solution in early January and pitch at the finale.",
     },
     {
       q: "Where and when is the finale?",
-      a: "In New Delhi in January 2027, on National Startup Day. Startups pitch and demo to the jury in their track room, and track winners re-pitch in the main auditorium.",
+      a: "In New Delhi in January 2027. Startups pitch and demo to the jury in their track room, and track winners re-pitch in the main auditorium.",
     },
     {
       q: "What do startups get?",

@@ -78,7 +78,7 @@ export default function DetailDrawer() {
               <p className="detail-lede">{item.lede}</p>
               {track && (
                 <figure className="detail-image" style={briefStyle(track.briefAspect)}>
-                  <img src={track.briefImage ?? track.image} alt="Cars24 operating environment" />
+                  <img src={track.briefImage ?? track.image} alt="Operating environment for this track" />
                 </figure>
               )}
             </div>

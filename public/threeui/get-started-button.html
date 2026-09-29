@@ -103,6 +103,14 @@ body{margin:0;background:var(--bg);color:#8a8a8f;font-family:"Geist Mono",ui-mon
 .cta.no-gl .knob-fallback{position:absolute;left:calc(502 * var(--u));top:calc(28 * var(--u));width:calc(176 * var(--u));height:calc(176 * var(--u));border-radius:50%;
   background:radial-gradient(circle at 42% 30%,#ffffff 0%,#d9d9e3 28%,#8d8d9b 70%,#5a5a66 100%);box-shadow:inset 0 calc(4 * var(--u)) calc(10 * var(--u)) rgba(0,0,0,.35);transition:background .4s}
 .cta.no-gl:hover .knob-fallback{background:radial-gradient(circle at 50% 40%,#3a1400 0%,#a03c00 45%,#ff8a28 100%)}
+/* GSC: a soft band of light sweeps across the chrome on hover, in place of the scratches */
+.sheen{position:absolute;inset:0;border-radius:calc(116 * var(--u));overflow:hidden;pointer-events:none}
+.sheen::before{content:"";position:absolute;top:-20%;bottom:-20%;left:0;width:38%;
+  background:linear-gradient(100deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.55) 45%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.55) 55%,rgba(255,255,255,0) 100%);
+  mix-blend-mode:overlay;transform:translateX(-140%) skewX(-18deg);opacity:0}
+.cta:hover .sheen::before,.cta:focus-visible .sheen::before,.cta.is-hover .sheen::before{animation:sheen-sweep 1.1s cubic-bezier(.45,0,.2,1) forwards}
+@keyframes sheen-sweep{0%{transform:translateX(-140%) skewX(-18deg);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateX(330%) skewX(-18deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.cta:hover .sheen::before{animation:none}}
 .knob-fallback{display:none}
 .cta.no-gl .knob-fallback{display:block}
 
@@ -117,6 +125,7 @@ body{margin:0;background:var(--bg);color:#8a8a8f;font-family:"Geist Mono",ui-mon
   <button class="cta" type="button" aria-label="Register">
     <span class="halo" aria-hidden="true"></span>
     <span class="face" aria-hidden="true"><canvas></canvas></span>
+    <span class="sheen" aria-hidden="true"></span>
     <span class="knob-fallback" aria-hidden="true"></span>
     <span class="label" aria-hidden="true">REGISTER</span>
     <span class="knob" aria-hidden="true">
@@ -398,6 +407,7 @@ body{margin:0;background:var(--bg);color:#8a8a8f;font-family:"Geist Mono",ui-mon
   const segs = [];
   let prev = null;
   cta.addEventListener('pointermove', e => {
+    return; // GSC: pointer-drawn scratches turned off; a light sweep plays on hover instead (see .sheen)
     const r = cta.getBoundingClientRect(); const u = r.width / 706;
     const x = (e.clientX - r.left) / u, y = (e.clientY - r.top) / u;
     if (!prev) { prev = { x, y }; return; }

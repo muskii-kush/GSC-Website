@@ -11,6 +11,11 @@
   --mint: #63FFB1;
   --orange: #EF4523;
   --black: #000;
+  /* Page colour: deep ink-violet between the two bright chapters. Nearly black, clearly purple,
+     so the accents keep their contrast and the page still reads as violet end to end. */
+  --page-deep: #0B0826;
+  --page: #120E3A;
+  --page-lift: #1A1450;
   --base: #0A0A0A;
   --ink: #FFFFFF;
   --ink-90: rgba(255, 255, 255, .9);
@@ -29,19 +34,19 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-padding-top: 60px; background: var(--black); color-scheme: dark; overflow-x: clip; }
+html { scroll-padding-top: 60px; background: var(--page-deep); color-scheme: dark; overflow-x: clip; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 [data-lenis-prevent] { overscroll-behavior: contain; }
 html.is-locked { overflow: hidden; }
 body {
   margin: 0;
-  background: var(--black);
+  background: var(--page-deep);
   color: var(--ink);
   font-family: var(--f-body);
   font-weight: 300;
   line-height: 1.5;
-  overflow-x: hidden;
+  overflow-x: clip; /* clip, not hidden: hidden turns body into a scroll box and breaks position: sticky */
   -webkit-font-smoothing: antialiased;
 }
 img { max-width: 100%; display: block; }
@@ -102,6 +107,8 @@ h1, h2, h3, p { margin: 0; }
 /* Word-mask reveal */
 .rw-mask { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .14em; margin-bottom: -.14em; }
 .rw-word { display: inline-block; will-change: transform; }
+/* Blur-in headings: let the soft edge of each word show while it comes into focus */
+.rw-blur .rw-mask { overflow: visible; }
 .rw-word.it {
   background: linear-gradient(180deg, var(--ink) 10%, #B9B2FF 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -143,8 +150,8 @@ h1, h2, h3, p { margin: 0; }
 .lb-dpiit { height: 52px; justify-self: start; }
 .lb-cars24 { height: 30px; justify-self: center; }
 .lb-spf { height: 50px; justify-self: end; }
-.link-bar { background: rgba(0, 0, 0, .55); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid var(--line); transition: background .35s; }
-.nav.scrolled .link-bar { background: rgba(0, 0, 0, .82); }
+.link-bar { background: rgba(11, 8, 38, .6); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid var(--line); transition: background .35s; }
+.nav.scrolled .link-bar { background: rgba(11, 8, 38, .88); }
 .link-inner { height: 48px; width: min(var(--max), calc(100% - 48px)); margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .nav-links { display: flex; gap: 30px; font-family: var(--f-label); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-70); white-space: nowrap; }
 .nav-links a:hover { color: var(--ink); }
@@ -152,15 +159,21 @@ h1, h2, h3, p { margin: 0; }
 
 /* ── Chapters: gradient rising from below ────────────────── */
 .chapter { position: relative; overflow: hidden; isolation: isolate; }
+/* Between the two chapters the violet keeps going, gently brightening and dimming, never black */
+main {
+  background: linear-gradient(to bottom,
+    var(--page-deep) 0%, var(--page) 14%, var(--page-lift) 30%, var(--page) 46%,
+    var(--page-lift) 60%, var(--page) 72%, var(--page) 100%);
+}
 .chapter-one {
   padding: 170px 0 200px;
   background:
-    linear-gradient(to bottom, rgba(0, 0, 0, 0) 74%, var(--black) 100%),
-    radial-gradient(124.75% 92% at 50% 90%, var(--blue-light) 0%, #8F84FF 9%, var(--blue) 24%, var(--blue-dark) 60%, var(--base) 86%, var(--black) 100%);
+    linear-gradient(to bottom, rgba(18, 14, 58, 0) 74%, var(--page) 100%),
+    radial-gradient(124.75% 92% at 50% 90%, var(--blue-light) 0%, #8F84FF 9%, var(--blue) 24%, var(--blue-dark) 60%, var(--page) 86%, var(--page-deep) 100%);
 }
 .chapter-two {
   padding-top: 40px;
-  background: radial-gradient(124.75% 70% at 50% 100%, var(--blue-light) 0%, #8F84FF 9%, var(--blue) 24%, var(--blue-dark) 58%, var(--base) 84%, var(--black) 100%);
+  background: radial-gradient(124.75% 70% at 50% 100%, var(--blue-light) 0%, #8F84FF 9%, var(--blue) 24%, var(--blue-dark) 58%, var(--page) 84%, var(--page) 100%);
 }
 .chapter::after {
   /* fine grain to keep the gradient from banding */
@@ -260,8 +273,22 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 }
 .metrics { flex-wrap: wrap; margin-top: clamp(64px, 7vw, 100px); gap: clamp(40px, 7vw, 110px); text-align: center; }
 
+/* What startups get: one big number held on the left, the rest read on the right */
+.gets { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 60px 8%; width: min(1200px, 100%); margin: 100px auto 0; text-align: left; }
+.gets-prize { position: sticky; top: 140px; align-self: start; }
+.gets-big {
+  font-family: var(--f-display); font-weight: 800; line-height: .85; letter-spacing: -.06em;
+  font-size: clamp(96px, 14vw, 220px);
+  background: linear-gradient(180deg, #fff 30%, #b9b0ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.gets-big-l { margin-top: 26px; max-width: 22ch; font-family: var(--f-display); font-weight: 600; font-size: clamp(20px, 2vw, 28px); line-height: 1.25; letter-spacing: -.02em; color: var(--ink-70); }
+.gets-list { position: relative; list-style: none; margin: 0; padding: 0 0 0 36px; display: grid; gap: 64px; border-left: 1px solid var(--line); }
+.gets-line { position: absolute; left: -1px; top: 0; bottom: 0; width: 2px; background: var(--mint); box-shadow: 0 0 14px var(--mint); transform-origin: top; }
+.gets-list h3 { font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 3.2vw, 46px); line-height: 1.02; letter-spacing: -.035em; }
+.gets-list p { margin-top: 12px; max-width: 44ch; font-size: 17px; line-height: 1.7; color: var(--ink-70); }
+
 /* Proof strip: the numbers scroll past under the hero */
-.proof { overflow: hidden; border-block: 1px solid var(--line); padding: 26px 0; margin-top: -40px; background: var(--black); }
+.proof { overflow: hidden; border-block: 1px solid var(--line); padding: 26px 0; margin-top: -40px; background: rgba(11, 8, 38, .6); }
 .proof-track { display: flex; width: max-content; animation: proof-scroll 38s linear infinite; }
 .proof ul { display: flex; flex: none; list-style: none; margin: 0; padding: 0; }
 .proof li {
@@ -334,7 +361,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .dates::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
 .dates-line { position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: linear-gradient(var(--mint), var(--blue)); transform-origin: top; }
 .dates li { position: relative; }
-.dates li::before { content: ""; position: absolute; left: -36px; top: 7px; width: 11px; height: 11px; border-radius: 50%; background: var(--black); border: 1px solid var(--ink-50); }
+.dates li::before { content: ""; position: absolute; left: -36px; top: 7px; width: 11px; height: 11px; border-radius: 50%; background: var(--page-deep); border: 1px solid var(--ink-50); }
 .dates li.finale::before { background: var(--mint); border-color: var(--mint); box-shadow: 0 0 20px var(--mint); }
 .date { font-family: var(--f-label); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--mint); }
 .dates h3 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 2.2vw, 30px); letter-spacing: -.025em; margin-top: 10px; }
@@ -347,6 +374,20 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   transition: border-color .4s, transform .4s var(--ease);
 }
 .room-card:hover { border-color: rgba(99, 255, 177, .35); transform: translateY(-4px); }
+/* "More than a prize" and "Who will be joining": cards fan out from a stack as you scroll (see SmoothScroll data-fan).
+   Solid faces so the stack reads as cards, and hover uses translate so it never fights the scrub. */
+.fan-grid { position: relative; margin-top: 50px !important; }
+/* Room stays on screen while the deck deals: the wrapper adds scroll room (same 110vh as the
+   scroll trigger's end) and the content sticks just under the nav bar. */
+/* A spacer inside the wrapper, not padding: sticky can only travel through the content box. */
+.fan-wrap::after { content: ""; display: block; height: 110vh; }
+.fan-pin { position: sticky; top: 72px; }
+.fan-grid .room-card {
+  position: relative; background: linear-gradient(to bottom, #221B5E, #141040);
+  border-color: rgba(255, 255, 255, .16); box-shadow: 0 30px 60px -20px rgba(12, 8, 60, .75);
+  transition: border-color .4s, translate .4s var(--ease); will-change: transform;
+}
+.fan-grid .room-card:hover { transform: none; translate: 0 -4px; }
 .room-n {
   font-family: var(--f-display); font-weight: 800; font-size: 64px; line-height: 1; letter-spacing: -.04em;
   color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .35);
@@ -437,10 +478,125 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   user-select: none;
 }
 
+/* ── "More than a prize": each benefit as an event pass ──── */
+.tickets {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 34px 30px;
+  width: min(1120px, 100%); margin: 70px auto 0; text-align: left;
+}
+.ticket {
+  --paper: #F3EFE6; --ink-t: #14121c; --stub: var(--blue); --stub-ink: #fff; --cut: 34%;
+  position: relative; display: grid; grid-template-columns: var(--cut) 1fr; min-height: 190px;
+  background: var(--paper); color: var(--ink-t); border-radius: 18px;
+  /* Two notches where the tear line meets the top and bottom edges */
+  -webkit-mask:
+    radial-gradient(circle 15px at var(--cut) 0, #0000 97%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle 15px at var(--cut) 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+          mask:
+    radial-gradient(circle 15px at var(--cut) 0, #0000 97%, #000) top / 100% 51% no-repeat,
+    radial-gradient(circle 15px at var(--cut) 100%, #0000 97%, #000) bottom / 100% 51% no-repeat;
+  /* Tilt via the rotate property so it never fights GSAP's transform on the reveal */
+  rotate: var(--tilt, 0deg);
+  transition: rotate .5s var(--ease), translate .5s var(--ease);
+}
+/* Only a hint of tilt, so the rows still read as aligned */
+.ticket:nth-child(odd) { --tilt: -.6deg; }
+.ticket:nth-child(even) { --tilt: .6deg; }
+.tickets .ticket-gold { --tilt: 0deg; }
+/* Tight, centred rhythm: golden ticket → heading block → the five passes */
+.tickets-lead { margin: 0 auto 64px; }
+/* An odd last pass sits centred under the row above instead of alone on the left */
+.tickets .ticket:last-child:nth-child(odd):not(.ticket-gold) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 15px); }
+.gets-eyebrow { margin-top: 0; }
+.s-gets .gets-title { margin-top: 18px; max-width: 24ch; text-wrap: balance; }
+.s-gets .soft { margin-top: 18px; max-width: 620px; text-wrap: balance; }
+.s-gets .tickets:not(.tickets-lead) { margin-top: 48px; }
+.ticket:hover { rotate: 0deg; translate: 0 -6px; }
+.ticket-gold { --stub: var(--mint); --stub-ink: #04130b; grid-column: 1 / -1; --cut: 30%; min-height: 220px; }
+
+.ticket-stub {
+  position: relative; background: var(--stub); color: var(--stub-ink);
+  display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+  padding: 22px 22px 20px 24px;
+}
+/* The perforated tear line */
+.ticket-stub::after {
+  content: ""; position: absolute; top: 20px; bottom: 20px; right: -1px; width: 2px;
+  background: repeating-linear-gradient(to bottom, rgba(20, 18, 28, .35) 0 6px, transparent 6px 12px);
+}
+/* Startup rocket in the stub corner, drawn in the stub's ink colour */
+.ticket-rocket {
+  position: absolute; top: 16px; right: 16px; width: 30px; height: 30px; overflow: visible;
+  fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  rotate: 45deg; opacity: .9;
+}
+.ticket-gold .ticket-rocket { width: 42px; height: 42px; top: 18px; right: 20px; }
+.ticket-rocket-body { transition: transform .6s var(--ease); }
+/* The flame is always lit and flickers; on hover the rocket lifts and the flame burns longer */
+.ticket-rocket-flame { stroke: var(--orange); transform-origin: 16px 21px; animation: rocket-flicker .22s ease-in-out infinite alternate; }
+.ticket-gold .ticket-rocket-flame { stroke: #EF4523; }
+.ticket:hover .ticket-rocket-body { transform: translateY(-5px); }
+.ticket:hover .ticket-rocket-flame { animation: rocket-flicker-hot .14s ease-in-out infinite alternate; }
+@keyframes rocket-flicker { from { transform: scaleY(.85); } to { transform: scaleY(1.1); } }
+@keyframes rocket-flicker-hot { from { transform: scaleY(1.1); } to { transform: scaleY(1.45); } }
+.ticket-admit { padding-right: 38px; font-family: var(--f-label); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; opacity: .8; }
+.ticket-stamp { font-family: var(--f-display); font-weight: 800; letter-spacing: -.04em; line-height: .9; font-size: clamp(38px, 4.4vw, 60px); }
+.ticket-gold .ticket-stamp { font-size: clamp(52px, 6vw, 92px); white-space: nowrap; }
+.ticket-no { font-family: var(--f-label); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; opacity: .7; }
+
+.ticket-body { position: relative; padding: 22px 70px 22px 28px; display: flex; flex-direction: column; }
+.ticket-event { font-family: var(--f-label); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: rgba(20, 18, 28, .5); }
+.ticket h3 { font-family: var(--f-display); font-weight: 700; font-size: clamp(20px, 1.9vw, 26px); letter-spacing: -.02em; margin-top: auto; padding-top: 22px; }
+.ticket-gold h3 { font-size: clamp(26px, 2.6vw, 38px); }
+.ticket p { font-size: 15px; line-height: 1.6; color: rgba(20, 18, 28, .72); margin-top: 8px; max-width: 44ch; }
+/* A small barcode down the right edge */
+.ticket-code {
+  position: absolute; top: 22px; bottom: 22px; right: 24px; width: 22px;
+  background: repeating-linear-gradient(to bottom, var(--ink-t) 0 2px, transparent 2px 4px, var(--ink-t) 4px 5px, transparent 5px 8px, var(--ink-t) 8px 11px, transparent 11px 13px);
+  opacity: .8;
+}
+
+/* ── Floating dock: register or email, always a click away ── */
+.dock {
+  position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); z-index: 55;
+  display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 22px; border-radius: 999px;
+  background: rgba(13, 10, 46, .82); border: 1px solid rgba(255, 255, 255, .16);
+  backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .5), 0 0 0 1px rgba(71, 54, 254, .15);
+  transform: translate(-50%, 140%); opacity: 0; pointer-events: none;
+  transition: transform .6s var(--ease), opacity .4s;
+}
+.dock.is-shown { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.dock-copy { display: flex; flex-direction: column; margin-right: 10px; line-height: 1.25; white-space: nowrap; }
+.dock-copy strong { font-family: var(--f-display); font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.dock-copy span { font-size: 12px; color: var(--ink-50); }
+.dock-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 42px; border-radius: 999px; font-family: var(--f-label); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; transition: background .3s, color .3s, transform .3s var(--ease); }
+.dock-primary { padding: 0 18px; background: #fff; color: #000; }
+.dock-primary:hover { background: var(--mint); }
+.dock-icon { width: 42px; border: 1px solid var(--line); color: var(--ink); }
+.dock-icon:hover { border-color: var(--mint); color: var(--mint); }
+.dock-btn:active { transform: scale(.96); }
+
+/* ── Sign-off line with a rotating verb ──────────────────── */
+.signoff {
+  margin: 0 auto; padding: 40px 24px 0; text-align: center; max-width: 18ch;
+  font-family: var(--f-display); font-weight: 700; font-size: clamp(34px, 5.4vw, 76px); line-height: 1.02; letter-spacing: -.035em;
+}
+/* Only the sizer (the current word) takes up room; the words sit on top of it, absolutely
+   placed, so hidden longer words can no longer widen the slot and leave a gap. */
+.rot { position: relative; display: inline-block; vertical-align: bottom; overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; transition: width .5s var(--ease); }
+.rot-sizer { visibility: hidden; display: inline-block; white-space: nowrap; }
+.rot-word {
+  position: absolute; left: 0; top: 0; white-space: nowrap; color: var(--mint);
+  transform: translateY(105%); opacity: 0; filter: blur(8px);
+  transition: transform .7s var(--ease), opacity .5s, filter .6s;
+}
+.rot-word.is-on { transform: none; opacity: 1; filter: none; }
+.rot-word.is-out { transform: translateY(-105%); opacity: 0; }
+
 /* ── Overlays (track / invitation briefs, registration) ──── */
 .overlay {
   position: fixed; inset: 0; z-index: 70; overflow: auto;
-  background: rgba(0, 0, 0, .9); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+  background: rgba(11, 8, 38, .95); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
   opacity: 0; pointer-events: none; transform: translateY(18px);
   transition: opacity .4s var(--ease), transform .4s var(--ease);
 }
@@ -507,7 +663,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .option-list { display: grid; gap: 10px; }
 .option-list label { display: block; position: relative; padding-left: 28px; color: var(--ink); font-size: 14px; }
 .option-list input { position: absolute; left: 0; top: 2px; width: 16px; height: 16px; padding: 0; accent-color: var(--blue); }
-.wizard-progress { position: sticky; top: 0; z-index: 2; background: rgba(0, 0, 0, .92); padding: 14px 0 18px; margin: 26px 0 4px; }
+.wizard-progress { position: sticky; top: 0; z-index: 2; background: rgba(11, 8, 38, .96); padding: 14px 0 18px; margin: 26px 0 4px; }
 .wizard-progress-top { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--f-label); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #C9CCD6; margin-bottom: 10px; }
 .wizard-progress-pct { color: var(--mint); }
 .wizard-progress-track { height: 3px; background: rgba(255, 255, 255, .14); border-radius: 2px; overflow: hidden; }
@@ -532,6 +688,20 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   .detail-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 40px; }
 }
 @media (max-width: 760px) {
+  .tickets { grid-template-columns: 1fr; gap: 22px; }
+  .tickets .ticket:last-child:nth-child(odd):not(.ticket-gold) { width: 100%; }
+  .ticket, .ticket-gold { --cut: 30%; min-height: 0; }
+  .ticket-body { padding: 18px 50px 18px 20px; }
+  .ticket-code { right: 16px; width: 16px; }
+  .gets { grid-template-columns: 1fr; margin-top: 60px; }
+  .gets-prize { position: static; }
+  .gets-list { gap: 40px; padding-left: 22px; }
+  .fan-wrap::after { display: none; }
+  .fan-pin { position: static; }
+  .dock { padding: 6px 6px 6px 16px; gap: 6px; }
+  .dock-copy span { display: none; }
+  .dock-copy strong { font-size: 12px; }
+  .dock-primary { padding: 0 14px; }
   .hero-chips { display: none; }
   .hero-chip-in { padding: 7px 12px 7px 10px; font-size: 9px; gap: 7px; }
   .hero-chip-in strong { font-size: 12px; }
@@ -563,6 +733,11 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .ticket-rocket-body { transition: none; }
+  .ticket-rocket-flame, .ticket:hover .ticket-rocket-flame { animation: none; }
+  .ticket { transition: none; }
+  [data-light] { opacity: 1 !important; }
+  .dock, .rot-word { transition: none; }
   .proof-track { animation: none; }
   .hero-chip-in { animation: none; }
   .rise { opacity: 1; transform: none; }
