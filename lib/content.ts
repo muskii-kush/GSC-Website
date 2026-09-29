@@ -29,7 +29,7 @@ export const challenge = {
   statement:
     "The Grand Startup Challenge, run with DPIIT and Startup India, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
   lede:
-    "Over a four-month journey, startups move from applications and shortlisting to a month of immersion and refinement, and a final showcase in New Delhi.",
+    "Over a four-month journey, startups move from applications and shortlisting to a month of immersion and refinement, and a national finale.",
   metrics: [
     { value: "1,000+", label: "Applications" },
     { value: "₹1 Cr", label: "Prize pool" },
@@ -44,14 +44,13 @@ export const proof = [
   "4 problem tracks",
   "1,000+ applications expected",
   "12 winning startups",
-  "Finale in New Delhi, January 2027",
   ];
 
 // Why this challenge. Leads with the Government of India collaboration; the host's 2015 roots are the credential.
 export const why = {
   eyebrow: "Why this challenge",
   items: [
-    { title: "Built with the Government of India", text: "The challenge runs with DPIIT and Startup India, with its finale in New Delhi. It is a national platform for founders, not a company contest." },
+    { title: "Built with the Government of India", text: "The challenge runs with DPIIT and Startup India. It is a national platform for founders, not a company contest." },
     { title: "Hosted by a company born in the startup boom", text: "Cars24 was founded in 2015, the year Startup India began, and scaled on the belief of founders and investors. This is that support, passed on." },
     { title: "For the next generation of Indian founders", text: "Real problems, real data, ₹1 crore in prize money and a national stage, open to early-stage teams building for India’s next decade." },
   ],
@@ -61,15 +60,25 @@ export const why = {
 export const gets = {
   eyebrow: "What startups get",
   title: "and the prize is only the beginning",
-  lede: "₹1 crore goes to twelve winning teams. But every startup that makes the shortlist also signs up for all of this.",
+  lede: "The ₹1 crore pool is shared among twelve winners, the top three in each track. But every startup that makes the shortlist also signs up for all of this.",
   items: [
-    { stamp: "₹1 Cr", admit: "Prize", title: "₹1 crore prize pool", text: "Shared across twelve winning startups." },
+    { stamp: "₹1 Cr", admit: "Prize", title: "₹1 crore prize pool", text: "One pool, shared among twelve winners: the top three startups in each of the four tracks." },
     { stamp: "Live", admit: "Data", title: "Real problems, real data", text: "Live problem statements drawn from real operations, with real data behind them." },
     { stamp: "1:1", admit: "Mentor", title: "A month with mentors", text: "Shortlisted startups spend December refining their solution with an assigned mentor." },
     { stamp: "Deploy", admit: "Launch", title: "A chance at real deployment", text: "Solutions are built for the context where the problem actually lives, not for a demo day." },
     { stamp: "Pitch", admit: "Lounge", title: "Investors in the room", text: "Pitch to a jury with DPIIT, industry leaders and invited investors, and meet them in the lounge." },
-    { stamp: "Delhi", admit: "Finale", title: "A national stage", text: "Pitch at the finale in New Delhi in January 2027." },
+    { stamp: "Delhi", admit: "Finale", title: "A national stage", text: "Pitch to the jury, investors and policymakers at the national finale." },
   ],
+};
+
+// One quiet line at the end of each section, handing off to the next (see Bridge in page.tsx).
+export const bridges = {
+  about: { label: "The four problem tracks", target: "#tracks" },
+  tracks: { label: "What startups get", target: "#benefits" },
+  benefits: { label: "How it works", target: "#timeline" },
+  timeline: { label: "Who will be joining", target: "#community" },
+  room: { label: "Partner with us", target: "#partners" },
+  partners: { label: "Questions", target: "#faq" },
 };
 
 export const gallery = [
@@ -264,7 +273,7 @@ export const invites: {
     id: "investor",
     label: "Investor partnership",
     card: "Meet the next generation of India's builders",
-    cardText: "Access a screened pipeline, the Founders’ Lounge, selected pitch decks and the final showcase in New Delhi.",
+    cardText: "Access a screened pipeline, the Founders’ Lounge, selected pitch decks and the final showcase.",
     link: "Open investor partnership",
     image: asset("/media/invite-investor.jpg"),
     kicker: "Investor access",

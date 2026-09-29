@@ -4,6 +4,23 @@ import { asset } from "@/lib/asset";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  // Which section the reader is in, so the menu shows where they are in the story.
+  const [current, setCurrent] = useState("#top");
+  useEffect(() => {
+    const ids = ["#challenge", "#tracks", "#timeline", "#partners", "#faq"];
+    const on = () => {
+      let at = "#top";
+      for (const id of ids) {
+        const el = document.querySelector(id);
+        if (el && el.getBoundingClientRect().top < window.innerHeight * 0.4) at = id;
+      }
+      setCurrent(at);
+    };
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
+  const cls = (id: string) => (current === id ? "is-current" : undefined);
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 24);
     on();
@@ -22,12 +39,12 @@ export default function Nav() {
       <div className="link-bar">
         <div className="link-inner">
           <nav className="nav-links" aria-label="Main navigation">
-            <a href="#top">home</a>
-            <a href="#challenge">about the event</a>
-            <a href="#tracks">tracks</a>
-            <a href="#timeline">how it works</a>
-            <a href="#partners">partners</a>
-            <a href="#faq">faq</a>
+            <a href="#top" className={cls("#top")}>home</a>
+            <a href="#challenge" className={cls("#challenge")}>about the event</a>
+            <a href="#tracks" className={cls("#tracks")}>tracks</a>
+            <a href="#timeline" className={cls("#timeline")}>how it works</a>
+            <a href="#partners" className={cls("#partners")}>partners</a>
+            <a href="#faq" className={cls("#faq")}>faq</a>
           </nav>
           <a className="btn btn-xs" href="#register" data-register>register <span aria-hidden="true">→</span></a>
         </div>

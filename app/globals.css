@@ -641,6 +641,24 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   opacity: .8;
 }
 
+/* ── Bridges: a quiet "Next · section ↓" hand-off at the end of each section ── */
+.bridge {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 12px 4px 10px; border-bottom: 1px solid var(--line);
+  font-family: var(--f-label); font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-50);
+  transition: color .3s, border-color .3s;
+}
+.bridge-next { color: var(--mint); }
+.bridge-label { color: var(--ink-70); }
+.bridge-arrow { letter-spacing: 0; font-size: 13px; transition: transform .4s var(--ease); }
+.bridge:hover { border-color: var(--mint); }
+.bridge:hover .bridge-label { color: var(--ink); }
+.bridge:hover .bridge-arrow { transform: translateY(3px); }
+.bridge-row { flex-basis: 100%; width: 100%; display: flex; justify-content: center; margin-top: clamp(70px, 8vw, 110px); }
+
+/* Current section in the menu bar */
+.nav-links a.is-current { color: var(--ink); box-shadow: 0 1px 0 var(--mint); }
+
 /* ── Floating dock: register or email, always a click away ── */
 .dock {
   position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); z-index: 55;
@@ -771,6 +789,22 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .application-note { font-size: 11px; color: var(--ink-50); margin: 0; }
 
 /* ── Responsive ──────────────────────────────────────────── */
+/* Desktop: horizontal timeline. The pin holds (sticky) while the list of months slides left. */
+@media (min-width: 1081px) {
+  .s-dates { display: block; }
+  .tl-pin {
+    position: sticky; top: 72px; height: calc(100vh - 72px); overflow: hidden;
+    display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); gap: clamp(40px, 5vw, 80px); align-items: center;
+    width: min(1300px, 100%); margin: 0 auto;
+  }
+  .dates-head { position: static; max-width: none; align-self: center; }
+  .tl-viewport { overflow: hidden; padding: 60px 0 20px 14px; mask-image: linear-gradient(90deg, transparent, #000 4%, #000 85%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 85%, transparent); }
+  .dates { display: flex; gap: 56px; width: max-content; max-width: none; padding: 44px 120px 0 0; will-change: transform; }
+  .dates::before { left: 0; right: 120px; top: 5px; bottom: auto; width: auto; height: 1px; }
+  .dates-line { left: 0; right: 120px; top: 5px; bottom: auto; width: auto; height: 1px; transform-origin: left; background: linear-gradient(90deg, var(--mint), var(--blue)); }
+  .dates li { flex: none; width: 290px; }
+  .dates li::before { left: 0; top: -44px; }
+}
 @media (max-width: 1080px) {
   .track-grid { grid-template-columns: repeat(2, 1fr); }
   .room-grid, .invite-grid { grid-template-columns: 1fr 1fr; }

@@ -1,4 +1,3 @@
-import HeroChips from "@/components/HeroChips";
 import FloatingDock from "@/components/FloatingDock";
 import CircuitOverlay from "@/components/CircuitOverlay";
 import TiltCards from "@/components/TiltCards";
@@ -15,7 +14,7 @@ import DetailDrawer from "@/components/DetailDrawer";
 import Registration from "@/components/Registration";
 import { asset } from "@/lib/asset";
 import {
-  CONTACT, gmailLink, challenge, closing, faq, footer, gets, hero, invites, invitesIntro, proof, room, timeline, tracks, tracksIntro, why,
+  CONTACT, gmailLink, challenge, closing, faq, footer, gets, hero, invites, invitesIntro, proof, room, bridges, timeline, tracks, tracksIntro, why,
 } from "@/lib/content";
 
 const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
@@ -34,6 +33,19 @@ function accentPhrases(text: string, phrases: string[]) {
     rest = rest.slice(i + p.length);
   }
   return parts;
+}
+
+// A quiet hand-off at the end of a section: "Next · <section> ↓", linking to it.
+function Bridge({ label, target }: { label: string; target: string }) {
+  return (
+    <div className="bridge-row rise">
+      <a className="bridge" href={target}>
+        <span className="bridge-next">Next</span>
+        <span className="bridge-label">{label}</span>
+        <span className="bridge-arrow" aria-hidden="true">↓</span>
+      </a>
+    </div>
+  );
 }
 
 // One benefit as an event pass: a stamped stub, a perforated tear line, the details.
@@ -55,7 +67,7 @@ function ticket(g: (typeof gets.items)[number], i: number, total: number) {
         <span className="ticket-no">Pass {i + 1} of {total}</span>
       </div>
       <div className="ticket-body">
-        <span className="ticket-event">GSC · New Delhi · Jan 2027</span>
+        <span className="ticket-event">Grand Startup Challenge 2027</span>
         <h3>{g.title}</h3>
         <p>{g.text}</p>
         <span className="ticket-code" aria-hidden="true" />
@@ -75,7 +87,6 @@ export default function Page() {
         {/* 1. Hero: one block. Who we are, the promise, the date, the way in. */}
         <div className="chapter chapter-one">
           <section className="glass invitation" data-grow>
-            <HeroChips />
             <div className="gsc-mark" aria-hidden="true">
               <img src={asset("/media/gsc-logo.jpg")} alt="" />
             </div>
@@ -110,8 +121,6 @@ export default function Page() {
           </div>
         </div>
 
-        <Film />
-
         {/* 3. What this is, and why it matters. */}
         <section className="s-challenge" id="challenge">
           <Reveal className="h-center" text={challenge.title} accent={["event"]} />
@@ -130,7 +139,10 @@ export default function Page() {
             ))}
           </div>
           </div>
+          <Bridge {...bridges.about} />
         </section>
+
+        <Film />
 
         {/* 4. The problems to solve. */}
         <section className="s-tracks" id="tracks">
@@ -154,29 +166,10 @@ export default function Page() {
               </a>
             ))}
           </div>
+          <Bridge {...bridges.tracks} />
         </section>
 
-        {/* 5. How it works: the journey and the key dates, as one timeline. */}
-        <section className="s-dates" id="timeline">
-          <div className="dates-head">
-            <p className="label rise">{timeline.eyebrow}</p>
-            <Reveal className="h-dare" text={timeline.title} accent={["finale"]} />
-            <p className="soft rise">{timeline.lede}</p>
-            <a className="btn rise" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
-          </div>
-          <ol className="dates">
-            <span className="dates-line" data-draw aria-hidden="true" />
-            {timeline.items.map((t, i) => (
-              <li key={t.title} className={`rise${i === timeline.items.length - 1 ? " finale" : ""}`}>
-                <span className="date">{t.date}</span>
-                <h3>{t.title}</h3>
-                <p>{t.text}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        {/* 6. What startups get. */}
+        {/* 5. What startups get: the reward, before the process. */}
         <section className="s-gets" id="benefits">
           {/* Eyebrow, then the headline prize as a golden ticket, then the write-up and the other five passes. */}
           <p className="label rise gets-eyebrow">{gets.eyebrow}</p>
@@ -188,8 +181,37 @@ export default function Page() {
           <div className="tickets" data-stagger>
             {gets.items.slice(1).map((g, i) => ticket(g, i + 1, gets.items.length))}
           </div>
+          <Bridge {...bridges.benefits} />
         </section>
 
+        {/* 6. How it works: the journey and the key dates, as one timeline. */}
+        <section className="s-dates" id="timeline">
+          {/* Desktop: the section holds (CSS sticky) while the months glide past left to right.
+              Tablet and phone: the same timeline, read top to bottom. */}
+          <div className="tl-wrap" data-htl>
+          <div className="tl-pin">
+          <div className="dates-head">
+            <p className="label rise">{timeline.eyebrow}</p>
+            <Reveal className="h-dare" text={timeline.title} accent={["finale"]} />
+            <p className="soft rise">{timeline.lede}</p>
+            <a className="btn rise" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
+          </div>
+          <div className="tl-viewport">
+          <ol className="dates">
+            <span className="dates-line" aria-hidden="true" />
+            {timeline.items.map((t, i) => (
+              <li key={t.title} className={`rise${i === timeline.items.length - 1 ? " finale" : ""}`}>
+                <span className="date">{t.date}</span>
+                <h3>{t.title}</h3>
+                <p>{t.text}</p>
+              </li>
+            ))}
+          </ol>
+          </div>
+          </div>
+          </div>
+          <Bridge {...bridges.timeline} />
+        </section>
 
         {/* 7. Who will be in the room. */}
         <section className="s-room" id="community">
@@ -217,6 +239,7 @@ export default function Page() {
           </div>
           </div>
           </div>
+          <Bridge {...bridges.room} />
         </section>
 
         {/* Chapter two: the way in. The page ends in the brand glow. */}
@@ -236,6 +259,7 @@ export default function Page() {
                 </a>
               ))}
             </div>
+            <Bridge {...bridges.partners} />
           </section>
 
           {/* 9. Questions. */}

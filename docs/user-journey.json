@@ -38,7 +38,8 @@
       "applicationsClose": "2026-10-31T23:59:59+05:30",
       "finale": "January 2027, New Delhi (exact date intentionally not published)"
     },
-    "contact": "grandstartupchallenge@cars24.com"
+    "contact": "grandstartupchallenge@cars24.com",
+    "narrative": "Question order for a founder: What is this? → Is it serious? → Who is behind it and why? → What would I work on? → What is in it for me? → How and when? → Who will I meet? → (Partner with us) → Questions → Apply. Each section ends with a quiet \"Next\" hand-off."
   },
   "globalLayer": {
     "description": "Elements present for the whole journey, independent of scroll position.",
@@ -97,7 +98,8 @@
             }
           }
         ],
-        "linkBehaviour": "Section links smooth-scroll (Lenis, 1.4s ease-out) so the section heading lands just below the link bar (components/SmoothScroll.tsx → useSectionLinks)."
+        "linkBehaviour": "Section links smooth-scroll (Lenis, 1.4s ease-out) so the section heading lands just below the link bar (components/SmoothScroll.tsx → useSectionLinks).",
+        "currentSection": "The menu link for the section being read is underlined in mint."
       },
       {
         "id": "floating-dock",
@@ -196,18 +198,6 @@
           ]
         }
       },
-      "decorations": {
-        "floatingChips": {
-          "component": "components/HeroChips.tsx",
-          "items": [
-            "₹1 Cr · prize pool",
-            "4 · problem tracks",
-            "1 Oct · applications open",
-            "Jan 2027 · New Delhi finale"
-          ],
-          "behaviour": "Float gently and drift with the pointer (parallax). Hidden below 760px."
-        }
-      },
       "motion": [
         "Headline words blur into focus on load",
         "Card scales/fades in as it enters (data-grow)"
@@ -235,8 +225,7 @@
         "₹1 Cr prize pool",
         "4 problem tracks",
         "1,000+ applications expected",
-        "12 winning startups",
-        "Finale in New Delhi, January 2027"
+        "12 winning startups"
       ],
       "motion": [
         "Continuous horizontal marquee (38s loop), pauses on hover"
@@ -245,21 +234,6 @@
     },
     {
       "step": 3,
-      "id": "film",
-      "component": "components/Film.tsx",
-      "purpose": "Motion intro.",
-      "content": {
-        "video": "/media/hero.mp4",
-        "poster": "/media/hero-poster.jpg",
-        "playback": "autoplay, muted, loop, inline"
-      },
-      "motion": [
-        "Frame tilts from a trapezoid into a flat screen as it scrolls in (data-tilt, scrubbed)"
-      ],
-      "ctas": []
-    },
-    {
-      "step": 4,
       "id": "about",
       "anchor": "#challenge",
       "navLabel": "about the event",
@@ -281,6 +255,25 @@
         "Heading blurs in word by word",
         "Statement and description rise in",
         "Why cards: numbers lit in mint; cards tilt towards the cursor on hover"
+      ],
+      "ctas": [],
+      "bridge": {
+        "label": "Next · The four problem tracks ↓",
+        "action": "scroll to that section"
+      }
+    },
+    {
+      "step": 4,
+      "id": "film",
+      "component": "components/Film.tsx",
+      "purpose": "A visual breather between the \"why\" and the problem tracks.",
+      "content": {
+        "video": "/media/hero.mp4",
+        "poster": "/media/hero-poster.jpg",
+        "playback": "autoplay, muted, loop, inline"
+      },
+      "motion": [
+        "Frame tilts from a trapezoid into a flat screen as it scrolls in (data-tilt, scrubbed)"
       ],
       "ctas": []
     },
@@ -327,10 +320,65 @@
           "target": "#track/{id}",
           "overlay": "trackBrief"
         }
-      ]
+      ],
+      "bridge": {
+        "label": "Next · What startups get ↓",
+        "action": "scroll to that section"
+      }
     },
     {
       "step": 6,
+      "id": "what-startups-get",
+      "anchor": "#benefits",
+      "purpose": "Benefits, led by the prize.",
+      "content": {
+        "leadTicket": {
+          "stamp": "₹1 Cr",
+          "title": "₹1 crore prize pool",
+          "text": "One pool, shared among twelve winners: the top three startups in each of the four tracks.",
+          "style": "full-width golden (mint) pass"
+        },
+        "eyebrow": "What startups get",
+        "heading": "and the prize is only the beginning",
+        "lede": "The ₹1 crore pool is shared among twelve winners, the top three in each track. But every startup that makes the shortlist also signs up for all of this.",
+        "passes": [
+          {
+            "stamp": "Live",
+            "title": "Real problems, real data"
+          },
+          {
+            "stamp": "1:1",
+            "title": "A month with mentors"
+          },
+          {
+            "stamp": "Deploy",
+            "title": "A chance at real deployment"
+          },
+          {
+            "stamp": "Pitch",
+            "title": "Investors in the room"
+          },
+          {
+            "stamp": "Delhi",
+            "title": "A national stage",
+            "layout": "centred under the row above"
+          }
+        ]
+      },
+      "design": "Each benefit is an event pass: coloured stub (Admit one · label, stamp, Pass n of 6, rocket), perforated tear line with notches, cream body with barcode.",
+      "motion": [
+        "Passes sharpen in one after another",
+        "Slight alternating tilt; straighten and lift on hover",
+        "Rocket flame flickers continuously; rocket lifts and flame burns longer on hover"
+      ],
+      "ctas": [],
+      "bridge": {
+        "label": "Next · How it works ↓",
+        "action": "scroll to that section"
+      }
+    },
+    {
+      "step": 7,
       "id": "how-it-works",
       "anchor": "#timeline",
       "navLabel": "how it works",
@@ -367,7 +415,7 @@
           }
         ]
       },
-      "layout": "Heading block sticky on the left, timeline on the right (stacks on mobile).",
+      "layout": "Desktop (>1080px): the section holds (CSS sticky) while the six dates slide left to right and the line draws across. Tablet/phone: vertical timeline, line draws down.",
       "motion": [
         "Timeline line draws down with scroll (scrubbed)",
         "Each date rises in"
@@ -377,54 +425,11 @@
           "label": "register now →",
           "action": "open-registration"
         }
-      ]
-    },
-    {
-      "step": 7,
-      "id": "what-startups-get",
-      "anchor": "#benefits",
-      "purpose": "Benefits, led by the prize.",
-      "content": {
-        "leadTicket": {
-          "stamp": "₹1 Cr",
-          "title": "₹1 crore prize pool",
-          "text": "Shared across twelve winning startups.",
-          "style": "full-width golden (mint) pass"
-        },
-        "eyebrow": "What startups get",
-        "heading": "and the prize is only the beginning",
-        "lede": "₹1 crore goes to twelve winning teams. But every startup that makes the shortlist also signs up for all of this.",
-        "passes": [
-          {
-            "stamp": "Live",
-            "title": "Real problems, real data"
-          },
-          {
-            "stamp": "1:1",
-            "title": "A month with mentors"
-          },
-          {
-            "stamp": "Deploy",
-            "title": "A chance at real deployment"
-          },
-          {
-            "stamp": "Pitch",
-            "title": "Investors in the room"
-          },
-          {
-            "stamp": "Delhi",
-            "title": "A national stage",
-            "layout": "centred under the row above"
-          }
-        ]
-      },
-      "design": "Each benefit is an event pass: coloured stub (Admit one · label, stamp, Pass n of 6, rocket), perforated tear line with notches, cream body with barcode.",
-      "motion": [
-        "Passes sharpen in one after another",
-        "Slight alternating tilt; straighten and lift on hover",
-        "Rocket flame flickers continuously; rocket lifts and flame burns longer on hover"
       ],
-      "ctas": []
+      "bridge": {
+        "label": "Next · Who will be joining ↓",
+        "action": "scroll to that section"
+      }
     },
     {
       "step": 8,
@@ -448,7 +453,11 @@
         "Desktop (>760px): heading and cards hold on screen (CSS position: sticky, ~110vh of scroll) while the cards deal out from a splayed deck at the top left into the 3×2 grid, one after another (GSAP timeline, scrubbed, data-fan). Reverses on scroll up.",
         "Mobile: cards rise in one after another."
       ],
-      "ctas": []
+      "ctas": [],
+      "bridge": {
+        "label": "Next · Partner with us ↓",
+        "action": "scroll to that section"
+      }
     },
     {
       "step": 9,
@@ -490,7 +499,11 @@
           "target": "#invite/{id}",
           "overlay": "partnershipBrief"
         }
-      ]
+      ],
+      "bridge": {
+        "label": "Next · Questions ↓",
+        "action": "scroll to that section"
+      }
     },
     {
       "step": 10,

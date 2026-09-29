@@ -98,6 +98,39 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
           scrollTrigger: { trigger: el.parentElement, start: "top 70%", end: "bottom 60%", scrub: true },
         }),
       );
+      // "How it works": on desktop the section holds while the timeline slides left, month by
+      // month, and the line draws across; below that it stays vertical and the line draws down.
+      const tlm = gsap.matchMedia();
+      tlm.add("(min-width: 1081px)", () => {
+        gsap.utils.toArray<HTMLElement>("[data-htl]").forEach((wrap) => {
+          const vp = wrap.querySelector<HTMLElement>(".tl-viewport");
+          const ol = wrap.querySelector<HTMLElement>(".dates");
+          const line = wrap.querySelector<HTMLElement>(".dates-line");
+          if (!vp || !ol) return;
+          const distance = () => Math.max(0, ol.scrollWidth - vp.clientWidth);
+          // The wrapper's extra height is exactly the sideways travel, so the hold lasts as long as the slide.
+          const size = () => { wrap.style.height = `calc(100vh - 72px + ${distance()}px)`; };
+          size();
+          ScrollTrigger.addEventListener("refreshInit", size);
+          const tl = gsap.timeline({
+            scrollTrigger: { trigger: wrap, start: "top 72px", end: () => `+=${distance()}`, scrub: 0.6, invalidateOnRefresh: true },
+          });
+          tl.to(ol, { x: () => -distance(), ease: "none" }, 0);
+          if (line) tl.fromTo(line, { scaleX: 0 }, { scaleX: 1, ease: "none" }, 0);
+          return () => {
+            ScrollTrigger.removeEventListener("refreshInit", size);
+            wrap.style.height = "";
+          };
+        });
+      });
+      tlm.add("(max-width: 1080px)", () => {
+        gsap.utils.toArray<HTMLElement>("[data-htl] .dates-line").forEach((el) =>
+          gsap.fromTo(el, { scaleY: 0 }, {
+            scaleY: 1, ease: "none",
+            scrollTrigger: { trigger: el.parentElement, start: "top 70%", end: "bottom 60%", scrub: true },
+          }),
+        );
+      });
       // Fan-out: the cards start stacked and tilted at the centre of the grid, then
       // spread into place as you scroll (scrubbed). Wide screens only; phones get a simple rise.
       const mm = gsap.matchMedia();
