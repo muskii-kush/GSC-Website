@@ -1,3 +1,4 @@
+import { asset } from "./asset";
 // All copy is carried over from Grand-Startup-Challenge-v5.html.
 export const CONTACT = "grandstartupchallenge@cars24.com";
 // Opens a Gmail compose window addressed to the team.
@@ -29,8 +30,8 @@ export const challenge = {
 };
 
 export const gallery = [
-  { src: "/media/band-founders.jpg", alt: "Founders and operators in conversation", caption: "Access to people who can help the work move." },
-  { src: "/media/band-inspection.jpg", alt: "Vehicle inspection in a Cars24 environment", caption: "Build in the context where the problem actually lives." },
+  { src: asset("/media/band-founders.jpg"), alt: "Founders and operators in conversation", caption: "Access to people who can help the work move." },
+  { src: asset("/media/band-inspection.jpg"), alt: "Vehicle inspection in a Cars24 environment", caption: "Build in the context where the problem actually lives." },
 ];
 
 export const journey = {
@@ -91,8 +92,8 @@ export const tracks: {
     num: "01 · Fintech",
     name: "Lending & Fintech",
     summary: "Better credit, underwriting and fraud intelligence for the next 400 million Indians.",
-    image: "/media/track-fintech-card.jpg",
-    briefImage: "/media/track-fintech-brief.jpg",
+    image: asset("/media/track-fintech-card.jpg"),
+    briefImage: asset("/media/track-fintech-brief.jpg"),
     kicker: "01 · Fintech & lending",
     title: "Credit that meets people where they are.",
     lede: "Build the next generation of underwriting, access and trust for India’s new-to-credit population.",
@@ -111,9 +112,9 @@ export const tracks: {
     num: "02 · Mobility",
     name: "Mobility & Road Safety",
     summary: "Vehicle health, driver risk and safety systems made for Indian road conditions.",
-    image: "/media/track-mobility.jpg",
-    briefImage: "/media/track-mobility-brief.jpg",
-    hoverImage: "/media/track-mobility-brief.jpg",
+    image: asset("/media/track-mobility.jpg"),
+    briefImage: asset("/media/track-mobility-brief.jpg"),
+    hoverImage: asset("/media/track-mobility-brief.jpg"),
     briefAspect: "1052 / 1495",
     kicker: "02 · Mobility & road safety",
     title: "Make every journey safer.",
@@ -133,7 +134,7 @@ export const tracks: {
     num: "03 · Logistics",
     name: "Logistics & Supply Chain",
     summary: "Route, load and hub optimisation across a live fleet and distributed network.",
-    image: "/media/track-logistics-warehouse.jpg",
+    image: asset("/media/track-logistics-warehouse.jpg"),
     briefAspect: "2 / 1",
     kicker: "03 · Logistics & supply chain",
     title: "Make the network work harder.",
@@ -153,7 +154,7 @@ export const tracks: {
     num: "04 · Sovereign AI",
     name: "Sovereign AI",
     summary: "Practical, trusted intelligence for the systems that power a more self-reliant India.",
-    image: "/media/track-sovereign-ai.jpg",
+    image: asset("/media/track-sovereign-ai.jpg"),
     kicker: "04 · Sovereign AI",
     title: "Build intelligence we can trust.",
     lede: "Create practical AI systems for the infrastructure and services that India depends on.",
@@ -211,7 +212,7 @@ export const invites: {
     card: "Meet the next generation of India's builders",
     cardText: "Access a screened pipeline, the Founders’ Lounge, selected pitch decks and the final showcase at Bharat Mandapam.",
     link: "Open investor invitation",
-    image: "/media/invite-investor.jpg",
+    image: asset("/media/invite-investor.jpg"),
     kicker: "Investor access",
     title: "Meet the next generation of India’s builders.",
     lede: "Get close to a screened pipeline of founders working on problems that matter across fintech, mobility, logistics and sovereign AI.",
@@ -230,7 +231,7 @@ export const invites: {
     card: "Put your organisation behind the challenge",
     cardText: "Support the prize pool, contribute as an industry or knowledge partner, or sponsor one of the four tracks.",
     link: "Open partner invitation",
-    image: "/media/invite-partner.jpg",
+    image: asset("/media/invite-partner.jpg"),
     kicker: "Partner access",
     title: "Help create the platform for what comes next.",
     lede: "Back the challenge as a sponsor, track partner or founding knowledge partner, with your organisation present across the season.",
@@ -249,7 +250,7 @@ export const invites: {
     card: "Put your brand behind meaningful progress",
     cardText: "Support the challenge through a sponsorship package designed around visibility, founder access and the themes shaping India’s next chapter.",
     link: "Open sponsorship invitation",
-    image: "/media/environment.jpg",
+    image: asset("/media/environment.jpg"),
     kicker: "Sponsorship access",
     title: "Put your brand behind the builders.",
     lede: "Support the challenge with a sponsorship package that connects your organisation to the founders, ideas and problem spaces shaping India’s next chapter.",

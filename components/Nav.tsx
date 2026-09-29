@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { asset } from "@/lib/asset";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -13,9 +14,9 @@ export default function Nav() {
     <header className={`nav${scrolled ? " scrolled" : ""}`}>
       <div className="logo-bar">
         <a href="#top" className="lb-inner" aria-label="Grand Startup Challenge home">
-          <img src="/media/dpiit.webp" alt="DPIIT Startup India" className="lb-dpiit" />
-          <img src="/media/cars24.webp" alt="Cars24" className="lb-cars24" />
-          <img src="/media/spf.webp" alt="Startup Policy Forum" className="lb-spf" />
+          <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="lb-dpiit" />
+          <img src={asset("/media/cars24.webp")} alt="Cars24" className="lb-cars24" />
+          <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="lb-spf" />
         </a>
       </div>
       <div className="link-bar">

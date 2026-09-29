@@ -8,6 +8,7 @@ import { ShapeDefs } from "@/components/Shape";
 import { ShapeName, shapePath } from "@/lib/trapezoid";
 import DetailDrawer from "@/components/DetailDrawer";
 import Registration from "@/components/Registration";
+import { asset } from "@/lib/asset";
 import {
   CONTACT, gmailLink, challenge, closing, footer, gallery, hero, invites, invitesIntro, journey, room, timeline, tracks, tracksIntro,
 } from "@/lib/content";
@@ -30,15 +31,15 @@ export default function Page() {
 
           <section className="glass invitation" data-grow>
             <div className="gsc-mark" aria-hidden="true">
-              <img src="/media/gsc-logo.jpg" alt="" />
+              <img src={asset("/media/gsc-logo.jpg")} alt="" />
             </div>
             <h1 className="wordmark">Grand Startup Challenge</h1>
             <div className="partners" aria-label="DPIIT, Cars24 and Startup Policy Forum">
-              <img src="/media/dpiit.webp" alt="DPIIT Startup India" className="p-dpiit" />
+              <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="p-dpiit" />
               <span className="p-div" />
-              <img src="/media/cars24.webp" alt="Cars24" className="p-cars24" />
+              <img src={asset("/media/cars24.webp")} alt="Cars24" className="p-cars24" />
               <span className="p-div" />
-              <img src="/media/spf.webp" alt="Startup Policy Forum" className="p-spf" />
+              <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="p-spf" />
             </div>
             <p className="soft">{hero.lede}</p>
             <p className="when">{hero.when}</p>
@@ -180,11 +181,11 @@ export default function Page() {
           <div className="footer-logos">
             <p className="footer-by">brought to you by</p>
             <div className="partners" aria-label="DPIIT, Cars24 and Startup Policy Forum">
-              <img src="/media/dpiit.webp" alt="DPIIT Startup India" className="p-dpiit" />
+              <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="p-dpiit" />
               <span className="p-div" />
-              <img src="/media/cars24.webp" alt="Cars24" className="p-cars24" />
+              <img src={asset("/media/cars24.webp")} alt="Cars24" className="p-cars24" />
               <span className="p-div" />
-              <img src="/media/spf.webp" alt="Startup Policy Forum" className="p-spf" />
+              <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="p-spf" />
             </div>
           </div>
           <footer className="footer">
