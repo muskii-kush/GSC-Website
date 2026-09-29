@@ -15,6 +15,14 @@ function lock(on: boolean) {
   window.dispatchEvent(new CustomEvent("gsc:lock", { detail: on }));
 }
 
+/** Frame the brief image at its own shape; keep portrait photos from getting too tall. */
+function briefStyle(aspect?: string): React.CSSProperties | undefined {
+  if (!aspect) return undefined;
+  const [w, h] = aspect.split("/").map((n) => parseFloat(n));
+  const portrait = w && h ? w / h < 1 : false;
+  return portrait ? { aspectRatio: aspect, maxWidth: "min(100%, 560px)" } : { aspectRatio: aspect };
+}
+
 export default function DetailDrawer() {
   const [open, setOpen] = useState<Open>(null);
 
@@ -68,8 +76,8 @@ export default function DetailDrawer() {
               <p className="label accent">{item.kicker}</p>
               <h2>{item.title}</h2>
               <p className="detail-lede">{item.lede}</p>
-              <figure className="detail-image">
-                <img src={item.image} alt={invite ? invite.label : "Cars24 operating environment"} />
+              <figure className="detail-image" style={briefStyle(track?.briefAspect)}>
+                <img src={track?.briefImage ?? item.image} alt={invite ? invite.label : "Cars24 operating environment"} />
               </figure>
             </div>
             <div className="detail-side">

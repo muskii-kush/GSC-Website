@@ -29,7 +29,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { background: var(--black); color-scheme: dark; overflow-x: clip; }
+html { scroll-padding-top: 60px; background: var(--black); color-scheme: dark; overflow-x: clip; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 [data-lenis-prevent] { overscroll-behavior: contain; }
@@ -134,9 +134,11 @@ h1, h2, h3, p { margin: 0; }
 .progress { position: fixed; inset: 0 0 auto; height: 3px; z-index: 60; pointer-events: none; }
 .progress div { height: 100%; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, var(--blue), var(--mint)); }
 
-.nav { position: fixed; z-index: 50; inset: 0 0 auto; }
+.nav { --lb-h: 72px; position: fixed; z-index: 50; inset: 0 0 auto; transition: transform .4s var(--ease); }
+/* On scroll the logo bar slides away; the link bar stays pinned to the top */
+.nav.scrolled { transform: translateY(calc(-1 * (var(--lb-h) + env(safe-area-inset-top, 0px)))); }
 .logo-bar { background: #fff; padding-top: env(safe-area-inset-top, 0px); }
-.lb-inner { height: 72px; width: min(var(--max), calc(100% - 48px)); margin: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+.lb-inner { height: var(--lb-h); width: min(var(--max), calc(100% - 48px)); margin: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
 .lb-inner img { width: auto; object-fit: contain; }
 .lb-dpiit { height: 52px; justify-self: start; }
 .lb-cars24 { height: 30px; justify-self: center; }
@@ -192,7 +194,7 @@ h1, h2, h3, p { margin: 0; }
   font-family: var(--f-display); font-weight: 800;
   font-size: clamp(30px, 5vw, 70px); line-height: .95; letter-spacing: -.02em;
   margin-top: 40px;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .partners {
   display: flex; align-items: center; gap: 14px;
@@ -289,6 +291,9 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .shape-soft img { clip-path: url(#trap-soft); }
 .track:hover .track-img img, .track:focus-visible .track-img img, .track:active .track-img img { transform: scale(1.04); filter: grayscale(0) saturate(1.1); }
 .track:hover .track-line, .track:focus-visible .track-line { transform: scale(1.04); }
+/* Colour layer for tracks whose card photo is already black and white */
+.track-img img.track-color { position: absolute; inset: 0; filter: none; opacity: 0; transition: transform 1s var(--ease), opacity .6s; }
+.track:hover .track-img img.track-color, .track:focus-visible .track-img img.track-color, .track:active .track-img img.track-color { opacity: 1; filter: none; }
 .track-go {
   position: absolute; right: 8%; bottom: 8%; width: 44px; height: 44px; border-radius: 50%;
   display: grid; place-items: center; background: var(--ink); color: var(--black); font-size: 18px;
@@ -438,7 +443,8 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
   .detail-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 40px; }
 }
 @media (max-width: 760px) {
-  .lb-inner { height: 56px; width: calc(100% - 32px); }
+  .nav { --lb-h: 56px; }
+  .lb-inner { width: calc(100% - 32px); }
   .lb-dpiit { height: 36px; } .lb-cars24 { height: 19px; } .lb-spf { height: 34px; }
   .link-inner { width: calc(100% - 32px); gap: 12px; }
   .nav-links { gap: 18px; overflow-x: auto; scrollbar-width: none; font-size: 10px; letter-spacing: .1em; }

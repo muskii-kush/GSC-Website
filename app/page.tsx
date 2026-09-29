@@ -32,7 +32,7 @@ export default function Page() {
             <div className="gsc-mark" aria-hidden="true">
               <img src="/media/gsc-logo.jpg" alt="" />
             </div>
-            <h1 className="wordmark">grand startup challenge</h1>
+            <h1 className="wordmark">Grand Startup Challenge</h1>
             <div className="partners" aria-label="DPIIT, Cars24 and Startup Policy Forum">
               <img src="/media/dpiit.webp" alt="DPIIT Startup India" className="p-dpiit" />
               <span className="p-div" />
@@ -101,6 +101,7 @@ export default function Page() {
               <a className="track" href={`#track/${t.id}`} key={t.id}>
                 <div className={`track-img shape-${TRACK_SHAPES[i]}`}>
                   <img src={t.image} alt="" />
+                  {t.hoverImage && <img className="track-color" src={t.hoverImage} alt="" />}
                   <svg className="track-line" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
                     <path d={shapePath(TRACK_SHAPES[i])} />
                   </svg>

@@ -73,6 +73,12 @@ export const tracks: {
   name: string;
   summary: string;
   image: string;
+  /** Optional image for the "explore the brief" drawer; falls back to image. */
+  briefImage?: string;
+  /** Optional colour photo shown on hover when the card image is already black and white. */
+  hoverImage?: string;
+  /** Optional aspect ratio for the brief image frame, e.g. "2 / 1", so a wide photo shows in full. */
+  briefAspect?: string;
   kicker: string;
   title: string;
   lede: string;
@@ -87,7 +93,8 @@ export const tracks: {
     num: "01 · Fintech",
     name: "Lending & Fintech",
     summary: "Better credit, underwriting and fraud intelligence for the next 400 million Indians.",
-    image: "/media/track-fintech.jpg",
+    image: "/media/track-fintech-card.jpg",
+    briefImage: "/media/track-fintech-brief.jpg",
     kicker: "01 · Fintech & lending",
     title: "Credit that meets people where they are.",
     lede: "Build the next generation of underwriting, access and trust for India’s new-to-credit population.",
@@ -106,7 +113,10 @@ export const tracks: {
     num: "02 · Mobility",
     name: "Mobility & Road Safety",
     summary: "Vehicle health, driver risk and safety systems made for Indian road conditions.",
-    image: "/media/track-mobility.webp",
+    image: "/media/track-mobility.jpg",
+    briefImage: "/media/track-mobility-brief.jpg",
+    hoverImage: "/media/track-mobility-brief.jpg",
+    briefAspect: "1052 / 1495",
     kicker: "02 · Mobility & road safety",
     title: "Make every journey safer.",
     lede: "Build for the realities of Indian roads, drivers and vehicles — including the transition to EV.",
@@ -125,7 +135,8 @@ export const tracks: {
     num: "03 · Logistics",
     name: "Logistics & Supply Chain",
     summary: "Route, load and hub optimisation across a live fleet and distributed network.",
-    image: "/media/track-logistics.jpg",
+    image: "/media/track-logistics-warehouse.jpg",
+    briefAspect: "2 / 1",
     kicker: "03 · Logistics & supply chain",
     title: "Make the network work harder.",
     lede: "Help a distributed fleet, its hubs and its people make better decisions every day.",
