@@ -159,6 +159,11 @@
       "hash": "#register",
       "result": "open registration overlay",
       "component": "components/Registration.tsx"
+    },
+    {
+      "hash": "#scoring",
+      "result": "open scoring rubric overlay (Eligibility and Screening tabs)",
+      "component": "components/DetailDrawer.tsx"
     }
   ],
   "journey": [
@@ -424,6 +429,11 @@
         {
           "label": "register now →",
           "action": "open-registration"
+        },
+        {
+          "label": "how applications are scored ↗",
+          "action": "open-overlay",
+          "target": "#scoring"
         }
       ],
       "bridge": {
@@ -518,6 +528,7 @@
         "questions": [
           "Who can apply?",
           "When do applications open and close?",
+          "How are applications scored?",
           "What do I need to apply?",
           "Which track should I apply to?",
           "What happens after I apply?",
@@ -642,215 +653,53 @@
           "action": "open-gmail-compose"
         }
       ]
+    },
+    "scoringRubric": {
+      "hash": "#scoring",
+      "tabs": [
+        "Stage 1 · Eligibility: eight yes-or-no checks, plus the verification note",
+        "Stage 2 · Screening: four criteria at 25% each, each with the question, what we read, and a 1 to 5 scale"
+      ],
+      "close": "Returns the address to the section it was opened from (#timeline or #faq)",
+      "ctas": [
+        {
+          "label": "register now →",
+          "action": "open-registration"
+        }
+      ]
     }
   },
   "registration": {
     "entryPoints": [
-      "nav link-bar: register →",
+      "nav: register →",
       "hero: register now →",
       "how it works: register now →",
+      "scoring rubric: register now →",
+      "track briefs: register for this track → (preselects the track)",
       "floating dock: register →",
       "closing: register now →",
       "direct link: #register"
     ],
-    "mechanism": "Any element with [data-register] opens the panel; the hash becomes #register. Close via Close ×, backdrop click, Esc or browser back (hash returns to #top).",
-    "staticBuild": {
-      "panel": "Registration opens soon",
-      "copy": "The online application for the Grand Startup Challenge will open here shortly. For questions in the meantime, write to us.",
-      "cta": {
-        "label": "Email grandstartupchallenge@cars24.com ↗",
-        "action": "open-gmail-compose"
-      }
-    },
-    "serverBuild": {
-      "files": [
-        "lib/registration.js",
-        "lib/registration-markup.ts",
-        "app/api/**",
-        "lib/server/**"
-      ],
-      "flow": [
-        {
-          "stage": "session-check",
-          "api": "GET /api/auth/me",
-          "result": {
-            "signedIn": "skip to application (resume)",
-            "signedOut": "show account gate"
-          }
-        },
-        {
-          "stage": "account-details",
-          "heading": "Create your account",
-          "fields": [
-            {
-              "name": "email",
-              "type": "email",
-              "required": true
-            },
-            {
-              "name": "phone",
-              "type": "tel",
-              "prefix": "+91",
-              "required": true,
-              "validation": "10-digit Indian mobile starting 6–9"
-            }
-          ],
-          "action": {
-            "label": "Send OTP",
-            "api": "POST /api/auth/send-otp"
-          },
-          "rules": [
-            "An email already tied to a different phone is rejected (409)",
-            "Resend cooldown 30s",
-            "Max 5 OTP requests per phone per hour, 20 per IP per hour"
-          ]
-        },
-        {
-          "stage": "otp-verify",
-          "fields": [
-            {
-              "name": "code",
-              "type": "text",
-              "pattern": "6 digits",
-              "required": true
-            }
-          ],
-          "action": {
-            "label": "Verify and create account",
-            "api": "POST /api/auth/verify-otp"
-          },
-          "secondary": [
-            "Resend OTP (after countdown)",
-            "Change email or number"
-          ],
-          "rules": [
-            "OTP valid 10 minutes",
-            "Max 5 attempts",
-            "Session cookie gsc_session: httpOnly, SameSite=Lax, 30 days"
-          ],
-          "note": "SMS provider is a mock today (lib/server/sms.ts); in non-production the OTP is echoed on screen as 'Test mode'."
-        },
-        {
-          "stage": "application",
-          "loadApi": "GET /api/application",
-          "resume": "Prefills from the server draft (or a local draft keyed by phone) and opens at the first step with an unanswered question. Submitted applications open read-only.",
-          "chrome": [
-            "Signed in as {email} · {phone}",
-            "Not you? Switch account (POST /api/auth/logout)",
-            "Progress: Step n of 7, % complete, clickable step pills up to the furthest step reached"
-          ],
-          "steps": [
-            {
-              "n": 1,
-              "title": "Eligibility",
-              "fields": [
-                "email",
-                "incorporated",
-                "funding",
-                "fulltime",
-                "cars24employee"
-              ]
-            },
-            {
-              "n": 2,
-              "title": "The company",
-              "fields": [
-                "track",
-                "company",
-                "registration",
-                "dpiit (optional)",
-                "location",
-                "website (optional)",
-                "company_summary",
-                "revenue_model",
-                "family_cars24"
-              ]
-            },
-            {
-              "n": 3,
-              "title": "The team",
-              "fields": [
-                "team_size",
-                "founder_count",
-                "founders",
-                "linkedin",
-                "founder_history",
-                "technical_ownership",
-                "equity",
-                "runway"
-              ]
-            },
-            {
-              "n": 4,
-              "title": "The problem and the market",
-              "fields": [
-                "problem",
-                "competition",
-                "market"
-              ]
-            },
-            {
-              "n": 5,
-              "title": "The product",
-              "fields": [
-                "product_stage",
-                "customers",
-                "tech_stack",
-                "performance (optional)",
-                "demo (optional)"
-              ]
-            },
-            {
-              "n": 6,
-              "title": "Traction",
-              "fields": [
-                "using_product",
-                "users",
-                "revenue_1 … revenue_6 (last six months)",
-                "acquisition",
-                "customer_value",
-                "retention",
-                "reference"
-              ]
-            },
-            {
-              "n": 7,
-              "title": "Scalability and materials",
-              "fields": [
-                "unit_cost",
-                "scale_numbers",
-                "bottleneck",
-                "deck (url)",
-                "founder_video (url, 2 to 5 minutes)",
-                "source",
-                "anything_else (optional)",
-                "declaration_1–4 (required checkboxes)"
-              ]
-            }
-          ],
-          "navigation": [
-            "← Back",
-            "Save and continue → (validates the current step first)",
-            "Save and exit (saves, closes the panel)"
-          ],
-          "autosave": {
-            "trigger": "1.2s after typing stops, and on every step change",
-            "api": "PUT /api/application",
-            "fallback": "localStorage (gsc-application-draft-v2:{phone}) if the server save fails"
-          },
-          "sessionExpiry": "A 401 on save or submit returns the user to the account gate with a message; answers stay on the device."
-        },
-        {
-          "stage": "submit",
-          "action": {
-            "label": "Submit application ↗",
-            "api": "POST /api/application/submit"
-          },
-          "validation": "Jumps to the first step with an invalid field and shows the browser's message.",
-          "success": "Form locks read-only; status: 'Your application has been submitted. We will be in touch by email.'"
-        }
-      ]
-    }
+    "mechanism": "Any element with [data-register] opens the application panel (components/Registration.tsx); [data-track] preselects the track. Close via Close ×, Save and close, backdrop click, Esc or browser back.",
+    "backend": "None. On submit the answers are posted (no-cors) to the live Google Form's formResponse endpoint, so every application lands in the Form and its response Sheet. Works on GitHub Pages.",
+    "definition": "lib/application-form.ts mirrors the live Google Form (entry IDs, titles, help, choices, limits). Do not delete, re-create or add required questions in the Form once applications open.",
+    "drafts": "Autosaved in localStorage (gsc-application-v3) on every keystroke; resumes on the same device and browser only.",
+    "flow": [
+      "Intro: close date, what to have ready, link to the rubric",
+      "Eligibility 1 to 4 (email and mobile first, then one knock-out question per page). A knock-out answer shows 'This edition is not for you' with 'Change my answer'",
+      "The company",
+      "The founders: up to 4. Founder 1 required (name, role, email, mobile, LinkedIn; X and another link optional). Founders 2 to 4 optional, but a started slot needs name, role, email, mobile and LinkedIn. Founder 1's email and mobile carry over from page 1",
+      "The team · The problem and the market · The product",
+      "Traction gate: 'No' skips 'Traction, the numbers'",
+      "Scalability and unit cost · Materials and declaration (six declarations, all required)",
+      "Submit → 'application received' screen; results on a rolling basis"
+    ],
+    "validation": "Checked when the founder leaves a field and again on Continue and Submit: CIN (21 characters, valid state code, possible year, private company type) or LLPIN (AAA-1234), matched to the incorporation answer; company name ending in Private Limited or LLP; DPIIT number format; city plus state; email format, typo domains, disposable and placeholder addresses; 10-digit Indian mobiles, placeholders rejected; LinkedIn /in/ profile links, X profile links; YouTube, Vimeo, Loom or Drive video links; deck links that point to a file; whole-rupee revenue; team size; placeholder, repeated or copy-pasted written answers; duplicate email, mobile or LinkedIn across founders; a hidden bot trap.",
+    "window": "Before 1 October 2026 founders can draft but not submit; after 31 October 2026 11:59 pm IST submissions are closed.",
+    "limits": [
+      "Google does not report success to other sites, so a completed request is treated as delivered.",
+      "Answers cannot be edited after submitting."
+    ]
   },
   "ctaInventory": [
     {
@@ -921,11 +770,31 @@
       "label": "Back to top ↑",
       "action": "scroll",
       "target": "#top"
+    },
+    {
+      "location": "how it works",
+      "label": "how applications are scored ↗",
+      "action": "open-overlay",
+      "target": "#scoring"
+    },
+    {
+      "location": "faq",
+      "label": "Read the eligibility checks and screening rubric ↗",
+      "action": "open-overlay",
+      "target": "#scoring"
+    },
+    {
+      "location": "scoring rubric",
+      "label": "register now →",
+      "action": "open-registration"
+    },
+    {
+      "location": "application declarations",
+      "label": "how applications are scored",
+      "action": "open ./#scoring in a new tab"
     }
   ],
   "reviewNotes": [
-    "Registration only works on a server build; the GitHub Pages build shows a 'Registration opens soon' panel.",
-    "SMS OTP uses a mock provider; a real provider (Twilio Verify, MSG91…) must be wired before launch.",
     "npm audit flags Next.js 14.2.35 (critical) and its bundled PostCSS (high). Server-side advisories do not affect the static build but apply once the registration backend is hosted; the fix is a major upgrade to Next.js 16, to be done on its own branch.",
     "No analytics or event tracking is instrumented yet; the ctaInventory above is the suggested event list."
   ]

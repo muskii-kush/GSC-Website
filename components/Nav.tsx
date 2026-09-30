@@ -43,6 +43,7 @@ export default function Nav() {
             <a href="#challenge" className={cls("#challenge")}>about the event</a>
             <a href="#tracks" className={cls("#tracks")}>tracks</a>
             <a href="#timeline" className={cls("#timeline")}>how it works</a>
+            <a href="#scoring">eligibility</a>
             <a href="#partners" className={cls("#partners")}>partners</a>
             <a href="#faq" className={cls("#faq")}>faq</a>
           </nav>

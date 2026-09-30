@@ -1,16 +1,27 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
-import { CONTACT, gmailLink, invites, tracks } from "@/lib/content";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CONTACT, gmailLink, invites, scoring, tracks } from "@/lib/content";
 
-type Open = { kind: "track" | "invite"; id: string } | null;
+// Track ids on the site mapped to the track answer in the application form.
+const TRACK_CHOICE: Record<string, string> = {
+  fintech: "Fintech and Lending",
+  mobility: "Mobility and Road Safety",
+  logistics: "Logistics, Fleet and Supply Chain",
+  "sovereign-ai": "Sovereign AI",
+};
+
+type Open = { kind: "track" | "invite" | "scoring"; id: string } | null;
 
 function parse(hash: string): Open {
   if (hash.startsWith("#track/")) return { kind: "track", id: hash.slice(7) };
   if (hash.startsWith("#invite/")) return { kind: "invite", id: hash.slice(8) };
+  if (hash === "#scoring") return { kind: "scoring", id: "" };
   return null;
 }
 
 function lock(on: boolean) {
+  // Leave the page locked if registration has just opened on top (the rubric's register button).
+  if (!on && document.querySelector(".registration.open")) return;
   document.documentElement.classList.toggle("is-locked", on);
   window.dispatchEvent(new CustomEvent("gsc:lock", { detail: on }));
 }
@@ -25,15 +36,23 @@ function briefStyle(aspect?: string): React.CSSProperties | undefined {
 
 export default function DetailDrawer() {
   const [open, setOpen] = useState<Open>(null);
+  const [tab, setTab] = useState<"gates" | "screening">("gates");
+  // Where the reader came from, so closing the rubric puts the address back there.
+  const origin = useRef("#timeline");
 
   useEffect(() => {
     const sync = () => setOpen(parse(location.hash));
     sync();
     const onClick = (e: MouseEvent) => {
-      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>("a[href^='#track/'],a[href^='#invite/']");
+      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>("a[href^='#track/'],a[href^='#invite/'],a[href='#scoring']");
       if (!a) return;
       e.preventDefault();
       const hash = a.getAttribute("href")!;
+      if (hash === "#scoring") {
+        const from = a.closest(".registration") ? "register" : a.closest<HTMLElement>("section[id]")?.id;
+        origin.current = from ? `#${from}` : "#top";
+        setTab("gates");
+      }
       try { history.pushState({}, "", hash); } catch { location.hash = hash; }
       setOpen(parse(hash));
     };
@@ -46,7 +65,7 @@ export default function DetailDrawer() {
   }, []);
 
   const close = useCallback(() => {
-    const back = open?.kind === "invite" ? "#partners" : "#tracks";
+    const back = open?.kind === "invite" ? "#partners" : open?.kind === "scoring" ? origin.current : "#tracks";
     try { history.pushState({}, "", back); } catch { location.hash = back; }
     setOpen(null);
   }, [open]);
@@ -62,9 +81,78 @@ export default function DetailDrawer() {
   const track = open?.kind === "track" ? tracks.find((t) => t.id === open.id) : undefined;
   const invite = open?.kind === "invite" ? invites.find((i) => i.id === open.id) : undefined;
   const item = track ?? invite;
+  const isScoring = open?.kind === "scoring";
+  const shown = !!item || isScoring;
 
   return (
-    <aside className={`detail overlay${item ? " open" : ""}`} aria-hidden={!item} data-lenis-prevent onClick={(e) => e.target === e.currentTarget && close()}>
+    <aside className={`detail overlay${shown ? " open" : ""}`} aria-hidden={!shown} data-lenis-prevent onClick={(e) => e.target === e.currentTarget && close()}>
+      {isScoring && (
+        <div className="detail-inner">
+          <div className="overlay-head detail-head">
+            <button className="close" type="button" onClick={close}>× close</button>
+            <span className="label">{scoring.label}</span>
+          </div>
+          <div className="rubric">
+            <h2>{scoring.title}</h2>
+            <p className="detail-lede">{scoring.lede}</p>
+            <div className="rubric-tabs" role="tablist" aria-label="Scoring stages">
+              {(["gates", "screening"] as const).map((k, i) => (
+                <button
+                  key={k}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === k}
+                  className={`rubric-tab${tab === k ? " is-active" : ""}`}
+                  onClick={() => setTab(k)}
+                >
+                  <span className="rubric-tab-no">Stage {i + 1}</span>
+                  {scoring[k].tab}
+                </button>
+              ))}
+            </div>
+            {tab === "gates" ? (
+              <div className="rubric-panel" role="tabpanel">
+                <h3 className="rubric-heading">{scoring.gates.heading}</h3>
+                <p className="rubric-intro">{scoring.gates.intro}</p>
+                <ol className="rubric-gates">
+                  {scoring.gates.items.map((g, i) => (
+                    <li key={g.title}>
+                      <span className="rubric-gate-no">{i + 1}</span>
+                      <div>
+                        <strong>{g.title}</strong>
+                        <p>{g.text}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+                <p className="rubric-note">{scoring.gates.note}</p>
+              </div>
+            ) : (
+              <div className="rubric-panel" role="tabpanel">
+                <h3 className="rubric-heading">{scoring.screening.heading}</h3>
+                <p className="rubric-intro">{scoring.screening.intro}</p>
+                <div className="rubric-criteria">
+                  {scoring.screening.criteria.map((c) => (
+                    <article className="rubric-criterion" key={c.title}>
+                      <header>
+                        <h4>{c.title}</h4>
+                        <span className="rubric-weight">{c.weight}</span>
+                      </header>
+                      <p className="rubric-question">{c.question}</p>
+                      <p className="rubric-reads"><span>What we read</span>{c.reads}</p>
+                      <p className="rubric-look"><span>What we look for</span>{c.look}</p>
+                    </article>
+                  ))}
+                </div>
+                <p className="rubric-note">{scoring.screening.note}</p>
+              </div>
+            )}
+            <div className="rubric-foot">
+              <a className="btn" href="#register" data-register onClick={() => setOpen(null)}>register now <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+      )}
       {item && (
         <div className="detail-inner">
           {/* Close sits top left, and the bar stays pinned while the brief scrolls */}
@@ -107,6 +195,9 @@ export default function DetailDrawer() {
                   <ul className="chips">
                     {track.build.map((b) => <li key={b}>{b}</li>)}
                   </ul>
+                  <a className="btn" href="#register" data-register data-track={TRACK_CHOICE[track.id]} onClick={() => setOpen(null)}>
+                    register for this track <span aria-hidden="true">→</span>
+                  </a>
                 </>
               )}
               {invite && (

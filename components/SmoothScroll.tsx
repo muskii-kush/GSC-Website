@@ -101,7 +101,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       // "How it works": on desktop the section holds while the timeline slides left, month by
       // month, and the line draws across; below that it stays vertical and the line draws down.
       const tlm = gsap.matchMedia();
-      tlm.add("(min-width: 1081px)", () => {
+      tlm.add("(min-width: 1081px) and (min-height: 620px)", () => {
         gsap.utils.toArray<HTMLElement>("[data-htl]").forEach((wrap) => {
           const vp = wrap.querySelector<HTMLElement>(".tl-viewport");
           const ol = wrap.querySelector<HTMLElement>(".dates");
@@ -113,7 +113,9 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
           size();
           ScrollTrigger.addEventListener("refreshInit", size);
           const tl = gsap.timeline({
-            scrollTrigger: { trigger: wrap, start: "top 72px", end: () => `+=${distance()}`, scrub: 0.6, invalidateOnRefresh: true },
+            scrollTrigger: {
+              trigger: wrap, start: "top 72px", end: () => `+=${distance()}`, scrub: 0.6, invalidateOnRefresh: true,
+            },
           });
           tl.to(ol, { x: () => -distance(), ease: "none" }, 0);
           if (line) tl.fromTo(line, { scaleX: 0 }, { scaleX: 1, ease: "none" }, 0);
@@ -123,7 +125,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
           };
         });
       });
-      tlm.add("(max-width: 1080px)", () => {
+      tlm.add("(max-width: 1080px), (max-height: 619px)", () => {
         gsap.utils.toArray<HTMLElement>("[data-htl] .dates-line").forEach((el) =>
           gsap.fromTo(el, { scaleY: 0 }, {
             scaleY: 1, ease: "none",

@@ -316,15 +316,20 @@ export const faq = {
   items: [
     {
       q: "Who can apply?",
-      a: "Early-stage startups incorporated in India, as a private limited company or an LLP, with at least one founder working on it full time. If you have raised more than ₹50 crore in equity, the challenge is not for you.",
+      a: "Early-stage startups incorporated in India, as a private limited company or an LLP, with at least one founder working on it full time. If you have raised more than ₹50 crore in funding, the challenge is not for you.",
     },
     {
       q: "When do applications open and close?",
       a: "Applications open on 1 October 2026 and close on 31 October 2026, IST. The deadline is firm and will not be extended.",
     },
     {
+      q: "How are applications scored?",
+      a: "Every application first clears eight yes-or-no eligibility checks. It is then read by two independent reviewers and scored on four equally weighted criteria: track fit, product evidence, team and traction. Both are published in full, so you can write your application against them.",
+      link: { label: "Read the eligibility checks and screening rubric", href: "#scoring" },
+    },
+    {
       q: "What do I need to apply?",
-      a: "Details on your company, team, product, market and traction, a link to your deck and a 2 to 5 minute video of the founders. The application takes about thirty minutes, and you can save your progress and come back to it.",
+      a: "Details on your company, team, product, market and traction, a link to your deck and a 2 to 5 minute video of the founders. The application takes about thirty minutes. Answers save in your browser as you type, so you can close it and come back on the same device.",
     },
     {
       q: "Which track should I apply to?",
@@ -332,7 +337,7 @@ export const faq = {
     },
     {
       q: "What happens after I apply?",
-      a: "Applications are screened and shortlisted startups are interviewed through November and December. You hear back either way. Shortlisted teams spend December with a mentor, refine their solution in early January and pitch at the finale.",
+      a: "Applications are reviewed on a rolling basis, and shortlisted startups are invited to interview. Everyone who applies hears back by email. We may contact you for clarification along the way; that does not mean you have been selected. Shortlisted teams then work with a mentor and refine their solution before the finale.",
     },
     {
       q: "Where and when is the finale?",
@@ -343,6 +348,65 @@ export const faq = {
       a: "A shot at the ₹1 crore prize pool, plus real deployment, mentorship, investor visibility and national recognition.",
     },
   ],
+};
+
+// The published part of the scoring rubric: the eligibility checks and the screening round.
+export const scoring = {
+  label: "How applications are scored",
+  title: "how we score applications",
+  lede: "Every application goes through the same two stages, scored against criteria written down in advance. This is what the reviewers read from, and what you should write your application against.",
+  gates: {
+    tab: "Eligibility",
+    heading: "Eight eligibility checks",
+    intro: "Each check is a simple yes or no. Miss any one and the application closes, however strong the rest of it is. Nothing here is scored, so a strong pitch cannot make up for a missed check. They are published so you can confirm them before you spend an evening on the form.",
+    items: [
+      { title: "Incorporated in India", text: "A private limited company or an LLP registered in India, with a CIN, on the day you apply. Teams that have not yet incorporated cannot apply this year, because the prize is paid to an entity and pilots need one to sign." },
+      { title: "The track fits", text: "The application answers one of the four published problem statements, and the track you select matches what the company actually does." },
+      { title: "Under ₹50 crore raised", text: "Total funding raised to date is under ₹50 crore." },
+      { title: "At least one full-time founder", text: "Named, reachable, and working on this and nothing else." },
+      { title: "Something is being built", text: "A product, a prototype, working code, or a technical founder who can build one. Consulting, staffing, reselling and pure systems integration businesses are not eligible." },
+      { title: "The deck opens", text: "A link that opens on the first click, without a permission request. A deck we cannot open is a deck we cannot score." },
+      { title: "Complete and declared", text: "Every required field filled, consent given, and a declaration that the figures you have given are true." },
+      { title: "Not a Cars24 employee", text: "A current Cars24 employee cannot apply as a founder. If a founder has immediate family working at Cars24, say so on the form. It is a disclosure, not a disqualification." },
+    ],
+    note: "Figures are checked for shortlisted startups. A figure overstated by more than 25% against what can be verified, without an explanation the committee accepts, closes the application.",
+  },
+  screening: {
+    tab: "Screening",
+    heading: "Screening: four criteria, equal weight",
+    intro: "Two independent reviewers read every application that clears eligibility, working from the form and the deck. Each scores four equally weighted criteria from 1 to 5. The two scores are averaged, and the strongest applications move on to the jury round. Here is what the reviewers look for.",
+    criteria: [
+      {
+        title: "Track fit and problem clarity",
+        weight: "25%",
+        question: "Can a reader tell what you do, who has the problem, and why it belongs in this track?",
+        reads: "Your one-sentence description, the problem, the target customer, and whether the track you picked matches the business.",
+        look: "We look at whether we can tell what you do and who it is for, whether the problem is specific and quantified in rupees, hours or incidents, whether the customer is identifiable, and whether it answers one of the four track problem statements. Evidence that customers already spend money or time on a worse fix counts strongly.",
+      },
+      {
+        title: "Product evidence",
+        weight: "25%",
+        question: "Does anything exist outside the deck, and has anyone outside your team used it?",
+        reads: "Your product stage, customers, tech stack, any measured quality number, and the demo if there is one.",
+        look: "We assess how far the product has come: an idea, a working prototype, something live with users outside the team, or a product customers depend on every day. We look for named customers, real technical choices, a measured result on quality or speed, and anything you own that a competitor cannot easily buy, such as your own data, models, licences or hard-won integrations.",
+      },
+      {
+        title: "Team credibility",
+        weight: "25%",
+        question: "Is there a person here who can build it and a person who can sell it?",
+        reads: "The founders, their roles and what each built before, LinkedIn profiles, who writes the code, team size, and the founder video.",
+        look: "We look for at least one full-time founder who can build the product and one who can sell it, relevant experience in the problem area, profiles that match the claims, and a clear split of who owns what. A founder who has worked on this exact problem before, or has built and exited a company, stands out.",
+      },
+      {
+        title: "Traction signal",
+        weight: "25%",
+        question: "Has anyone paid, or used it enough to count?",
+        reads: "Whether anyone uses the product, customer and paying counts, six months of revenue, and whether a reference customer is offered.",
+        look: "We look at whether anyone uses or pays for the product: paid pilots, paying customers, active users or transaction volume, and whether revenue has grown over the last six months. Renewals, expanded contracts and a named reference customer all strengthen the case.",
+      },
+    ],
+    note: "Traction is not an eligibility check. A strong idea-stage team can still move forward on the other three criteria.",
+  },
 };
 
 export const closing = {

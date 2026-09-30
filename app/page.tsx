@@ -96,7 +96,10 @@ export default function Page() {
             <p className="when">{hero.when}</p>
             <Countdown />
             <div className="actions">
-              <a className="reg-link" href="#register" data-register>register now <span className="reg-arrow" aria-hidden="true">→</span></a>
+              <div className="reg-stack">
+                <a className="reg-link" href="#register" data-register>register now <span className="reg-arrow" aria-hidden="true">→</span></a>
+                <a className="elig-link" href="#scoring">check eligibility <span aria-hidden="true">↗</span></a>
+              </div>
               <a className="btn ghost" href="#partners">partner with us</a>
             </div>
             <p className="hero-with">in partnership with</p>
@@ -194,9 +197,14 @@ export default function Page() {
             <p className="label rise">{timeline.eyebrow}</p>
             <Reveal className="h-dare" text={timeline.title} accent={["finale"]} />
             <p className="soft rise">{timeline.lede}</p>
-            <a className="btn rise" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
+            <a className="rubric-link rise" href="#scoring">eligibility and scoring <span aria-hidden="true">↗</span></a>
+            <div className="dates-actions rise">
+              <a className="btn" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
+            </div>
           </div>
           <div className="tl-viewport">
+          {/* Desktop only: the timeline moves sideways as you scroll down, which is not obvious at first. */}
+          <p className="tl-hint" aria-hidden="true">Keep scrolling down to move along the timeline <span>→</span></p>
           <ol className="dates">
             <span className="dates-line" aria-hidden="true" />
             {timeline.items.map((t, i) => (
@@ -277,6 +285,9 @@ export default function Page() {
                     <span className="faq-plus" aria-hidden="true" />
                   </summary>
                   <p>{f.a}</p>
+                  {f.link && (
+                    <a className="faq-link" href={f.link.href}>{f.link.label} <span aria-hidden="true">↗</span></a>
+                  )}
                 </details>
               ))}
             </div>
