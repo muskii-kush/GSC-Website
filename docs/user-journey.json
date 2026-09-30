@@ -178,8 +178,8 @@
         "mark": "GSC logo (trapezoid clip)",
         "name": "Grand Startup Challenge",
         "headline": "build what moves india forward",
-        "lede": "A four-month startup challenge for early-stage teams building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
-        "when": "January 2027, New Delhi",
+        "lede": "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
+        "when": "Grand finale | calendar icon January 2027 | pin icon New Delhi (one row)",
         "countdown": {
           "component": "components/Countdown.tsx",
           "phases": [
@@ -195,7 +195,7 @@
           ]
         },
         "partnerStrip": {
-          "label": "in partnership with",
+          "label": "brought to you by",
           "logos": [
             "DPIIT Startup India",
             "Cars24",
@@ -214,6 +214,12 @@
           "action": "open-registration"
         },
         {
+          "label": "check eligibility ↗",
+          "style": "small label under register now",
+          "action": "open-overlay",
+          "target": "#scoring"
+        },
+        {
           "label": "partner with us",
           "style": "ghost pill",
           "action": "scroll",
@@ -229,7 +235,8 @@
         "With DPIIT and Startup India, Government of India",
         "₹1 Cr prize pool",
         "4 problem tracks",
-        "1,000+ applications expected",
+        "Funding opportunities",
+        "Mentorship support",
         "12 winning startups"
       ],
       "motion": [
@@ -245,14 +252,13 @@
       "purpose": "What the event is, and why it exists.",
       "content": {
         "heading": "about the event",
-        "statement": "The Grand Startup Challenge, run with DPIIT and Startup India, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
-        "lede": "Over a four-month journey, startups move from applications and shortlisting to a month of immersion and refinement, and a final showcase in New Delhi.",
+        "statement": "The Grand Startup Challenge, run with Startup India and the Startup Policy Forum, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
         "why": {
           "eyebrow": "Why this challenge",
           "cards": [
-            "1 · Built with the Government of India",
-            "2 · Hosted by a company born in the startup boom",
-            "3 · For the next generation of Indian founders"
+            "1 · Built with the Government of India (government building icon)",
+            "2 · Hosted by a company born in the startup boom: scaled with the help of founders and investors (growth icon)",
+            "3 · For the next generation of Indian founders (sprout icon)"
           ]
         }
       },
@@ -329,7 +335,8 @@
       "bridge": {
         "label": "Next · What startups get ↓",
         "action": "scroll to that section"
-      }
+      },
+      "overlayNote": "Track briefs: 'Problem statements' chips (from the GSC problem statements sheet), three sourced metrics each, no em or en dashes."
     },
     {
       "step": 6,
@@ -345,7 +352,7 @@
         },
         "eyebrow": "What startups get",
         "heading": "and the prize is only the beginning",
-        "lede": "The ₹1 crore pool is shared among twelve winners, the top three in each track. But every startup that makes the shortlist also signs up for all of this.",
+        "lede": "Every startup that makes the shortlist also signs up for all of this.",
         "passes": [
           {
             "stamp": "Live",
@@ -360,11 +367,12 @@
             "title": "A chance at real deployment"
           },
           {
-            "stamp": "Pitch",
-            "title": "Investors in the room"
+            "stamp": "Network",
+            "title": "Investors in the room",
+            "text": "Closed-door, invite-only one-on-one sessions with potential investors in the investor lounge."
           },
           {
-            "stamp": "Delhi",
+            "stamp": "Pitch",
             "title": "A national stage",
             "layout": "centred under the row above"
           }
@@ -453,7 +461,7 @@
         "cards": [
           "1 · Startups and founders",
           "2 · Investors",
-          "3 · Policymakers",
+          "3 · Policy makers",
           "4 · Students and campus delegates",
           "5 · Media and industry press",
           "6 · Corporate innovation and CVC teams"

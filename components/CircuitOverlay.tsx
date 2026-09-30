@@ -57,9 +57,18 @@ export default function CircuitOverlay({ gridSelector }: { gridSelector: string 
       setSize({ w: grid.clientWidth, h: grid.clientHeight, x: grid.offsetLeft, y: grid.offsetTop });
     };
     measure();
+    // Re-measure whenever anything that moves the cards changes: the grid, its container, any card,
+    // the window, or the deck finishing its deal (the host gains .is-dealt). A stale measurement is
+    // what drew traces across the cards instead of in the gaps between them.
     const ro = new ResizeObserver(measure);
     ro.observe(grid);
-    return () => ro.disconnect();
+    if (svg.parentElement) ro.observe(svg.parentElement);
+    Array.from(grid.children).forEach((c) => ro.observe(c));
+    const mo = new MutationObserver(measure);
+    if (svg.parentElement) mo.observe(svg.parentElement, { attributes: true, attributeFilter: ["class"] });
+    window.addEventListener("resize", measure);
+    document.fonts?.ready.then(measure).catch(() => {});
+    return () => { ro.disconnect(); mo.disconnect(); window.removeEventListener("resize", measure); };
   }, [gridSelector]);
 
   const links = buildLinks(boxes, cols);

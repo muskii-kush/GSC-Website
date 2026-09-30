@@ -36,6 +36,13 @@ function accentPhrases(text: string, phrases: string[]) {
 }
 
 // A quiet hand-off at the end of a section: "Next · <section> ↓", linking to it.
+// Line icons for the three "why this challenge" cards: government, growth, the next founders.
+const WHY_ICONS = [
+  <svg key="gov" viewBox="0 0 24 24"><path d="M3 9.5 12 4l9 5.5M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20.5h18" /></svg>,
+  <svg key="grow" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6" /></svg>,
+  <svg key="sprout" viewBox="0 0 24 24"><path d="M12 21v-9M12 12c0-3.5-2.5-6-7-6 0 4 2.5 6 7 6zM12 14c0-3.5 2.5-6 7-6 0 4-2.5 6-7 6z" /></svg>,
+];
+
 function Bridge({ label, target }: { label: string; target: string }) {
   return (
     <div className="bridge-row rise">
@@ -63,7 +70,7 @@ function ticket(g: (typeof gets.items)[number], i: number, total: number) {
             <path className="ticket-rocket-flame" d="M13.4 21.5c0 3 1.2 5 2.6 6.8 1.4-1.8 2.6-3.8 2.6-6.8" />
           </g>
         </svg>
-        <strong className="ticket-stamp">{g.stamp}</strong>
+        <strong className={`ticket-stamp${g.stamp.length > 6 ? " is-long" : ""}`}>{g.stamp}</strong>
         <span className="ticket-no">Pass {i + 1} of {total}</span>
       </div>
       <div className="ticket-body">
@@ -93,7 +100,17 @@ export default function Page() {
             <p className="wordmark">Grand Startup Challenge</p>
             <Reveal as="h1" className="statement" text={hero.statement} immediate stagger={0.08} />
             <p className="soft">{hero.lede}</p>
-            <p className="when">{hero.when}</p>
+            <p className="when">
+              <span className="when-label">{hero.when.label}</span>
+              <span className="when-item">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
+                {hero.when.date}
+              </span>
+              <span className="when-item">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" /><circle cx="12" cy="10" r="2.4" /></svg>
+                {hero.when.venue}
+              </span>
+            </p>
             <Countdown />
             <div className="actions">
               <div className="reg-stack">
@@ -102,7 +119,7 @@ export default function Page() {
               </div>
               <a className="btn ghost" href="#partners">partner with us</a>
             </div>
-            <p className="hero-with">in partnership with</p>
+            <p className="hero-with">brought to you by</p>
             <div className="partners" aria-label="DPIIT, Cars24 and Startup Policy Forum">
               <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="p-dpiit" />
               <span className="p-div" />
@@ -127,14 +144,14 @@ export default function Page() {
         {/* 3. What this is, and why it matters. */}
         <section className="s-challenge" id="challenge">
           <Reveal className="h-center" text={challenge.title} accent={["event"]} />
-          <p className="statement-sm rise">{accentPhrases(challenge.statement, ["DPIIT and Startup India", "real problems", "national recognition"])}</p>
-          <p className="soft center rise">{challenge.lede}</p>
+          <p className="statement-sm rise">{accentPhrases(challenge.statement, ["Startup India and the Startup Policy Forum", "real problems", "national recognition"])}</p>
           <p className="label accent why-label rise">{why.eyebrow}</p>
           {/* Numbers lit in mint; the cards tilt towards the cursor. */}
           <div className="why-wrap">
           <div className="room-grid why-grid" data-stagger>
             {why.items.map((w, i) => (
               <article className="room-card" data-tiltcard key={w.title}>
+                <span className="why-icon" aria-hidden="true">{WHY_ICONS[i]}</span>
                 <span className="room-n">{i + 1}</span>
                 <h3>{w.title}</h3>
                 <p>{w.text}</p>

@@ -191,7 +191,7 @@ export default function DetailDrawer() {
                       <li key={v}><strong>{v}</strong><span>{l}</span></li>
                     ))}
                   </ul>
-                  <h3>What startups would build</h3>
+                  <h3>Problem statements</h3>
                   <ul className="chips">
                     {track.build.map((b) => <li key={b}>{b}</li>)}
                   </ul>

@@ -224,7 +224,14 @@ main {
 .hero-with { margin-top: 70px; font-family: var(--f-label); font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-50); }
 .hero-with + .partners { margin-top: 16px; }
 .invitation .soft { margin-top: 44px; max-width: 1080px; font-size: clamp(15px, 1.4vw, 20px); text-wrap: balance; }
-.when { font-family: var(--f-display); font-weight: 700; font-size: clamp(20px, 2.2vw, 30px); letter-spacing: -.01em; margin-top: 36px; }
+.when {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 26px;
+  font-family: var(--f-display); font-weight: 700; font-size: clamp(20px, 2.2vw, 30px); letter-spacing: -.01em; margin-top: 36px;
+}
+.when-label { color: #B9B2FF; padding-right: 26px; border-right: 1px solid rgba(255, 255, 255, .22); line-height: 1.1; }
+@media (max-width: 560px) { .when-label { flex-basis: 100%; padding-right: 0; border-right: 0; } }
+.when-item { display: inline-flex; align-items: center; gap: 10px; }
+.when-item svg { width: .9em; height: .9em; fill: none; stroke: #B9B2FF; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 .countdown-wrap { margin-top: 56px; }
 .countdown-label { font-family: var(--f-label); font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink-70); display: inline-flex; align-items: center; gap: 10px; }
@@ -269,7 +276,7 @@ main {
 .stat-l { font-family: var(--f-label); font-size: clamp(11px, 1vw, 13px); letter-spacing: .26em; text-transform: uppercase; color: var(--ink-70); margin-top: 12px; }
 
 /* ── Film ────────────────────────────────────────────────── */
-.s-film { padding: 40px 24px 160px; }
+.s-film { padding: 40px 24px clamp(60px, 7vw, 100px); }
 .film-stage { perspective: 1400px; width: min(1200px, 100%); margin: auto; }
 .film-frame {
   position: relative; aspect-ratio: 16 / 9; overflow: hidden;
@@ -281,7 +288,7 @@ main {
 .film-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ── Section rhythm ──────────────────────────────────────── */
-section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align: center; }
+section[class^="s-"]:not(.s-hero):not(.s-film) { padding: clamp(72px, 8vw, 112px) 24px; text-align: center; }
 /* Key phrases in the about statement, in the same lilac as the heading accents */
 .it-soft { color: #B9B2FF; }
 .s-challenge .statement-sm {
@@ -337,6 +344,11 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .why-grid .room-card:hover, .why-grid .room-card.is-tilting { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); }
 .why-grid .room-card > * { transform: translateZ(26px); }
 .why-grid .room-card .room-n { transform: translateZ(44px); }
+.why-icon {
+  display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; margin-bottom: 22px;
+  background: rgba(185, 178, 255, .12); border: 1px solid rgba(185, 178, 255, .22);
+}
+.why-icon svg { width: 24px; height: 24px; fill: none; stroke: #B9B2FF; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .why-grid .room-card::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
   background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, .10), transparent 55%);
@@ -634,6 +646,8 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 @keyframes rocket-flicker-hot { from { transform: scaleY(1.1); } to { transform: scaleY(1.45); } }
 .ticket-admit { padding-right: 38px; font-family: var(--f-label); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; opacity: .8; }
 .ticket-stamp { font-family: var(--f-display); font-weight: 800; letter-spacing: -.04em; line-height: .9; font-size: clamp(32px, 3.4vw, 48px); white-space: nowrap; }
+/* Longer stamp words (e.g. "Network") step down a size so they stay inside the stub */
+.ticket-stamp.is-long { font-size: clamp(26px, 2.6vw, 38px); }
 .ticket-gold .ticket-stamp { font-size: clamp(52px, 6vw, 92px); white-space: nowrap; }
 .ticket-no { font-family: var(--f-label); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; opacity: .7; }
 
@@ -662,7 +676,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .bridge:hover { border-color: var(--mint); }
 .bridge:hover .bridge-label { color: var(--ink); }
 .bridge:hover .bridge-arrow { transform: translateY(3px); }
-.bridge-row { flex-basis: 100%; width: 100%; display: flex; justify-content: center; margin-top: clamp(70px, 8vw, 110px); }
+.bridge-row { flex-basis: 100%; width: 100%; display: flex; justify-content: center; margin-top: clamp(44px, 5vw, 72px); }
 
 /* Current section in the menu bar */
 .nav-links a.is-current { color: var(--ink); box-shadow: 0 1px 0 var(--mint); }
@@ -734,8 +748,11 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .detail-side p { font-size: 15px; line-height: 1.75; color: var(--ink-70); margin: 0 0 32px; }
 .detail-side .track-why { font-family: var(--f-display); font-weight: 600; font-size: 22px; line-height: 1.3; color: var(--ink); letter-spacing: -.02em; }
 .track-stats { list-style: none; padding: 0; margin: 0 0 36px; display: grid; gap: 18px; }
-.track-stats li { display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: baseline; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-.track-stats strong { font-family: var(--f-display); font-weight: 800; font-size: 26px; letter-spacing: -.03em; }
+.track-stats li { display: grid; gap: 6px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.track-stats strong { font-family: var(--f-display); font-weight: 800; font-size: 28px; line-height: 1.1; letter-spacing: -.03em; }
+.problems { list-style: none; padding: 0; margin: 0 0 40px; border-top: 1px solid var(--line); }
+.problems li { display: flex; gap: 14px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.5; color: var(--ink); }
+.problems-n { flex: 0 0 18px; font-family: var(--f-label); font-size: 12px; color: var(--mint); }
 .track-stats span { font-size: 13px; line-height: 1.6; color: var(--ink-70); }
 .points { margin: 0 0 32px; padding-left: 18px; display: grid; gap: 10px; }
 .points li { font-size: 15px; line-height: 1.7; color: var(--ink-70); }
@@ -991,3 +1008,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 160px 24px; text-align
 .app-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .rubric-look { margin: 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: 15px; line-height: 1.75; color: var(--ink-70); max-width: 900px; }
 .rubric-look span { display: block; font-family: var(--f-label); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--mint); margin-bottom: 6px; }
+/* Why cards: icon tile top left, lit number top right, as one header row */
+.why-grid .room-n { position: absolute; top: 30px; right: 32px; font-size: 52px; }
+.why-grid .room-card .why-icon { margin-bottom: 0; }
+.why-grid .room-card h3 { margin-top: 26px; }

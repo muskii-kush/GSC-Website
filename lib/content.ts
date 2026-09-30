@@ -11,8 +11,8 @@ export const APPLICATIONS_CLOSE = "2026-10-31T23:59:59+05:30";
 export const hero = {
   statement: "build what moves india forward",
   lede:
-    "A four-month startup challenge for early-stage teams building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
-  when: "January 2027, New Delhi",
+    "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
+  when: { label: "Grand finale", date: "January 2027", venue: "New Delhi" },
 };
 
 // Floating chips around the hero statement. Every fact here is repeated elsewhere on the page.
@@ -27,11 +27,8 @@ export const challenge = {
   title: "about the event",
   // From the GSC 2027 concept note (objective, format and outcomes).
   statement:
-    "The Grand Startup Challenge, run with DPIIT and Startup India, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
-  lede:
-    "Over a four-month journey, startups move from applications and shortlisting to a month of immersion and refinement, and a national finale.",
+    "The Grand Startup Challenge, run with Startup India and the Startup Policy Forum, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
   metrics: [
-    { value: "1,000+", label: "Applications" },
     { value: "₹1 Cr", label: "Prize pool" },
     { value: "4", label: "Problem tracks" },
   ],
@@ -42,7 +39,8 @@ export const proof = [
   "With DPIIT and Startup India, Government of India",
   "₹1 Cr prize pool",
   "4 problem tracks",
-  "1,000+ applications expected",
+  "Funding opportunities",
+  "Mentorship support",
   "12 winning startups",
   ];
 
@@ -50,9 +48,9 @@ export const proof = [
 export const why = {
   eyebrow: "Why this challenge",
   items: [
-    { title: "Built with the Government of India", text: "The challenge runs with DPIIT and Startup India. It is a national platform for founders, not a company contest." },
-    { title: "Hosted by a company born in the startup boom", text: "Cars24 was founded in 2015, the year Startup India began, and scaled on the belief of founders and investors. This is that support, passed on." },
-    { title: "For the next generation of Indian founders", text: "Real problems, real data, ₹1 crore in prize money and a national stage, open to early-stage teams building for India’s next decade." },
+    { title: "Built with the Government of India", text: "The challenge runs with Startup India, Government of India. It is a national platform for founders, not a company contest." },
+    { title: "Hosted by a company born in the startup boom", text: "Cars24 was founded in 2015, the year Startup India began, and scaled with the help of founders and investors. This is that support, passed on." },
+    { title: "For the next generation of Indian founders", text: "Real problems, real data, ₹1 crore in prize money and a national stage, open to early-stage startups building for India’s next decade." },
   ],
 };
 
@@ -60,14 +58,14 @@ export const why = {
 export const gets = {
   eyebrow: "What startups get",
   title: "and the prize is only the beginning",
-  lede: "The ₹1 crore pool is shared among twelve winners, the top three in each track. But every startup that makes the shortlist also signs up for all of this.",
+  lede: "Every startup that makes the shortlist also signs up for all of this.",
   items: [
     { stamp: "₹1 Cr", admit: "Prize", title: "₹1 crore prize pool", text: "One pool, shared among twelve winners: the top three startups in each of the four tracks." },
     { stamp: "Live", admit: "Data", title: "Real problems, real data", text: "Live problem statements drawn from real operations, with real data behind them." },
     { stamp: "1:1", admit: "Mentor", title: "A month with mentors", text: "Shortlisted startups spend December refining their solution with an assigned mentor." },
     { stamp: "Deploy", admit: "Launch", title: "A chance at real deployment", text: "Solutions are built for the context where the problem actually lives, not for a demo day." },
-    { stamp: "Pitch", admit: "Lounge", title: "Investors in the room", text: "Pitch to a jury with DPIIT, industry leaders and invited investors, and meet them in the lounge." },
-    { stamp: "Delhi", admit: "Finale", title: "A national stage", text: "Pitch to the jury, investors and policymakers at the national finale." },
+    { stamp: "Network", admit: "Lounge", title: "Investors in the room", text: "Closed-door, invite-only one-on-one sessions with potential investors in the investor lounge." },
+    { stamp: "Pitch", admit: "Finale", title: "A national stage", text: "Pitch to the jury, investors and policy makers at the national finale." },
   ],
 };
 
@@ -132,21 +130,21 @@ export const tracks: {
     id: "fintech",
     num: "Track 1 · Fintech",
     name: "Lending & Fintech",
-    summary: "Better credit, underwriting and fraud intelligence for the next 400 million Indians.",
+    summary: "Better credit, underwriting and fraud checks for India’s fast growing base of borrowers.",
     image: asset("/media/track-fintech-card.jpg"),
     briefImage: asset("/media/track-fintech-brief.jpg"),
     kicker: "Track 1 · Fintech & lending",
     title: "Credit that meets people where they are.",
-    lede: "Build the next generation of underwriting, access and trust for India’s new-to-credit population.",
-    body: "We are interested in products that make financial decisions more useful and more equitable: alternative data, contextual credit, fraud intelligence, collections and tools that help people build a financial life.",
-    signals: "A clear wedge, responsible use of data, measurable outcomes and a path to real distribution.",
-    why: "Only 8 in every 100 Indian households own a car.",
+    lede: "Build better ways to judge, price and serve borrowers, including the millions applying for their first loan.",
+    body: "We want products that help lenders say yes to the right people: sharper credit models, loans structured around the borrower, early warnings before an EMI is missed, and tools that help vehicle owners manage what they owe.",
+    signals: "A clear first use case, responsible use of data, results you can measure against a bureau score, and a real route to lenders.",
+    why: "More Indians are asking for credit than lenders can confidently assess.",
     stats: [
-      ["8%", "Of Indian households own a car. 14% urban, 4% rural"],
-      ["759 Mn", "Credit eligible Indians outside the formal credit system"],
-      ["₹2,562 Cr", "Cars24 Financial Services AUM, 98% of it retail"],
+      ["₹30 lakh crore", "The credit small businesses need but cannot get from formal lenders (SIDBI and Crisil, 2025)"],
+      ["18.3 crore", "Indians now track their own CIBIL score, three in four of them outside the metros (TransUnion CIBIL, 2025)"],
+      ["40%", "Year on year rise in the value of new retail loans in the March 2026 quarter (TransUnion CIBIL)"],
     ],
-    build: ["Credit intelligence", "Background verification", "Fraud detection", "Early repayment alerts", "Alternative data scoring", "Dealer financing tools"],
+    build: ["Credit intelligence for vehicle owners", "Fraud and identity checks", "An AI underwriter that designs the loan", "Stopping a missed EMI before it happens", "A financial garage for vehicle owners"],
   },
   {
     id: "mobility",
@@ -159,16 +157,16 @@ export const tracks: {
     briefAspect: "1052 / 1495",
     kicker: "Track 2 · Mobility & road safety",
     title: "Make every journey safer.",
-    lede: "Build for the realities of Indian roads, drivers and vehicles — including the transition to EV.",
-    body: "Think beyond the dashboard: vehicle health, driver risk scoring, safety systems, maintenance intelligence and tools that help people move with greater confidence.",
-    signals: "A grounded understanding of road behaviour, a measurable safety outcome and a product that can operate at scale.",
-    why: "India does not just need more cars. India needs safer cars, better cars and safer roads.",
+    lede: "Build for Indian roads, Indian drivers and the vehicles on them, including the move to electric.",
+    body: "We are looking for products that catch problems before they cause harm: faster and fairer vehicle inspections, driver risk scoring, safer routes, quicker help after a crash, and trusted data on EV battery health.",
+    signals: "A clear grasp of how people actually drive, a safety outcome you can measure, and a product that works at the scale of Indian roads.",
+    why: "485 people die on Indian roads every day.",
     stats: [
-      ["1,77,175", "Lives lost on Indian roads in 2024, up 2.5% on the year before"],
-      ["1 lakh+", "Vehicle inspections every month at Cars24"],
-      ["₹52 Cr+", "In pending challans flagged by SATARK across 5.5 lakh vehicles"],
+      ["1,77,175", "Lives lost on Indian roads in 2024 (MoRTH)"],
+      ["70.3%", "Of those deaths involved over-speeding (MoRTH, 2024)"],
+      ["Oct 2024", "Since then, commercial vehicles can only be certified fit at automated testing stations (MoRTH)"],
     ],
-    build: ["Vehicle inspection", "Pricing and valuation", "AI enabled dashcams", "Vehicle telemetry", "Vehicle safety devices", "Driver risk scoring"],
+    build: ["Smartphone based vehicle inspection", "Predicting accident prone routes", "A first responder network for the golden hour", "Road safety audits with computer vision", "Turning road video into safety data", "Trusted battery health for used EVs"],
   },
   {
     id: "logistics",
@@ -179,16 +177,16 @@ export const tracks: {
     briefAspect: "2 / 1",
     kicker: "Track 3 · Logistics & supply chain",
     title: "Make the network work harder.",
-    lede: "Help a distributed fleet, its hubs and its people make better decisions every day.",
-    body: "We are looking for route and load optimisation, hub operations, robotics, damage detection, valuation from images and the intelligence layer connecting it all.",
-    signals: "Operational depth, a clear feedback loop and evidence that the product saves time, cost or unnecessary movement.",
-    why: "Every rupee and every hour taken out of the hub comes back on the price.",
+    lede: "Help a fleet, its hubs and the people running them move more with less.",
+    body: "We want tools that cut empty and wasted movement: route and load planning, shared truck space for part loads, hub and yard operations, damage checks at every handover, and fuel use you can measure.",
+    signals: "Operational depth, a tight feedback loop, and proof that the product saves time, money or trips.",
+    why: "Every hour and every rupee taken out of moving a car comes back in its price.",
     stats: [
-      ["~200,000", "Cars bought, moved, refurbished and sold in FY26"],
-      ["7.97%", "Of India’s GDP spent on logistics, the cost the National Logistics Policy targets"],
-      ["3", "Markets, across India, the UAE and Australia"],
+      ["₹24 lakh crore", "India’s logistics bill in 2023 to 24, or 7.97% of GDP (DPIIT and NCAER)"],
+      ["70%", "Of India’s freight moves by road (NITI Aayog and RMI)"],
+      ["~2 lakh", "Cars bought, moved, refurbished and sold in FY26 on the network behind this track"],
     ],
-    build: ["Operational optimisation", "Hub operations", "Fuel optimisation", "Cleaner operations", "Yard management", "Attendance management"],
+    build: ["Interstate car carriers for part truck loads", "Route and load planning", "Hub and yard operations", "Damage checks at handover", "Fuel optimisation"],
   },
   {
     id: "sovereign-ai",
@@ -198,16 +196,16 @@ export const tracks: {
     image: asset("/media/track-sovereign-ai.jpg"),
     kicker: "Track 4 · Sovereign AI",
     title: "Build intelligence we can trust.",
-    lede: "Create practical AI systems for the infrastructure and services that India depends on.",
-    body: "The opportunity spans applied models, privacy-aware infrastructure, evaluation, multilingual systems and dependable tools for high-consequence operating environments.",
-    signals: "Strong technical judgement, responsible deployment and a sharp view of where local context creates a real advantage.",
-    why: "AI built for India has to be trained on Indian data.",
+    lede: "Build AI that understands Indian languages, follows Indian rules and keeps Indian data at home.",
+    body: "Most of the AI used in India today runs on models, chips and clouds controlled abroad. We want practical systems that keep sensitive data in the country, work in the languages people speak, and hold up in public services and regulated industries.",
+    signals: "Sound technical judgement, careful handling of personal data, and a clear view of where local context gives you an edge.",
+    why: "India creates a fifth of the world’s data but stores very little of it at home.",
     stats: [
-      ["~89%", "Of new startups launched in India last year used AI in their products or services"],
-      ["~60%", "Of AI value in India comes from automotive, retail, financial services and healthcare"],
-      ["$20 Mn", "Committed to Cars24 AI Labs"],
+      ["20% vs 3%", "India’s share of the world’s data, against its share of global data centre capacity"],
+      ["₹10,372 crore", "Committed to the IndiaAI Mission to build compute and models in India (Government of India)"],
+      ["38,000+", "GPUs made available to Indian startups and researchers under the mission"],
     ],
-    build: ["Indian language interfaces", "Voice and speech models", "Small efficient models", "On device inference", "Accent robust speech", "Document understanding"],
+    build: ["Data privacy and consent", "Keeping data in India", "Accuracy in regional languages", "One vehicle record across Vahan, RC and insurance", "Automating RTO services", "An AI copilot for vehicle inspectors"],
   },
 ];
 
@@ -218,7 +216,7 @@ export const room = {
   people: [
     { title: "Startups and founders", text: "Shortlisted early-stage founders across the four tracks, many DPIIT recognised." },
     { title: "Investors", text: "Venture capital funds, industry leaders and invited investors, with access to the Founders’ Lounge." },
-    { title: "Policymakers", text: "DPIIT, Startup India and other government representatives shaping India's next decade." },
+    { title: "Policy makers", text: "DPIIT, Startup India and other government representatives shaping India's next decade." },
     { title: "Students and campus delegates", text: "Students and delegates from participating academic and knowledge partner institutions." },
     { title: "Media and industry press", text: "Media and industry voices covering the founders, solutions and national showcase." },
     { title: "Corporate innovation and CVC teams", text: "Corporate innovation and venture teams exploring solutions with deployment and partnership potential." },
@@ -257,11 +255,11 @@ export const invites: {
     image: asset("/media/invite-partner.jpg"),
     kicker: "Academic & incubation partnership",
     title: "Become a Founding Knowledge Partner.",
-    lede: "For universities, business schools and incubators that stand with founders at the earliest stage. Help shape the challenge, and meet the best of 1,000+ applicants while they are still early.",
+    lede: "For universities, business schools and incubators that stand with founders at the earliest stage. Help shape the challenge, and meet the strongest applicants while they are still early.",
     points: [
       "Your faculty or incubator leads sit on the jury and the selection committee",
       "Your incubated startups can apply, compete for the ₹1 crore prize pool and pitch to the full jury",
-      "Your team leads a panel at the finale on the question you most want India to debate",
+      "Your team joins a panel at the finale on the question you most want India to debate",
       "A seat in the Investor Lounge, alongside every investor invited to the challenge",
       "A stall to meet students and campus delegates from India’s leading institutions",
       "Case studies from the challenge, co-authored with your team",
@@ -281,8 +279,7 @@ export const invites: {
     lede: "Get close to a screened pipeline of founders working on problems that matter across fintech, mobility, logistics and sovereign AI.",
     points: [
       "Join startup mixers from October to December",
-      "Receive the shortlisted decks in December",
-      "Meet the teams you choose in the Investor Lounge and in the weeks that follow",
+      "Receive the list of shortlisted startups, and meet the ones you choose one on one in the Investor Lounge",
       "Join the final pitch day and the jury alongside DPIIT and industry leaders",
     ],
     signals: "Shortlisted startups across four tracks, with decks, demos, mentorship outcomes and a final pitch.",
