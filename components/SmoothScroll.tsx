@@ -109,7 +109,9 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
           if (!vp || !ol) return;
           const distance = () => Math.max(0, ol.scrollWidth - vp.clientWidth);
           // The wrapper's extra height is exactly the sideways travel, so the hold lasts as long as the slide.
-          const size = () => { wrap.style.height = `calc(100vh - 72px + ${distance()}px)`; };
+          // The frame is only as tall as its content, so there is no empty band above or below it.
+          const pin = wrap.querySelector<HTMLElement>(".tl-pin");
+          const size = () => { wrap.style.height = `${(pin?.offsetHeight ?? 0) + distance()}px`; };
           size();
           ScrollTrigger.addEventListener("refreshInit", size);
           const tl = gsap.timeline({

@@ -288,7 +288,9 @@ main {
 .film-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* ── Section rhythm ──────────────────────────────────────── */
-section[class^="s-"]:not(.s-hero):not(.s-film) { padding: clamp(72px, 8vw, 112px) 24px; text-align: center; }
+section[class^="s-"]:not(.s-hero):not(.s-film) { padding: clamp(56px, 6vw, 84px) 24px; text-align: center; }
+/* A section that ends in a "Next" hand-off needs little room below it: the next heading follows closely. */
+section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !important; }
 /* Key phrases in the about statement, in the same lilac as the heading accents */
 .it-soft { color: #B9B2FF; }
 .s-challenge .statement-sm {
@@ -676,7 +678,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: clamp(72px, 8vw, 112px
 .bridge:hover { border-color: var(--mint); }
 .bridge:hover .bridge-label { color: var(--ink); }
 .bridge:hover .bridge-arrow { transform: translateY(3px); }
-.bridge-row { flex-basis: 100%; width: 100%; display: flex; justify-content: center; margin-top: clamp(44px, 5vw, 72px); }
+.bridge-row { flex-basis: 100%; width: 100%; display: flex; justify-content: center; margin-top: clamp(36px, 4vw, 56px); }
 
 /* Current section in the menu bar */
 .nav-links a.is-current { color: var(--ink); box-shadow: 0 1px 0 var(--mint); }
@@ -822,7 +824,7 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: clamp(72px, 8vw, 112px
   .s-dates { display: block; }
   .dates-head .h-dare { font-size: min(clamp(40px, 5.6vw, 80px), 8.5vh); }
   .tl-pin {
-    position: sticky; top: 72px; height: calc(100vh - 72px); overflow: hidden;
+    position: sticky; top: 72px; max-height: calc(100vh - 72px); overflow: hidden; padding: 24px 0;
     display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); gap: clamp(40px, 5vw, 80px); align-items: center;
     width: min(1300px, 100%); margin: 0 auto;
   }
