@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GOOGLE_FORM_ACTION, INELIGIBLE, PENDING, pages, type Page, type Question } from "@/lib/application-form";
+import { GOOGLE_FORM_ACTION, GOOGLE_FORM_VIEW_URL, INELIGIBLE, PENDING, pages, type Page, type Question } from "@/lib/application-form";
 import {
   E, FOUNDER_CORE, checkApplication, checkEmail, checkField, checkFounders, checkLinkedinProfile, checkPhone, checkRevenue,
   checkWritten, checkXProfile, normalise,
@@ -403,7 +403,18 @@ export default function Registration() {
 function Field({ q, value, error, onChange, onBlur }: { q: Question; value: Answers[string] | undefined; error?: string; onChange: (v: string | string[]) => void; onBlur: () => void }) {
   const id = `q-${q.entry}`;
   const req = q.required ? <span className="app-req" aria-hidden="true">*</span> : null;
-  const help = q.help ? <span className="app-help">{q.help}</span> : null;
+  const isUpload = q.entry === E.deck || q.entry === E.video;
+  const help = q.help ? (
+    <span className="app-help">
+      {q.help}
+      {isUpload && (
+        <>
+          {" "}
+          <a href={GOOGLE_FORM_VIEW_URL} target="_blank" rel="noopener noreferrer">Open the official form <span aria-hidden="true">↗</span></a>
+        </>
+      )}
+    </span>
+  ) : null;
 
   if (q.kind === "radio" || q.kind === "checkbox") {
     const picked = q.kind === "radio" ? [text(value)] : list(value);

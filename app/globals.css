@@ -984,6 +984,8 @@ section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !
 .app-field > label, .app-field > legend { font-size: 15px; line-height: 1.5; color: var(--ink); padding: 0; }
 .app-req { color: var(--mint); margin-left: 4px; }
 .app-help { display: block; font-size: 13px; line-height: 1.6; color: var(--ink-70); margin-top: -2px; }
+.app-help a { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(99, 255, 177, .6); text-underline-offset: 3px; white-space: nowrap; transition: color .2s; }
+.app-help a:hover { color: var(--mint); }
 .app-choices { display: grid; gap: 8px; margin-top: 4px; }
 .app-choice { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 14px; background: rgba(255, 255, 255, .03); cursor: pointer; font-size: 14px; line-height: 1.5; color: #C9CCD6; transition: border-color .2s, background .2s; }
 .app-choice:hover { border-color: rgba(255, 255, 255, .3); }

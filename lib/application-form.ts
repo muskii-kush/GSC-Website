@@ -11,6 +11,8 @@
 
 export const GOOGLE_FORM_ID = "1FAIpQLSe7uI5-KB-8DN-TtK8S6fjeqLjCn8rH62kORvhx2F8sC84rUg";
 export const GOOGLE_FORM_ACTION = `https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/formResponse`;
+// The real Form, for the file-upload questions this site can't submit headlessly (see deck/video below).
+export const GOOGLE_FORM_VIEW_URL = `https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/viewform`;
 
 export type Question = {
   entry: string; // "emailAddress" for the Form's own email collection, otherwise "entry.<id>"
@@ -450,18 +452,21 @@ export const pages: Page[] = [
     title: "Materials and declaration",
     questions: [
       {
+        // Primary path is now dropping the file straight into the file-upload question on the
+        // live Google Form (see GOOGLE_FORM_VIEW_URL) — a real file, locked after submit, no edits.
+        // This link stays as an optional fallback for anyone who'd rather paste one.
         entry: "entry.1798461330",
         kind: "url",
         title: "Link to your deck",
-        help: "A PDF on DocSend or Dropbox. Google Drive links are not accepted, because the file can be changed after you apply. Open the link in a private browser window before you paste it: a link that asks us for permission is treated as no deck at all.",
-        required: true,
+        help: "Optional — prefer to drop the file itself? Upload it directly on the official form, in the deck question there. If you'd rather share a link instead, use a PDF on DocSend or Dropbox. Google Drive links are not accepted, because the file can be changed after you apply.",
+        required: false,
       },
       {
         entry: "entry.1187041600",
         kind: "url",
         title: "2-5 minute video of the founders",
-        help: "All of you if there is more than one founder, or just you if you are on your own. Introduce yourselves, say what you are building and why, and stop. Not a demo, not a pitch, and not read off a script: use bullet points and talk the way you would to a friend. A phone camera is perfectly good. If you cannot be in one room, record a video call. YouTube, Vimeo or Loom, unlisted is fine.",
-        required: true,
+        help: "Optional — prefer to drop the file itself? Upload it directly on the official form, in the video question there. If you'd rather share a link instead: all of you if there is more than one founder, or just you if you are on your own. Introduce yourselves, say what you are building and why, and stop. YouTube, Vimeo or Loom, unlisted is fine.",
+        required: false,
       },
       {
         entry: "entry.1620737390",
