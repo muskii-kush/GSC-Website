@@ -12,7 +12,29 @@ This is everything needed to put the site live on Cloudflare, including the appl
 
 No Google sign-in is needed by applicants. The Google Form must not contain a file upload question.
 
-## 1. Create the Pages project
+## Deploying from the zip files (no Git access)
+
+Two zips are provided:
+
+- **GSC-Website-deploy-ready.zip**: the built site (`out/`) plus the server functions (`functions/`). Use this to deploy as is.
+- **GSC-Website-source.zip**: the full source, if you want to build it yourself.
+
+Deploy with Wrangler (the dashboard's drag-and-drop upload does not include the `functions/` folder, so the application form would not work):
+
+```
+unzip GSC-Website-deploy-ready.zip && cd GSC-Website-deploy-ready
+npx wrangler login
+npx wrangler pages project create gsc-website     # first time only
+npx wrangler pages deploy out --project-name gsc-website
+```
+
+Run the deploy command from the folder that contains both `out/` and `functions/`. Then add the bindings and secret in section 2 (Pages project > Settings) and deploy once more.
+
+To build from source instead: `npm ci`, then `rm -rf app/api`, then `STATIC_EXPORT=true NEXT_PUBLIC_STATIC_SITE=true npm run build` (Node 20). The output is in `out/`.
+
+For later updates we will send a new deploy-ready zip; redeploy it the same way.
+
+## 1. Create the Pages project (if connecting to Git)
 
 Cloudflare dashboard > Workers & Pages > Create > Pages > Connect to Git, then pick this repository and the `main` branch.
 
