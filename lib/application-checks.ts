@@ -24,8 +24,8 @@ export const E = {
   runway: "entry.546859427",
   demo: "entry.356505945",
   reference: "entry.488733686",
-  deck: "entry.1798461330",
-  video: "entry.1187041600",
+  deck: "deck",
+  video: "entry.2085184104",
 } as const;
 
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
@@ -167,19 +167,18 @@ export function checkDeck(raw: string): string | null {
   return null;
 }
 
-const VIDEO_HOSTS = ["youtube.com", "youtu.be", "m.youtube.com", "vimeo.com", "player.vimeo.com", "loom.com"];
+const VIDEO_HOSTS = ["youtube.com", "youtu.be", "m.youtube.com", "loom.com", "drive.google.com"];
 export function checkVideo(raw: string): string | null {
   const u = parseUrl(raw);
   if (!u) return "Paste the full link to the video, starting with https://";
   const h = host(u);
-  if (!VIDEO_HOSTS.some((v) => h === v || h.endsWith(`.${v}`))) return /(^|\.)(drive|docs)\.google\.com$/.test(h)
-      ? "Google Drive links are not accepted, because the file can be changed after you apply. Upload it to YouTube (unlisted is fine), Vimeo or Loom."
-      : "Use a YouTube, Vimeo or Loom link. Unlisted is fine.";
+  if (!VIDEO_HOSTS.some((v) => h === v || h.endsWith(`.${v}`))) return "Use a YouTube, Google Drive or Loom link.";
   if ((h === "youtube.com" || h === "m.youtube.com") && !/[?&]v=|\/shorts\/|\/live\/|\/embed\//.test(u.href)) {
     return "That is not a link to a single YouTube video. Open the video and copy its link.";
   }
   if (h === "youtu.be" && u.pathname.length < 5) return "That YouTube link is incomplete. Open the video and copy its link.";
   if (h.endsWith("loom.com") && !/\/share\/|\/embed\//.test(u.pathname)) return "Use the Loom share link for the video.";
+  if (h === "drive.google.com" && !/\/file\/d\/|[?&]id=/.test(u.href)) return "That is a link to a Drive folder or page. Open the video file, choose Share, set it to anyone with the link, and copy that link.";
   return null;
 }
 
@@ -294,7 +293,6 @@ export function checkField(entry: string, value: string, answers: AnswerMap): st
     case E.company: return checkCompany(value, inc);
     case E.website: return value.trim() ? checkLink(value) : null;
     case E.demo: return value.trim() ? checkLink(value) : null;
-    case E.deck: return checkDeck(value);
     case E.video: return checkVideo(value);
     case E.linkedin: return checkLinkedin(value);
     case E.teamSize: return checkTeamSize(value);

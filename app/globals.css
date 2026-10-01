@@ -1016,3 +1016,18 @@ section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !
 .why-grid .room-n { position: absolute; top: 30px; right: 32px; font-size: 52px; }
 .why-grid .room-card .why-icon { margin-bottom: 0; }
 .why-grid .room-card h3 { margin-top: 26px; }
+/* Register hand-off to the Google Form */
+.registration .handoff-h { font-size: 18px; margin: 6px 0 12px; }
+.handoff-list { margin: 0 0 26px; padding-left: 20px; display: grid; gap: 10px; }
+.handoff-list li { font-size: 15px; line-height: 1.6; color: #C9CCD6; }
+.handoff-list li::marker { color: var(--mint); }
+.registration .app-fineprint { margin: 0 0 28px; }
+.handoff-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; }
+.handoff-actions .button.primary { display: inline-flex; text-decoration: none; }
+/* Deck upload field */
+.app-file { position: relative; display: flex !important; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 12px 12px 16px; border: 1px dashed rgba(255, 255, 255, .28); border-radius: 14px; background: rgba(255, 255, 255, .04); cursor: pointer; transition: border-color .2s, background .2s; }
+.app-file:hover { border-color: var(--mint); }
+.app-file.has-file { border-style: solid; border-color: rgba(99, 255, 177, .55); background: rgba(99, 255, 177, .05); }
+.application-form .app-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; padding: 0; }
+.app-file-name { font-size: 14px; color: #C9CCD6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-file-btn { flex: none; font-family: var(--f-label); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink); padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .25); }

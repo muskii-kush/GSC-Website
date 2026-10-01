@@ -326,7 +326,7 @@ export const faq = {
     },
     {
       q: "What do I need to apply?",
-      a: "Details on your company, team, product, market and traction, a link to your deck and a 2 to 5 minute video of the founders. The application takes about thirty minutes. Answers save in your browser as you type, so you can close it and come back on the same device.",
+      a: "Details on your company, every founder, your product, market and traction, your pitch deck as a PDF (up to 50MB), uploaded on the form, and a link to a 2 to 5 minute video of the founders on YouTube, Google Drive or Loom. It takes about thirty minutes, and your answers save in your browser as you go.",
     },
     {
       q: "Which track should I apply to?",
@@ -362,7 +362,7 @@ export const scoring = {
       { title: "Under ₹50 crore raised", text: "Total funding raised to date is under ₹50 crore." },
       { title: "At least one full-time founder", text: "Named, reachable, and working on this and nothing else." },
       { title: "Something is being built", text: "A product, a prototype, working code, or a technical founder who can build one. Consulting, staffing, reselling and pure systems integration businesses are not eligible." },
-      { title: "The deck opens", text: "A link that opens on the first click, without a permission request. A deck we cannot open is a deck we cannot score." },
+      { title: "The deck is uploaded", text: "Your pitch deck is uploaded to the form as a PDF. A deck we cannot open is a deck we cannot score." },
       { title: "Complete and declared", text: "Every required field filled, consent given, and a declaration that the figures you have given are true." },
       { title: "Not a Cars24 employee", text: "A current Cars24 employee cannot apply as a founder. If a founder has immediate family working at Cars24, say so on the form. It is a disclosure, not a disqualification." },
     ],

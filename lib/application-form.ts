@@ -13,12 +13,15 @@ export const GOOGLE_FORM_ID = "1FAIpQLSe7uI5-KB-8DN-TtK8S6fjeqLjCn8rH62kORvhx2F8
 export const GOOGLE_FORM_ACTION = `https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/formResponse`;
 // The real Form, for the file-upload questions this site can't submit headlessly (see deck/video below).
 export const GOOGLE_FORM_VIEW_URL = `https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/viewform`;
+/** The receiver: the Cloudflare Pages Function in functions/api/apply.js, on the same domain as the site. */
+export const SUBMIT_URL = process.env.NEXT_PUBLIC_SUBMIT_URL || "/api/apply";
+export const MAX_DECK_BYTES = 50 * 1024 * 1024;
 
 export type Question = {
   entry: string; // "emailAddress" for the Form's own email collection, otherwise "entry.<id>"
   /** Stable name for questions with extra rules (founder slots, phone), independent of the entry ID. */
   key?: string;
-  kind: "email" | "phone" | "text" | "paragraph" | "radio" | "checkbox" | "number" | "url";
+  kind: "email" | "phone" | "text" | "paragraph" | "radio" | "checkbox" | "number" | "url" | "file";
   title: string;
   help?: string;
   required: boolean;
@@ -452,21 +455,21 @@ export const pages: Page[] = [
     title: "Materials and declaration",
     questions: [
       {
-        // Primary path is now dropping the file straight into the file-upload question on the
-        // live Google Form (see GOOGLE_FORM_VIEW_URL) — a real file, locked after submit, no edits.
-        // This link stays as an optional fallback for anyone who'd rather paste one.
-        entry: "entry.1798461330",
-        kind: "url",
-        title: "Link to your deck",
-        help: "Optional — prefer to drop the file itself? Upload it directly on the official form, in the deck question there (PDF, up to 100MB). If you'd rather share a link instead, use a PDF on DocSend or Dropbox. Google Drive links are not accepted, because the file can be changed after you apply.",
-        required: false,
+        // The deck is uploaded on the site and stored in R2 by functions/api/apply.js, which
+        // writes the deck's link into the Form's "Pitch deck link" question (entry.1771685276).
+        entry: "deck",
+        key: "deck",
+        kind: "file",
+        title: "Pitch deck",
+        help: "Upload your deck as a PDF, up to 50MB. We keep the copy you submit, so it cannot change after you apply.",
+        required: true,
       },
       {
-        entry: "entry.1187041600",
+        entry: "entry.2085184104",
         kind: "url",
         title: "2-5 minute video of the founders",
-        help: "Optional — prefer to drop the file itself? Upload it directly on the official form, in the video question there (up to 1GB). If you'd rather share a link instead: all of you if there is more than one founder, or just you if you are on your own. Introduce yourselves, say what you are building and why, and stop. YouTube, Vimeo or Loom, unlisted is fine.",
-        required: false,
+        help: "All of you if there is more than one founder, or just you if you are on your own. Introduce yourselves, say what you are building and why, and stop. Not a demo, not a pitch, and not read off a script. A phone camera is perfectly good. Paste a YouTube, Google Drive or Loom link, and make sure anyone with the link can view it.",
+        required: true,
       },
       {
         entry: "entry.1620737390",

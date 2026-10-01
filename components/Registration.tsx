@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GOOGLE_FORM_ACTION, GOOGLE_FORM_VIEW_URL, INELIGIBLE, PENDING, pages, type Page, type Question } from "@/lib/application-form";
+import { GOOGLE_FORM_VIEW_URL, INELIGIBLE, MAX_DECK_BYTES, PENDING, SUBMIT_URL, pages, type Page, type Question } from "@/lib/application-form";
 import {
   E, FOUNDER_CORE, checkApplication, checkEmail, checkField, checkFounders, checkLinkedinProfile, checkPhone, checkRevenue,
   checkWritten, checkXProfile, normalise,
@@ -51,7 +51,20 @@ function required(q: Question, answers: Answers): boolean {
   return FOUNDER_CORE.some((f) => text(answers[BY_KEY[`f${m[1]}.${f}`]]).trim());
 }
 
+/** The chosen deck file. Files cannot be kept in the saved draft, so this lives only for the visit. */
+let DECK: File | null = null;
+
+function checkDeckFile(hadDraft: boolean): string | null {
+  if (!DECK) return hadDraft ? "Please attach the deck again. Files are not saved between visits." : "Attach your pitch deck as a PDF.";
+  if (!/\.pdf$/i.test(DECK.name) && DECK.type !== "application/pdf") return "The deck must be a PDF file.";
+  if (DECK.size > MAX_DECK_BYTES) return `The deck is ${(DECK.size / 1048576).toFixed(1)}MB. Please keep it to 50MB or smaller.`;
+  if (DECK.size < 10 * 1024) return "This file looks empty. Please attach your full deck.";
+  return null;
+}
+
+
 function validate(q: Question, v: Answers[string] | undefined, answers: Answers): string | null {
+  if (q.kind === "file") return checkDeckFile(!!text(v));
   if (q.kind === "checkbox") {
     const picked = list(v);
     if (q.required && picked.length < (q.choices?.length ?? 1)) return `Please tick all ${q.choices?.length === 6 ? "six" : q.choices?.length}.`;
@@ -106,13 +119,19 @@ function windowState() {
   return "open" as const;
 }
 
-export default function Registration() {
+/**
+ * The site's own application form. Answers and the deck PDF go to the Cloudflare Pages Function
+ * at /api/apply (functions/api/apply.js), which stores the deck in R2 and submits the response to
+ * the Google Form.
+ */
+export default function SiteApplicationForm() {
   const [open, setOpen] = useState(false);
   const [answers, setAnswers] = useState<Answers>({});
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [stopped, setStopped] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
+  const [failMsg, setFailMsg] = useState("");
   const [submittedAt, setSubmittedAt] = useState<string | undefined>();
   const [loaded, setLoaded] = useState(false);
   const [phase, setPhase] = useState<"before" | "open" | "closed">("open");
@@ -246,8 +265,9 @@ export default function Registration() {
       toTop();
       return;
     }
-    // Safety: never send while a question is not yet linked to the live Google Form.
-    if (shown.some((p) => p.questions.some((q) => q.entry.startsWith(PENDING)))) {
+    // Safety: never send while a question is not linked to the live Google Form, or the receiver is not set up.
+    if (!SUBMIT_URL || shown.some((p) => p.questions.some((q) => q.entry.startsWith(PENDING)))) {
+      setFailMsg("Submissions are being switched on. Your answers are saved in this browser; please try again shortly.");
       setStatus("failed");
       return;
     }
@@ -261,23 +281,43 @@ export default function Registration() {
     }
     // Bots fill every field, including this hidden one. People never see it.
     if (honeypot.current?.value) { setStatus("sent"); return; }
-    const body = new URLSearchParams();
+    // Answers as [entry, value] pairs. Email and the deck travel separately: the receiver
+    // saves the deck to Drive and adds its link to the Form's "Pitch deck link" question.
+    const fields: [string, string][] = [];
     shown.forEach((p) => p.questions.forEach((q) => {
+      if (q.kind === "file" || q.entry === "emailAddress") return;
       const v = answers[q.entry];
-      if (Array.isArray(v)) v.forEach((x) => body.append(q.entry, x));
-      else if (v && v.trim()) body.append(q.entry, normalise(q.entry, v, q.key));
+      if (Array.isArray(v)) v.forEach((x) => fields.push([q.entry, x]));
+      else if (v && v.trim()) fields.push([q.entry, normalise(q.entry, v, q.key)]);
     }));
-    body.append("pageHistory", shown.map((p) => p.section).join(","));
-    body.append("fvv", "1");
     setStatus("sending");
+    setFailMsg("");
     try {
-      // Google does not let other sites read its reply, so a completed request is treated as delivered.
-      await fetch(GOOGLE_FORM_ACTION, { method: "POST", mode: "no-cors", body });
-      const at = new Date().toISOString();
-      setSubmittedAt(at);
+      const deck = DECK!;
+      const company = text(answers[E.company]).replace(/\s+/g, "");
+      const founder = text(answers[BY_KEY["f1.name"]]).replace(/\s+/g, "");
+      const payload = {
+        email: normalise("emailAddress", text(answers.emailAddress)),
+        pageHistory: shown.map((p) => p.section).join(","),
+        fields,
+        deckName: `${company || "Company"}_${founder || "Founder"}_PitchDeck.pdf`,
+      };
+      const body = new FormData();
+      body.append("payload", JSON.stringify(payload));
+      body.append("deck", deck, payload.deckName);
+      const res = await fetch(SUBMIT_URL, { method: "POST", body });
+      const out = await res.json().catch(() => ({ ok: false, message: "" }));
+      if (!out.ok) {
+        setFailMsg(out.message || "That did not go through. Please try again in a minute. Your answers are still saved.");
+        setStatus("failed");
+        return;
+      }
+      DECK = null;
+      setSubmittedAt(new Date().toISOString());
       setStatus("sent");
       toTop();
     } catch {
+      setFailMsg("That did not go through. Check your connection and press submit again. Your answers are still saved.");
       setStatus("failed");
     }
   };
@@ -386,7 +426,7 @@ export default function Registration() {
               </div>
               {status === "failed" && (
                 <p className="auth-error" role="alert">
-                  That did not go through. Check your connection and press submit again. Your answers are still saved.
+                  {failMsg || "That did not go through. Check your connection and press submit again. Your answers are still saved."}
                 </p>
               )}
               {Object.keys(errors).length > 0 && (
@@ -447,6 +487,30 @@ function Field({ q, value, error, onChange, onBlur }: { q: Question; value: Answ
     );
   }
 
+  if (q.kind === "file") {
+    const name = text(value);
+    return (
+      <div className={`app-field${error ? " has-error" : ""}`} id={id}>
+        <label htmlFor={`${id}-input`}>{q.title}{req}</label>
+        {help}
+        <label className={`app-file${name ? " has-file" : ""}`}>
+          <input
+            id={`${id}-input`}
+            type="file"
+            accept="application/pdf,.pdf"
+            onChange={(e) => {
+              DECK = e.target.files?.[0] ?? null;
+              onChange(DECK ? DECK.name : "");
+            }}
+          />
+          <span className="app-file-name">{name ? (DECK ? `${name} · ${(DECK.size / 1048576).toFixed(1)}MB` : `${name} (attach again)`) : "Choose a PDF"}</span>
+          <span className="app-file-btn">{name ? "Replace" : "Browse"}</span>
+        </label>
+        <span className="app-meta">{error ? <span className="app-error">{error}</span> : <span />}</span>
+      </div>
+    );
+  }
+
   const v = text(value);
   const common = {
     id: `${id}-input`,
@@ -478,5 +542,98 @@ function Field({ q, value, error, onChange, onBlur }: { q: Question; value: Answ
         {q.max ? <span className={`app-count${v.length > q.max ? " over" : ""}`}>{v.length} / {q.max}</span> : null}
       </span>
     </div>
+  );
+}
+
+
+/**
+ * Register: a short "before you apply" panel that hands off to the official Google Form,
+ * where the deck is uploaded as a file. Any [data-register] element opens it; [data-track]
+ * prefills the track on the Form.
+ */
+export function GoogleFormHandoff() {
+  const [open, setOpen] = useState(false);
+  const [track, setTrack] = useState<string | undefined>();
+  const [phase, setPhase] = useState<"before" | "open" | "closed">("open");
+
+  useEffect(() => {
+    const now = Date.now();
+    setPhase(now < new Date(APPLICATIONS_OPEN).getTime() ? "before" : now > new Date(APPLICATIONS_CLOSE).getTime() ? "closed" : "open");
+  }, []);
+
+  const show = useCallback((t?: string) => { setTrack(t); setOpen(true); lock(true); }, []);
+  const hide = useCallback(() => {
+    setOpen(false);
+    lock(false);
+    if (location.hash === "#register") { try { history.pushState({}, "", "#top"); } catch { /* ignore */ } }
+  }, []);
+
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const el = (e.target as HTMLElement).closest<HTMLElement>("[data-register]");
+      if (!el) return;
+      e.preventDefault();
+      try { history.pushState({}, "", "#register"); } catch { /* ignore */ }
+      show(el.dataset.track);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && document.querySelector(".registration.open") && !document.querySelector(".detail.open")) hide();
+    };
+    const onPop = () => { if (location.hash === "#register") show(); else { setOpen(false); lock(false); } };
+    document.addEventListener("click", onClick);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("popstate", onPop);
+    if (location.hash === "#register") show();
+    return () => {
+      document.removeEventListener("click", onClick);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("popstate", onPop);
+    };
+  }, [show, hide]);
+
+  const formUrl = track
+    ? `${GOOGLE_FORM_VIEW_URL}?usp=pp_url&${TRACK_ENTRY}=${encodeURIComponent(track)}`
+    : GOOGLE_FORM_VIEW_URL;
+
+  return (
+    <aside className={`registration overlay${open ? " open" : ""}`} id="registration" aria-hidden={!open} data-lenis-prevent>
+      <div className="registration-inner">
+        <div className="registration-head">
+          <span className="eyebrow">Application</span>
+          <button className="close" type="button" onClick={hide}>Close ×</button>
+        </div>
+        <h2>apply to the challenge</h2>
+        <p className="registration-lede">
+          The application is on Google Forms. You will need to sign in with a Google account, because your pitch deck is
+          uploaded as a file. Applications close on 31 October 2026, 11:59 pm IST.
+        </p>
+        {phase === "closed" ? (
+          <p className="app-banner">Applications for the 2027 edition are closed.</p>
+        ) : (
+          <>
+            <h3 className="handoff-h">Have these ready</h3>
+            <ul className="handoff-list">
+              <li>Your CIN, or LLPIN if you are an LLP</li>
+              <li>Name, role, email, mobile and LinkedIn profile for every founder</li>
+              <li>Your revenue for each of the last six months (0 is a valid answer)</li>
+              <li>Your pitch deck as a PDF under 100MB, named CompanyName_FounderName_PitchDeck.pdf</li>
+              <li>A 2 to 5 minute video of the founders, as a YouTube, Google Drive or Loom link</li>
+            </ul>
+            <p className="app-fineprint">
+              It takes about 30 minutes, and answers cannot be edited once submitted.{" "}
+              <a href="#scoring">Check eligibility and how applications are scored ↗</a>
+            </p>
+            <div className="handoff-actions">
+              <a className="button primary" href={formUrl} target="_blank" rel="noopener noreferrer">
+                {phase === "before" ? "Open the application form ↗" : "Start your application ↗"}
+              </a>
+              <a className="wizard-save-exit" href={gmailLink("Grand Startup Challenge application")} target="_blank" rel="noopener noreferrer">
+                Questions? Email {CONTACT}
+              </a>
+            </div>
+          </>
+        )}
+      </div>
+    </aside>
   );
 }
