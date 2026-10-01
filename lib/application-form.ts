@@ -458,14 +458,14 @@ export const pages: Page[] = [
         entry: "entry.1798461330",
         kind: "url",
         title: "Link to your deck",
-        help: "Optional — prefer to drop the file itself? Upload it directly on the official form, in the deck question there. If you'd rather share a link instead, use a PDF on DocSend or Dropbox. Google Drive links are not accepted, because the file can be changed after you apply.",
+        help: "Optional — prefer to drop the file itself? Upload it directly on the official form, in the deck question there (PDF, up to 100MB). If you'd rather share a link instead, use a PDF on DocSend or Dropbox. Google Drive links are not accepted, because the file can be changed after you apply.",
         required: false,
       },
       {
         entry: "entry.1187041600",
         kind: "url",
         title: "2-5 minute video of the founders",
-        help: "Optional — prefer to drop the file itself? Upload it directly on the official form, in the video question there. If you'd rather share a link instead: all of you if there is more than one founder, or just you if you are on your own. Introduce yourselves, say what you are building and why, and stop. YouTube, Vimeo or Loom, unlisted is fine.",
+        help: "Optional — prefer to drop the file itself? Upload it directly on the official form, in the video question there (up to 1GB). If you'd rather share a link instead: all of you if there is more than one founder, or just you if you are on your own. Introduce yourselves, say what you are building and why, and stop. YouTube, Vimeo or Loom, unlisted is fine.",
         required: false,
       },
       {
