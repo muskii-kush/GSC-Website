@@ -1922,3 +1922,8 @@ main section.s-closing { padding-top: 0 !important; }
   .northern-lights::after { display: none !important; }
   .northern-lights { opacity: .7 !important; filter: blur(22px) !important; }
 }
+/* Home banner a little darker */
+.banner-glow { opacity: .72; }
+.northern-lights { opacity: .7 !important; }
+.starfield { opacity: .85 !important; }
+@media (max-width: 760px) { .banner-glow { opacity: .68; } .northern-lights { opacity: .5 !important; } }
