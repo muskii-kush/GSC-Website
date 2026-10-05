@@ -291,6 +291,12 @@ export const pages: Page[] = [
     help: "Numbers with assumptions attached beat adjectives, every time.",
     questions: [
       para(
+        "762666439",
+        "What problem are you solving?",
+        "Write it in 1-2 sentences.",
+        300,
+      ),
+      para(
         "1765861708",
         "Which customers face this problem, what does it cost them, and how do they handle it today?",
         "Name the kind of customer and attach a number, in rupees, hours or incidents. Then say what they use instead today, even if the answer is a spreadsheet and three people. A customer already paying for a worse fix is the strongest thing you can show here. 900 characters.",

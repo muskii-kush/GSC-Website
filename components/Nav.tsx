@@ -56,7 +56,7 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
             <a href={h("#scoring")}>Eligibility</a>
             <a href={h("#partners")} className={cls("#partners")}>Partners</a>
             <a href={h("#faq")} className={cls("#faq")}>FAQ</a>
-            <a href="/joining" className={page === "joining" ? "is-current" : undefined}><span className="nl-full">Who&rsquo;s joining</span><span className="nl-short">Joining</span></a>
+            <a href="/joining" className={page === "joining" ? "is-current" : undefined}>The room</a>
           </nav>
           <a className="btn btn-xs" href="#register" data-register>Register <span aria-hidden="true">→</span></a>
         </div>

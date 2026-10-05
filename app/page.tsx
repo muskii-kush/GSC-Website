@@ -12,7 +12,7 @@ import Registration from "@/components/Registration";
 import { ticket } from "@/components/Ticket";
 import { asset } from "@/lib/asset";
 import {
-  CONTACT, gmailLink, challenge, closing, faq, footer, gets, hero, invites, invitesIntro, timeline, tracks, tracksIntro,
+  CONTACT, gmailLink, challenge, faq, footer, gets, hero, invites, invitesIntro, timeline, tracks, tracksIntro,
 } from "@/lib/content";
 
 const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
@@ -186,7 +186,6 @@ export default function Page() {
 
           {/* 10. Last call, then the sign-off. */}
           <section className="s-closing">
-            <Reveal className="statement" text={closing.title} accent={["worth", "solving"]} />
             <div className="actions rise">
               <a className="btn" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
               <a className="btn ghost" href={gmailLink()} target="_blank" rel="noopener noreferrer">talk to the team <span aria-hidden="true">↗</span></a>

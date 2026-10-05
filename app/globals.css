@@ -1412,3 +1412,31 @@ section[class^="s-"]:not(.s-hero):not(.s-film) { padding: var(--sec-pad) 24px !i
   .tl2-list h3 { font-size: 18px; margin-top: 4px; }
   .tl2-list p { font-size: 14.5px; line-height: 1.6; }
 }
+
+/* Ticket rocket on tablets and phones too (smaller, top right of the stub) */
+@media (max-width: 1080px) {
+  .ticket-rocket { display: block; width: 22px; height: 22px; top: 10px; right: 10px; }
+  .ticket-gold .ticket-rocket { width: 28px; height: 28px; top: 12px; right: 12px; }
+}
+
+/* The room: the same orbiting mint light as the invitation cards */
+.s-room .room-card { position: relative; border-color: rgba(99, 255, 177, .18); }
+.s-room .room-card::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px; pointer-events: none;
+  background: conic-gradient(from var(--spark), transparent 0 78%, rgba(99, 255, 177, .15) 84%, var(--mint) 92%, transparent 97%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  filter: drop-shadow(0 0 6px rgba(99, 255, 177, .7));
+  animation: spark-orbit 7s linear infinite;
+}
+.s-room .room-card:nth-child(2)::before { animation-delay: -1.2s; }
+.s-room .room-card:nth-child(3)::before { animation-delay: -2.3s; }
+.s-room .room-card:nth-child(4)::before { animation-delay: -3.5s; }
+.s-room .room-card:nth-child(5)::before { animation-delay: -4.6s; }
+.s-room .room-card:nth-child(6)::before { animation-delay: -5.8s; }
+.s-room .room-card:hover { border-color: rgba(99, 255, 177, .45); }
+@media (prefers-reduced-motion: reduce) { .s-room .room-card::before { animation: none; } }
+
+/* Closing without its headline: the buttons follow the FAQ directly */
+main section.s-closing { padding-top: 0 !important; }
+.s-closing .actions { margin-top: 0 !important; }
