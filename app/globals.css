@@ -1916,3 +1916,9 @@ main section.s-closing { padding-top: 0 !important; }
 }
 /* GSC'27: never clip the last letter (negative letter-spacing + overflow:hidden cut the 7) */
 .gm-outline { overflow: visible !important; padding: 0 .12em 0 .04em !important; }
+/* Phone: no visible stripes in the home background, just the soft glow and specks */
+@media (max-width: 760px) {
+  .banner-streaks { display: none !important; }
+  .northern-lights::after { display: none !important; }
+  .northern-lights { opacity: .7 !important; filter: blur(22px) !important; }
+}
