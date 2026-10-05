@@ -2,7 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
 
-export default function Nav() {
+export default function Nav({ base = "", page }: { base?: string; page?: "more" | "joining" }) {
+  // On the "More" page the section links point back to the main page.
+  const h = (hash: string) => `${base}${hash}`;
   const [scrolled, setScrolled] = useState(false);
   // Which section the reader is in, so the menu shows where they are in the story.
   const [current, setCurrent] = useState("#top");
@@ -20,7 +22,7 @@ export default function Nav() {
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
   }, []);
-  const cls = (id: string) => (current === id ? "is-current" : undefined);
+  const cls = (id: string) => (!base && current === id ? "is-current" : undefined);
   // On phones the menu scrolls sideways: keep the current section's link in view.
   const links = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -38,7 +40,7 @@ export default function Nav() {
   return (
     <header className={`nav${scrolled ? " scrolled" : ""}`}>
       <div className="logo-bar">
-        <a href="#top" className="lb-inner" aria-label="Grand Startup Challenge home">
+        <a href={h("#top")} className="lb-inner" aria-label="Grand Startup Challenge home">
           <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="lb-dpiit" />
           <img src={asset("/media/cars24.webp")} alt="Cars24" className="lb-cars24" />
           <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="lb-spf" />
@@ -47,13 +49,14 @@ export default function Nav() {
       <div className="link-bar">
         <div className="link-inner">
           <nav className="nav-links" aria-label="Main navigation" ref={links}>
-            <a href="#top" className={cls("#top")}>Home</a>
-            <a href="#challenge" className={cls("#challenge")}><span className="nl-full">About the event</span><span className="nl-short">About</span></a>
-            <a href="#tracks" className={cls("#tracks")}>Tracks</a>
-            <a href="#timeline" className={cls("#timeline")}>How it works</a>
-            <a href="#scoring">Eligibility</a>
-            <a href="#partners" className={cls("#partners")}>Partners</a>
-            <a href="#faq" className={cls("#faq")}>FAQ</a>
+            <a href={h("#top")} className={cls("#top")}>Home</a>
+            <a href={h("#challenge")} className={cls("#challenge")}><span className="nl-full">About the event</span><span className="nl-short">About</span></a>
+            <a href={h("#tracks")} className={cls("#tracks")}>Tracks</a>
+            <a href={h("#timeline")} className={cls("#timeline")}>Timeline</a>
+            <a href={h("#scoring")}>Eligibility</a>
+            <a href={h("#partners")} className={cls("#partners")}>Partners</a>
+            <a href={h("#faq")} className={cls("#faq")}>FAQ</a>
+            <a href="/joining" className={page === "joining" ? "is-current" : undefined}><span className="nl-full">Who&rsquo;s joining</span><span className="nl-short">Joining</span></a>
           </nav>
           <a className="btn btn-xs" href="#register" data-register>Register <span aria-hidden="true">→</span></a>
         </div>

@@ -1044,7 +1044,7 @@ section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !
     font-family: var(--f-body); font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none;
   }
   .nav-links a { display: flex; align-items: center; justify-content: center; height: 40px; white-space: nowrap; }
-  .nav-links a[href="#top"] { display: none; }
+  .nav-links a[href$="#top"] { display: none; }
   .nav-links a.is-current { box-shadow: inset 0 -2px 0 var(--mint); }
   .nl-full { display: none; }
   .nl-short { display: inline; }
@@ -1212,4 +1212,203 @@ section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !
   .application-form .wizard-nav .button.primary { flex: 1; justify-content: center; min-height: 52px; padding: 0 16px; }
   .application-form .auth-error { margin: 4px 0 0; }
   .app-file-btn { padding: 10px 14px; }
+}
+
+/* ══ Simple version ═══════════════════════════════════════════════════════
+   Same design, calmer page: everything centred, no scroll-driven motion.
+   The only animation is a gentle one-time fade as content enters. */
+.rise { transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.rise.is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .rise { opacity: 1; transform: none; transition: none; } }
+.rw-word.it { will-change: auto; }
+.signoff-word { color: var(--mint); }
+
+/* What startups get: just the prize ticket, then a link to the rest */
+.s-gets .tickets-lead { margin-bottom: 28px; }
+.more-link {
+  display: inline-block; font-family: var(--f-label); font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--ink-70); text-decoration: none; border-bottom: 1px solid var(--line); padding: 10px 0 6px;
+}
+.more-link:hover { color: var(--mint); border-color: var(--mint); }
+
+/* How it works: centred heading, dates as a calm centred grid (no sideways scroll) */
+.s-dates { display: block !important; text-align: center !important; }
+.tl-wrap, .tl-pin { position: static !important; display: block !important; height: auto !important; max-height: none !important; overflow: visible !important; padding: 0 !important; width: 100%; }
+.dates-head { position: static !important; max-width: 720px !important; margin: 0 auto; text-align: center; }
+.dates-head .soft { margin-inline: auto; }
+.dates-actions { justify-content: center; }
+.tl-viewport { overflow: visible !important; padding: 0 !important; -webkit-mask-image: none !important; mask-image: none !important; }
+.tl-hint, .dates::before, .dates-line { display: none !important; }
+.dates {
+  display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 44px 40px !important;
+  width: min(1100px, 100%) !important; max-width: none !important; margin: 56px auto 0 !important; padding: 0 !important;
+  transform: none !important;
+}
+.dates li { width: auto !important; text-align: center; padding-top: 22px; }
+.dates li::before { left: 50% !important; top: 0 !important; transform: translateX(-50%); }
+.dates p { margin-inline: auto; }
+
+/* Who will be joining: plain grid, no deck */
+.s-room .room-grid { margin-top: 56px; }
+.s-room .room-card { transform: none !important; }
+
+/* FAQ: heading centred above a centred list */
+.s-faq { display: block !important; text-align: center !important; }
+.faq-head { position: static !important; max-width: 720px !important; margin: 0 auto 40px; text-align: center; }
+.faq-head .soft { margin-inline: auto; }
+.faq-list { max-width: 760px !important; margin: 0 auto; text-align: left; }
+
+/* Footer: centred */
+.footer { justify-content: center; text-align: center; }
+
+/* The "More" page */
+.more-page { padding-top: 150px; }
+.more-page .why-grid { margin-top: 48px !important; }
+.more-page .s-gets .tickets { margin-top: 48px; }
+.more-back { padding-top: 0 !important; }
+.more-foot { padding-top: 0; }
+
+@media (max-width: 1080px) {
+  .dates { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nav-links { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .dates { grid-template-columns: 1fr; gap: 28px !important; margin-top: 36px !important; }
+  /* Phone menu: 7 links + Register in two rows of four */
+  .nav-links { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .link-inner > .btn-xs { width: calc(25% - 3px); padding: 0 6px; letter-spacing: .06em; }
+  .link-inner > .btn-xs span { display: none; }
+  .more-page { padding-top: 110px; }
+}
+
+/* Timeline: the six dates along one line */
+.tl-line {
+  list-style: none; position: relative; margin: 56px auto 0; padding: 0; width: min(1200px, 100%);
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.tl-line::before {
+  content: ""; position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 6px; height: 1px;
+  background: linear-gradient(90deg, var(--mint), var(--blue));
+}
+.tl-line li { position: relative; padding: 32px 10px 0; text-align: center; }
+.tl-line li::before {
+  content: ""; position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+  width: 13px; height: 13px; border-radius: 50%; background: var(--page-deep); border: 1px solid var(--ink-50);
+}
+.tl-line li.finale::before { background: var(--mint); border-color: var(--mint); box-shadow: 0 0 18px var(--mint); }
+.tl-line .date { display: block; font-family: var(--f-label); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--mint); }
+.tl-line h3 { margin-top: 10px; font-family: var(--f-display); font-weight: 700; font-size: 18px; line-height: 1.25; letter-spacing: -.02em; }
+
+/* ₹1 Cr ticket: text centred */
+.ticket-gold .ticket-body { align-items: center; justify-content: center; text-align: center; }
+.ticket-gold .ticket-body p { margin-inline: auto; }
+
+/* Menu: one more tab */
+@media (max-width: 1080px) {
+  .nav-links { grid-template-columns: repeat(8, minmax(0, 1fr)); font-size: 13px; }
+}
+@media (max-width: 760px) {
+  /* Timeline on a phone: the same line, running down the left */
+  .tl-line { grid-template-columns: 1fr; margin-top: 32px; width: min(420px, 100%); text-align: left; }
+  .tl-line::before { left: 6px; right: auto; top: 8px; bottom: 8px; width: 1px; height: auto; background: linear-gradient(var(--mint), var(--blue)); }
+  .tl-line li { padding: 0 0 22px 34px; text-align: left; }
+  .tl-line li::before { left: 0; top: 2px; transform: none; }
+  .tl-line h3 { margin-top: 4px; font-size: 17px; }
+  /* Menu: 8 tabs and Register in two rows of five */
+  .nav-links { grid-template-columns: repeat(5, minmax(0, 1fr)); font-size: 12.5px; gap: 2px 2px; }
+  .link-inner > .btn-xs { width: calc(40% - 2px); padding: 0 8px; letter-spacing: .1em; }
+  .link-inner > .btn-xs span { display: inline; }
+}
+
+/* Menu without the More tab: 7 tabs */
+@media (max-width: 1080px) { .nav-links { grid-template-columns: repeat(7, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  /* Phone: two rows of four, Register in the last cell */
+  .nav-links { grid-template-columns: repeat(4, minmax(0, 1fr)); font-size: 13px; }
+  .link-inner > .btn-xs { width: calc(25% - 2px); padding: 0 6px; letter-spacing: .06em; }
+  .link-inner > .btn-xs span { display: none; }
+}
+
+/* ══ Layout pass: one consistent rhythm, no big empty bands ═════════════════
+   Like cars24.com: every section has the same modest spacing, headings sit
+   directly above their content, nothing floats in an empty band. */
+:root { --sec-pad: 64px; --head-gap: 32px; }
+
+/* Hero: less empty space around the card */
+.chapter-one { padding: 150px 0 24px !important; }
+.invitation { padding-block: 64px 56px !important; }
+
+/* Sections: same padding everywhere */
+section[class^="s-"]:not(.s-hero):not(.s-film) { padding: var(--sec-pad) 24px !important; }
+.s-film { padding: 0 24px !important; }
+.chapter-two { padding-top: 0 !important; }
+
+/* Headings: a size step down, close to their content */
+.h-center, .h-dare { font-size: clamp(32px, 3.4vw, 48px) !important; }
+.s-closing .statement { font-size: clamp(36px, 4.6vw, 64px); margin-top: 0; }
+.soft { margin-top: 14px; }
+.track-grid, .room-grid, .invite-grid, .tickets, .tl-line { margin-top: var(--head-gap) !important; }
+.s-challenge .statement-sm { margin-top: 20px; }
+.faq-head { margin-bottom: var(--head-gap) !important; }
+
+/* ₹1 Cr ticket: text in the vertical middle of the ticket */
+.ticket-gold .ticket-event { position: absolute; top: 22px; left: 0; right: 0; text-align: center; }
+.ticket-gold h3 { margin-top: 0; padding-top: 0; }
+.ticket-gold .ticket-body { padding-block: 44px; }
+
+/* Timeline: vertical at every size, centred on the page */
+.tl-line { grid-template-columns: 1fr !important; width: min(460px, 100%) !important; text-align: left; }
+.tl-line::before { left: 6px !important; right: auto !important; top: 8px !important; bottom: 8px !important; width: 1px !important; height: auto !important; background: linear-gradient(var(--mint), var(--blue)) !important; }
+.tl-line li { padding: 0 0 26px 36px !important; text-align: left !important; }
+.tl-line li:last-child { padding-bottom: 0 !important; }
+.tl-line li::before { left: 0 !important; top: 2px !important; transform: none !important; }
+.tl-line h3 { margin-top: 4px; font-size: 19px; }
+
+/* Ending: the last call, then straight into the GSC'27 mark */
+.s-closing { padding-bottom: 32px !important; }
+.giant-mark { margin-top: 8px; }
+.more-page { padding-top: 140px; }
+
+@media (max-width: 760px) {
+  :root { --sec-pad: 40px; --head-gap: 22px; }
+  .chapter-one { padding: 108px 0 16px !important; }
+  .invitation { padding-block: 40px 36px !important; }
+  section[class^="s-"]:not(.s-hero):not(.s-film) { padding: var(--sec-pad) 16px !important; }
+  .s-film { padding: 0 16px !important; }
+  .h-center, .h-dare { font-size: 28px !important; }
+  .s-closing .statement { font-size: 32px; }
+  .ticket-gold .ticket-event { display: none; }
+  .ticket-gold .ticket-body { padding-block: 14px; }
+  .tl-line li { padding-bottom: 20px !important; }
+  .tl-line h3 { font-size: 17px; }
+  .more-page { padding-top: 100px; }
+}
+
+/* ══ Timeline (first-version layout) ══════════════════════════════════════
+   "Timeline" on the left, held in view while the dates scroll by on the right
+   down a line that draws itself as you read. */
+.tl2 { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 40px 8%; width: min(1100px, 100%); margin: 0 auto; text-align: left; }
+.tl2-head { align-self: start; position: sticky; top: 150px; }
+.tl2-head .h-dare { margin-top: 0; }
+.tl2-list { position: relative; list-style: none; margin: 0; padding: 0 0 0 36px; display: grid; gap: 40px; }
+.tl2-list::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--line); }
+.tl2-line { position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: linear-gradient(var(--mint), var(--blue)); transform-origin: top; }
+.tl2-list li { position: relative; }
+.tl2-list li::before { content: ""; position: absolute; left: -36px; top: 5px; width: 11px; height: 11px; border-radius: 50%; background: var(--page-deep); border: 1px solid var(--ink-50); }
+.tl2-list li.finale::before { background: var(--mint); border-color: var(--mint); box-shadow: 0 0 18px var(--mint); }
+.tl2-list .date { font-family: var(--f-label); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--mint); }
+.tl2-list h3 { margin-top: 8px; font-family: var(--f-display); font-weight: 700; font-size: clamp(20px, 2vw, 26px); letter-spacing: -.02em; }
+.tl2-list p { margin-top: 6px; max-width: 52ch; font-size: 15.5px; line-height: 1.7; color: var(--ink-70); }
+
+/* No empty band before the GSC'27 mark */
+.s-closing { padding-bottom: 24px !important; }
+.giant-mark { margin-top: 0 !important; }
+
+@media (max-width: 760px) {
+  .tl2 { grid-template-columns: 1fr; gap: 22px; }
+  .tl2-head { position: static; text-align: center; }
+  .tl2-list { padding-left: 30px; gap: 24px; }
+  .tl2-list li::before { left: -30px; }
+  .tl2-list h3 { font-size: 18px; margin-top: 4px; }
+  .tl2-list p { font-size: 14.5px; line-height: 1.6; }
 }
