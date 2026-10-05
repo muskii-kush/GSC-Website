@@ -1874,3 +1874,7 @@ main section.s-closing { padding-top: 0 !important; }
   .ps-list li { padding: 11px 0; grid-template-columns: 30px 1fr; }
   .ps-t { font-size: 14.5px; }
 }
+
+/* Starfield: crisp, no blur */
+.starfield { filter: none !important; opacity: 1 !important; }
+.banner-streaks { filter: blur(3px) !important; }
