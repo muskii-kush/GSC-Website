@@ -16,7 +16,7 @@
 
 var FORM_PUBLIC_ID = '1FAIpQLSe7uI5-KB-8DN-TtK8S6fjeqLjCn8rH62kORvhx2F8sC84rUg';
 var DECK_QUESTION_TITLE = 'Pitch deck link';
-var DECK_FOLDER_NAME = 'GSC 2027 pitch decks';
+var DECK_FOLDER_ID = '1LUZbTJRJpSWerP81XVQWWoP3mfmGV5Y4'; // "GSC 2027 Pitch Decks" folder (shared by IT)
 var MAX_DECK_BYTES = 30 * 1024 * 1024; // 30MB: Apps Script accepts about 50MB per request, and base64 adds a third.
 var CIN_ENTRY = 'entry.1619968075';
 
@@ -107,8 +107,8 @@ function entryForTitle(title) {
 }
 
 function deckFolder() {
-  var it = DriveApp.getFoldersByName(DECK_FOLDER_NAME);
-  return it.hasNext() ? it.next() : DriveApp.createFolder(DECK_FOLDER_NAME);
+  // The account the script runs as needs edit access to this folder.
+  return DriveApp.getFolderById(DECK_FOLDER_ID);
 }
 
 function safeName(n) {
