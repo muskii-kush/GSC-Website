@@ -193,9 +193,14 @@ export default function DetailDrawer() {
                   </ul>
                   <h3>Problems your startup could be solving</h3>
                   <p className="chips-lede">Common problem statements in this track. If your startup already works on one of these, or on something close to it, this track is for you.</p>
-                  <ul className="chips">
-                    {track.build.map((b) => <li key={b}>{b}</li>)}
-                  </ul>
+                  <ol className="ps-list">
+                    {track.build.map((b, i) => (
+                      <li key={b}>
+                        <span className="ps-n">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="ps-t">{b}</span>
+                      </li>
+                    ))}
+                  </ol>
                   <a className="btn" href="#register" data-register data-track={TRACK_CHOICE[track.id]} onClick={() => setOpen(null)}>
                     register for this track <span aria-hidden="true">→</span>
                   </a>

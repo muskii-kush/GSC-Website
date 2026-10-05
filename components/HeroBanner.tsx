@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import Countdown from "@/components/Countdown";
+import StarField from "@/components/StarField";
 import { asset } from "@/lib/asset";
 import { hero } from "@/lib/content";
 
@@ -18,6 +19,9 @@ export default function HeroBanner() {
         <span className="orb orb-1" />
         <span className="orb orb-2" />
         <span className="orb orb-3" />
+        <span className="banner-glow" />
+        <span className="banner-streaks" />
+        <StarField />
       </div>
 
       <div className="banner-copy">
