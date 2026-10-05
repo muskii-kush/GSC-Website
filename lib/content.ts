@@ -9,7 +9,7 @@ export const APPLICATIONS_OPEN = "2026-10-01T00:00:00+05:30";
 export const APPLICATIONS_CLOSE = "2026-10-31T23:59:59+05:30";
 
 export const hero = {
-  statement: "build what moves india forward",
+  statement: "build what moves India forward",
   lede:
     "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
   when: { label: "Grand finale", date: "January 2027", venue: "New Delhi" },
@@ -60,7 +60,7 @@ export const gets = {
   title: "and the prize is only the beginning",
   lede: "Every startup that makes the shortlist also signs up for all of this.",
   items: [
-    { stamp: "₹1 Cr", admit: "Prize", title: "₹1 crore prize pool", text: "One pool, shared among twelve winners: the top three startups in each of the four tracks." },
+    { stamp: "₹1 Cr", admit: "Prize", title: "₹1 crore prize pool", text: "One shared prize pool for the winning startups across all four tracks." },
     { stamp: "Live", admit: "Data", title: "Real problems, real data", text: "Live problem statements drawn from real operations, with real data behind them." },
     { stamp: "1:1", admit: "Mentor", title: "A month with mentors", text: "Shortlisted startups spend December refining their solution with an assigned mentor." },
     { stamp: "Deploy", admit: "Launch", title: "A chance at real deployment", text: "Solutions are built for the context where the problem actually lives, not for a demo day." },
@@ -342,7 +342,7 @@ export const faq = {
     },
     {
       q: "What do startups get?",
-      a: "A shot at the ₹1 crore prize pool, plus real deployment, mentorship, investor visibility and national recognition.",
+      a: "A shot at the ₹1 crore shared prize pool, plus real deployment, mentorship, investor visibility and national recognition.",
     },
   ],
 };

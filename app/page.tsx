@@ -322,7 +322,7 @@ export default function Page() {
           </section>
 
           <p className="signoff rise">
-            let&rsquo;s <RotatingWord words={["build", "pitch", "scale", "deploy"]} /> what moves india forward
+            let&rsquo;s <RotatingWord words={["build", "pitch", "scale", "deploy"]} /> what moves India forward
           </p>
           <div className="footer-logos">
             <p className="footer-by">brought to you by</p>

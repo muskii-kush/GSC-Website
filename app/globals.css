@@ -682,6 +682,7 @@ section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !
 
 /* Current section in the menu bar */
 .nav-links a.is-current { color: var(--ink); box-shadow: 0 1px 0 var(--mint); }
+.nl-short { display: none; }
 
 /* ── Floating dock: register or email, always a click away ── */
 .dock {
@@ -982,7 +983,7 @@ section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !
 .app-section-help { margin: -6px 0 6px; font-size: 14px; line-height: 1.6; color: var(--ink-70); }
 .app-field { display: grid; gap: 8px; border: 0; padding: 0; margin: 0 0 6px; min-width: 0; }
 .app-field > label, .app-field > legend { font-size: 15px; line-height: 1.5; color: var(--ink); padding: 0; }
-.app-req { color: var(--mint); margin-left: 4px; }
+.app-req { color: var(--mint); margin-left: 2px; }
 .app-help { display: block; font-size: 13px; line-height: 1.6; color: var(--ink-70); margin-top: -2px; }
 .app-help a { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(99, 255, 177, .6); text-underline-offset: 3px; white-space: nowrap; transition: color .2s; }
 .app-help a:hover { color: var(--mint); }
@@ -1031,3 +1032,184 @@ section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !
 .application-form .app-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; padding: 0; }
 .app-file-name { font-size: 14px; color: #C9CCD6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .app-file-btn { flex: none; font-family: var(--f-label); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink); padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .25); }
+
+/* ── Tablets and phones (≤1080px) ─────────────────────────────────────────
+   The desktop menu, sticky timeline heading, card deck and side-stub tickets
+   need more width than a tablet has. */
+@media (max-width: 1080px) {
+  /* Menu: one tidy row of equal cells, Register at the end, nothing pushed off screen */
+  .link-inner { display: flex; align-items: center; height: 52px; gap: 12px; }
+  .nav-links {
+    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); flex: 1; min-width: 0; gap: 0 4px;
+    font-family: var(--f-body); font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none;
+  }
+  .nav-links a { display: flex; align-items: center; justify-content: center; height: 40px; white-space: nowrap; }
+  .nav-links a[href="#top"] { display: none; }
+  .nav-links a.is-current { box-shadow: inset 0 -2px 0 var(--mint); }
+  .nl-full { display: none; }
+  .nl-short { display: inline; }
+  .link-inner > .btn-xs { flex: none; height: 38px; padding: 0 18px; font-size: 11px; }
+
+  /* "How it works": the heading no longer sticks over the dates */
+  .dates-head { position: static; }
+
+  /* "Who will be joining": no deck to deal out, so no tall scroll spacer */
+  .fan-wrap::after { display: none; }
+  .fan-pin { position: static; }
+  .deck-hint { display: none; }
+
+  /* Three-card rows stay three across instead of 2 + an orphan */
+  .why-grid, .invite-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .why-grid .room-card { padding: 22px 20px 24px; }
+  .why-grid .room-n { top: 18px; right: 18px; font-size: 40px; }
+  .why-grid .room-card h3 { font-size: 19px; }
+  .invite { min-height: 0; padding: 30px 24px; border-radius: 28px; }
+  .invite h3 { margin-top: 28px; font-size: 22px; }
+  .invite p:not(.label) { font-size: 14px; }
+  .invite-link { padding-top: 26px; }
+
+  /* Tickets: compact horizontal passes. Narrow stub with the stamp word, the body
+     keeps only the title and one line of copy; decorative details are dropped. */
+  .tickets { gap: 12px; margin-top: 36px; }
+  .tickets-lead { margin: 24px auto 40px; }
+  .tickets .ticket { --dx: 0 !important; --dy: 0 !important; rotate: 0deg; }
+  .ticket, .ticket-gold { --cut: 104px; min-height: 0; border-radius: 16px; }
+  .ticket-gold { --cut: 136px; }
+  .ticket-stub { justify-content: center; align-items: center; padding: 14px 8px; }
+  .ticket-stub::after { top: 14px; bottom: 14px; }
+  .ticket-admit, .ticket-rocket, .ticket-no, .ticket-event, .ticket-code { display: none; }
+  .ticket-stamp { font-size: 21px; white-space: nowrap; letter-spacing: -.035em; }
+  .ticket-stamp.is-long { font-size: 18px; }
+  .ticket-gold .ticket-stamp { font-size: 34px; }
+  .ticket-body { padding: 14px 16px 15px 18px; justify-content: center; }
+  .ticket h3 { margin: 0; padding: 0; font-size: 17px; line-height: 1.25; }
+  .ticket-gold h3 { font-size: 20px; }
+  .ticket p { margin-top: 4px; font-size: 13.5px; line-height: 1.5; max-width: none; }
+}
+
+/* ── Mobile pass (phones, ≤760px) ──────────────────────────────────────────
+   Readable type, finger-sized tap targets, tighter vertical rhythm, tickets
+   that stack instead of squeezing, and a form whose buttons sit under the thumb. */
+@media (max-width: 760px) {
+  /* Menu bar: every link visible at once in two tight rows; Register fills the last two cells */
+  .link-inner { position: relative; display: block; height: auto; padding: 4px 0 6px; }
+  .nav-links {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 34px; gap: 2px 4px;
+    font-size: 13.5px;
+  }
+  .nav-links a { height: auto; }
+  .nav-links a:last-child { padding-right: 0; }
+  .link-inner > .btn-xs {
+    position: absolute; right: 0; bottom: 6px; width: calc(50% - 2px); height: 34px;
+    justify-content: center; padding: 0 12px; font-size: 11px; letter-spacing: .12em;
+  }
+  .chapter-one { padding-top: 160px; }
+
+  /* Countdown labels were 8px */
+  .countdown-item span { font-size: 10px; letter-spacing: .06em; }
+
+  /* Vertical rhythm: sections were separated by ~220px of empty space */
+  section[class^="s-"]:not(.s-hero):not(.s-film) { padding: 64px 16px; }
+  section[class^="s-"]:has(.bridge-row) { padding-bottom: 24px !important; }
+  .bridge-row { margin-top: 36px; }
+  .bridge { padding-block: 12px; }
+  .chapter-one { padding-bottom: 72px; }
+
+  /* Film: show the whole frame (the video is 6:5) so its text is legible */
+  .s-film { padding: 0 16px 8px; }
+  .s-challenge { padding-bottom: 40px !important; }
+  .film-frame { aspect-ratio: 6 / 5; border-radius: 22px; }
+
+  /* Tracks: all four on one screen, two by two */
+  .track-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 14px; margin-top: 28px; }
+  .track { min-width: 0; }
+  .track-img { width: 100%; aspect-ratio: 1 / 1; margin-bottom: 10px; }
+  .track-img img { position: absolute; inset: 0; }
+  .track .label { font-size: 10px; letter-spacing: .14em; }
+  .track h3 { font-size: 16px; line-height: 1.2; margin-top: 6px; }
+  .track-sum { display: none; }
+  .track-link { margin-top: 10px; font-size: 10px; letter-spacing: .14em; padding-block: 8px 3px; }
+  .track-go { display: none; }
+
+  /* Who will be joining: a compact two-column grid instead of six tall cards */
+  .s-room .room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 28px; }
+  .s-room .room-card { position: relative; padding: 14px 12px 14px 14px; border-radius: 16px; }
+  .s-room .room-n { position: absolute; top: 10px; right: 12px; font-size: 22px; }
+  .s-room .room-card h3 { font-size: 15px; line-height: 1.25; margin-top: 0; padding-right: 22px; }
+  .s-room .room-card p { font-size: 12.5px; line-height: 1.5; margin-top: 6px; }
+  .s-room .soft { margin-top: 14px; }
+  .s-room .circuit-host { margin-top: 0; }
+  .s-room .circuit { display: none; }
+
+  /* Why this challenge: one card per row on a phone */
+  .why-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Invitations: three compact cards that fit on one screen; full details open on tap */
+  .invite-grid { grid-template-columns: 1fr; gap: 10px; margin-top: 26px; }
+  .invite { padding: 18px 18px 16px; border-radius: 20px; }
+  .invite .label { font-size: 10px; letter-spacing: .16em; }
+  .invite h3 { margin-top: 10px; font-size: 18px; line-height: 1.2; }
+  .invite p:not(.label) { display: none; }
+  .invite-link { padding-top: 12px; font-size: 10px; letter-spacing: .14em; }
+
+  /* "Next · section" links: the menu is always on screen, so on a phone they only add length */
+  .bridge-row { display: none; }
+  section[class^="s-"]:has(.bridge-row) { padding-bottom: 56px !important; }
+
+  /* How it works: a tighter timeline */
+  .dates { gap: 26px; padding-left: 30px; }
+  .dates li::before { left: -30px; }
+  .dates h3 { font-size: 20px; margin-top: 6px; }
+  .dates p { font-size: 14.5px; line-height: 1.6; margin-top: 4px; }
+  .dates-actions { margin-top: 20px; }
+
+  /* Ending: less empty space between the last call, the sign-off and the footer */
+  .s-closing { padding-bottom: 40px !important; }
+  .s-closing .actions { margin-top: 32px; }
+  .signoff { padding-top: 16px; font-size: 30px; }
+  .footer-logos { padding: 44px 16px 28px; }
+
+  /* Floating register bar: keep it off the last lines of the page */
+  .footer { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)); }
+  .dock { width: calc(100% - 24px); justify-content: space-between; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .dock-copy { margin-right: auto; min-width: 0; }
+  .dock-copy strong { white-space: normal; }
+  .dock-btn { flex: none; height: 44px; }
+  .dock-icon { width: 44px; }
+
+  /* Links that were 15–20px tall */
+  .contact-link, .footer a { display: inline-block; padding-block: 10px; }
+
+  /* Pop-ups (track briefs, partnerships, rubric) */
+  .detail-inner { width: calc(100% - 32px); padding: 20px 0 calc(48px + env(safe-area-inset-bottom, 0px)); }
+  .detail h2 { font-size: clamp(36px, 10vw, 44px); margin: 12px 0 18px; }
+  .detail-layout { gap: 36px; padding-top: 28px; }
+  .detail .close, .registration .close { min-height: 44px; padding-inline: 18px; }
+  .detail-side .btn { width: 100%; justify-content: center; }
+
+  /* Application form */
+  .registration-inner { width: calc(100% - 32px); padding: 16px 0 0; }
+  .registration h2 { font-size: clamp(34px, 10vw, 42px); margin: 28px 0 14px; }
+  .registration-lede { font-size: 15px; }
+  .wizard-progress {
+    margin: 18px -16px 4px; padding: 12px 16px 14px;
+    background: #0B0826; box-shadow: 0 10px 18px -12px rgba(0, 0, 0, .8);
+  }
+  .wizard-progress-top { font-size: 11px; letter-spacing: .08em; }
+  .application-form { gap: 26px; }
+  .app-choice { padding: 14px 14px; }
+  .application-form input, .application-form select, .application-form textarea { font-size: 16px; }
+  /* Back / Continue stay pinned to the bottom of the screen while scrolling a long section */
+  .application-form .wizard-nav {
+    position: sticky; bottom: 0; z-index: 3; flex-wrap: nowrap; gap: 10px;
+    margin: 8px -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+    background: #0B0826; border-top: 1px solid var(--line);
+  }
+  .application-form .wizard-back { flex: none; min-height: 52px; padding: 0 18px; }
+  .application-form .wizard-back:disabled { display: none; }
+  .application-form .wizard-nav-right { flex: 1; flex-wrap: nowrap; gap: 0; }
+  .application-form .wizard-save-exit { display: none; }
+  .application-form .wizard-nav .button.primary { flex: 1; justify-content: center; min-height: 52px; padding: 0 16px; }
+  .application-form .auth-error { margin: 4px 0 0; }
+  .app-file-btn { padding: 10px 14px; }
+}

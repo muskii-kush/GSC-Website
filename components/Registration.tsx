@@ -142,6 +142,12 @@ export default function SiteApplicationForm() {
   const page = shown[Math.min(step, shown.length - 1)];
   const last = step >= shown.length - 1;
 
+  // A saved draft can point past the end, e.g. when a changed answer hides a conditional
+  // section. Pull the step back so the counter and Back button stay right.
+  useEffect(() => {
+    if (step > shown.length - 1) setStep(shown.length - 1);
+  }, [step, shown.length]);
+
   // Restore the draft once, on the client.
   useEffect(() => {
     const d = loadDraft();
@@ -200,6 +206,17 @@ export default function SiteApplicationForm() {
 
   const toTop = () => panel.current?.scrollTo({ top: 0, behavior: "smooth" });
 
+  // Bring a question with an error into view and put the cursor in it. Waits a frame so a
+  // section change has rendered; centring keeps it clear of the sticky progress and button bars.
+  const focusError = (entry: string) => {
+    requestAnimationFrame(() => setTimeout(() => {
+      const box = document.getElementById(`q-${entry}`);
+      if (!box) return;
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+      box.querySelector<HTMLElement>("input:not(.app-hp), textarea, select")?.focus({ preventScroll: true });
+    }, 60));
+  };
+
   const set = (q: Question, v: string | string[]) => {
     setAnswers((a) => ({ ...a, [q.entry]: v }));
     if (errors[q.entry]) setErrors((e) => { const n = { ...e }; delete n[q.entry]; return n; });
@@ -219,7 +236,7 @@ export default function SiteApplicationForm() {
     setErrors(errs);
     const first = Object.keys(errs)[0];
     if (first) {
-      document.getElementById(`q-${first}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      focusError(first);
       return false;
     }
     return true;
@@ -229,7 +246,7 @@ export default function SiteApplicationForm() {
     if (!checkPage()) return;
     if (page.founders) {
       const dupe = checkFounders(answers, BY_KEY);
-      if (dupe) { setErrors({ [dupe.entry]: dupe.message }); document.getElementById(`q-${dupe.entry}`)?.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+      if (dupe) { setErrors({ [dupe.entry]: dupe.message }); focusError(dupe.entry); return; }
     }
     const knock = page.questions.find((q) => q.stop?.includes(text(answers[q.entry])));
     if (knock) { setStopped(knock.title); toTop(); return; }
@@ -254,7 +271,7 @@ export default function SiteApplicationForm() {
       if (bad) {
         setStep(i);
         setErrors({ [bad.entry]: validate(bad, answers[bad.entry], answers)! });
-        toTop();
+        focusError(bad.entry);
         return;
       }
     }
@@ -262,7 +279,7 @@ export default function SiteApplicationForm() {
     if (founderDupe) {
       setStep(shown.findIndex((p) => p.founders));
       setErrors({ [founderDupe.entry]: founderDupe.message });
-      toTop();
+      focusError(founderDupe.entry);
       return;
     }
     // Safety: never send while a question is not linked to the live Google Form, or the receiver is not set up.
@@ -276,7 +293,7 @@ export default function SiteApplicationForm() {
       const at = shown.findIndex((p) => p.questions.some((q) => q.entry === dup.entry));
       setStep(at);
       setErrors({ [dup.entry]: dup.message });
-      toTop();
+      focusError(dup.entry);
       return;
     }
     // Bots fill every field, including this hidden one. People never see it.
@@ -442,7 +459,7 @@ export default function SiteApplicationForm() {
 
 function Field({ q, value, error, onChange, onBlur }: { q: Question; value: Answers[string] | undefined; error?: string; onChange: (v: string | string[]) => void; onBlur: () => void }) {
   const id = `q-${q.entry}`;
-  const req = q.required ? <span className="app-req" aria-hidden="true">*</span> : null;
+  const req = q.required ? <span className="app-req" aria-hidden="true">{"\u00a0*"}</span> : null;
   const isUpload = q.entry === E.deck || q.entry === E.video;
   const help = q.help ? (
     <span className="app-help">
@@ -503,7 +520,7 @@ function Field({ q, value, error, onChange, onBlur }: { q: Question; value: Answ
               onChange(DECK ? DECK.name : "");
             }}
           />
-          <span className="app-file-name">{name ? (DECK ? `${name} · ${(DECK.size / 1048576).toFixed(1)}MB` : `${name} (attach again)`) : "Choose a PDF"}</span>
+          <span className="app-file-name">{name ? (DECK ? `${name} · ${DECK.size < 1048576 ? `${Math.max(1, Math.round(DECK.size / 1024))}KB` : `${(DECK.size / 1048576).toFixed(1)}MB`}` : `${name} (attach again)`) : "Choose a PDF"}</span>
           <span className="app-file-btn">{name ? "Replace" : "Browse"}</span>
         </label>
         <span className="app-meta">{error ? <span className="app-error">{error}</span> : <span />}</span>
@@ -529,7 +546,11 @@ function Field({ q, value, error, onChange, onBlur }: { q: Question; value: Answ
         <input
           {...common}
           type={q.kind === "email" ? "email" : q.kind === "url" ? "url" : q.kind === "phone" ? "tel" : "text"}
-          inputMode={q.kind === "number" || q.kind === "phone" ? "numeric" : undefined}
+          inputMode={q.kind === "number" ? "numeric" : q.kind === "phone" ? "tel" : undefined}
+          enterKeyHint="next"
+          {...(q.kind === "email" || q.kind === "url" || q.key?.endsWith(".linkedin") || q.key?.endsWith(".x")
+            ? { autoCapitalize: "none", autoCorrect: "off", spellCheck: false }
+            : {})}
           placeholder={
             q.key?.endsWith(".linkedin") ? "https://www.linkedin.com/in/…" : q.key?.endsWith(".x") ? "https://x.com/…"
               : q.kind === "url" ? "https://" : q.kind === "number" ? "0" : q.kind === "email" ? "you@company.com" : q.kind === "phone" ? "98765 43210" : undefined

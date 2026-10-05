@@ -136,9 +136,9 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
         );
       });
       // Fan-out: the cards start stacked and tilted at the centre of the grid, then
-      // spread into place as you scroll (scrubbed). Wide screens only; phones get a simple rise.
+      // spread into place as you scroll (scrubbed). Desktop only; tablets and phones get a simple rise.
       const mm = gsap.matchMedia();
-      mm.add("(min-width: 761px)", () => {
+      mm.add("(min-width: 1081px)", () => {
         gsap.utils.toArray<HTMLElement>("[data-fan]").forEach((grid) => {
           const cards = Array.from(grid.children) as HTMLElement[];
           // Deck: stacked on the first card's spot (top left), splayed like a hand of photos,
@@ -182,7 +182,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
           });
         });
       });
-      mm.add("(max-width: 760px)", () => {
+      mm.add("(max-width: 1080px)", () => {
         gsap.utils.toArray<HTMLElement>("[data-fan]").forEach((grid) => grid.closest(".circuit-host")?.classList.add("is-dealt"));
         gsap.utils.toArray<HTMLElement>("[data-fan]").forEach((grid) =>
           gsap.from(grid.children, {
@@ -191,21 +191,31 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
           }),
         );
       });
+      // Phones skip the blur: iOS Safari can fail to paint blurred, masked cards (the tickets),
+      // which left that section blank.
+      const phone = matchMedia("(max-width: 760px)").matches;
       gsap.utils.toArray<HTMLElement>("[data-stagger]").forEach((group) =>
         gsap.from(group.children, {
-          y: 40, opacity: 0, filter: "blur(10px)", duration: 0.9, ease: "power3.out",
+          y: phone ? 24 : 40, opacity: 0, ...(phone ? {} : { filter: "blur(10px)" }), duration: phone ? 0.6 : 0.9, ease: "power3.out",
           // data-stagger="together" rises as one row, so cards never look out of line mid-reveal.
           stagger: group.dataset.stagger === "together" ? 0 : 0.08,
           // Hand the cards back to CSS once they land, so hover lifts and transitions
           // do not fight a leftover inline transform and leave a row out of line.
           clearProps: "transform,opacity,filter",
-          scrollTrigger: { trigger: group, start: "top 85%" },
+          scrollTrigger: { trigger: group, start: phone ? "top 95%" : "top 85%", once: true },
         }),
       );
     });
-    const r = setTimeout(() => ScrollTrigger.refresh(), 300);
+    // Reveal positions are measured on load; images, fonts and the phone's address bar change the
+    // page height afterwards, which left some cards waiting for a scroll point they never reached.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+    const refresh = () => ScrollTrigger.refresh();
+    const r = setTimeout(refresh, 300);
+    window.addEventListener("load", refresh);
+    document.fonts?.ready.then(refresh).catch(() => {});
     return () => {
       clearTimeout(r);
+      window.removeEventListener("load", refresh);
       ctx.revert();
       gsap.ticker.remove(raf);
       window.removeEventListener("gsc:lock", onLock);

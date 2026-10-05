@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
 
 export default function Nav() {
@@ -21,6 +21,14 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", on);
   }, []);
   const cls = (id: string) => (current === id ? "is-current" : undefined);
+  // On phones the menu scrolls sideways: keep the current section's link in view.
+  const links = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const bar = links.current;
+    const el = bar?.querySelector<HTMLElement>(".is-current");
+    if (!bar || !el || bar.scrollWidth <= bar.clientWidth) return;
+    bar.scrollTo({ left: Math.max(0, el.offsetLeft - 16), behavior: "smooth" });
+  }, [current]);
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 24);
     on();
@@ -38,16 +46,16 @@ export default function Nav() {
       </div>
       <div className="link-bar">
         <div className="link-inner">
-          <nav className="nav-links" aria-label="Main navigation">
-            <a href="#top" className={cls("#top")}>home</a>
-            <a href="#challenge" className={cls("#challenge")}>about the event</a>
-            <a href="#tracks" className={cls("#tracks")}>tracks</a>
-            <a href="#timeline" className={cls("#timeline")}>how it works</a>
-            <a href="#scoring">eligibility</a>
-            <a href="#partners" className={cls("#partners")}>partners</a>
-            <a href="#faq" className={cls("#faq")}>faq</a>
+          <nav className="nav-links" aria-label="Main navigation" ref={links}>
+            <a href="#top" className={cls("#top")}>Home</a>
+            <a href="#challenge" className={cls("#challenge")}><span className="nl-full">About the event</span><span className="nl-short">About</span></a>
+            <a href="#tracks" className={cls("#tracks")}>Tracks</a>
+            <a href="#timeline" className={cls("#timeline")}>How it works</a>
+            <a href="#scoring">Eligibility</a>
+            <a href="#partners" className={cls("#partners")}>Partners</a>
+            <a href="#faq" className={cls("#faq")}>FAQ</a>
           </nav>
-          <a className="btn btn-xs" href="#register" data-register>register <span aria-hidden="true">→</span></a>
+          <a className="btn btn-xs" href="#register" data-register>Register <span aria-hidden="true">→</span></a>
         </div>
       </div>
     </header>
