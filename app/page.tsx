@@ -3,7 +3,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import ScrollProgress from "@/components/ScrollProgress";
 import Nav from "@/components/Nav";
 import Reveal from "@/components/Reveal";
-import Countdown from "@/components/Countdown";
+import HeroBanner from "@/components/HeroBanner";
 import Film from "@/components/Film";
 import { ShapeDefs } from "@/components/Shape";
 import { ShapeName, shapePath } from "@/lib/trapezoid";
@@ -43,44 +43,8 @@ export default function Page() {
       <Nav />
 
       <main id="top">
-        {/* 1. Hero: one block. Who we are, the promise, the date, the way in. */}
-        <div className="chapter chapter-one">
-          <section className="glass invitation">
-            <div className="gsc-mark" aria-hidden="true">
-              <img src={asset("/media/gsc-logo.jpg")} alt="" />
-            </div>
-            <p className="wordmark">Grand Startup Challenge</p>
-            <Reveal as="h1" className="statement" text={hero.statement} immediate stagger={0.08} />
-            <p className="soft">{hero.lede}</p>
-            <p className="when">
-              <span className="when-label">{hero.when.label}</span>
-              <span className="when-item">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
-                {hero.when.date}
-              </span>
-              <span className="when-item">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" /><circle cx="12" cy="10" r="2.4" /></svg>
-                {hero.when.venue}
-              </span>
-            </p>
-            <Countdown />
-            <div className="actions">
-              <div className="reg-stack">
-                <a className="reg-link" href="#register" data-register>register now <span className="reg-arrow" aria-hidden="true">→</span></a>
-                <a className="elig-link" href="#scoring">check eligibility <span aria-hidden="true">↗</span></a>
-              </div>
-              <a className="btn ghost" href="#partners">partner with us</a>
-            </div>
-            <p className="hero-with">brought to you by</p>
-            <div className="partners" aria-label="DPIIT, Cars24 and Startup Policy Forum">
-              <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="p-dpiit" />
-              <span className="p-div" />
-              <img src={asset("/media/cars24.webp")} alt="Cars24" className="p-cars24" />
-              <span className="p-div" />
-              <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="p-spf" />
-            </div>
-          </section>
-        </div>
+        {/* 1. Banner: full screen, the promise and the way in. */}
+        <HeroBanner />
 
         {/* 3. What this is, and why it matters. */}
         <section className="s-challenge" id="challenge">
@@ -122,22 +86,34 @@ export default function Page() {
           </div>
         </section>
 
-        {/* 6. Timeline: title on the left, the dates down a line on the right. */}
-        <section className="s-tl" id="timeline">
-          <div className="tl2">
-            <div className="tl2-head">
-              <h2 className="h-dare rise">Timeline</h2>
+        {/* 6. Timeline. Desktop: the section holds while the dates glide past left to right
+            (as on gsc.cars24.com). Tablet and phone: the same timeline, read top to bottom. */}
+        <section className="s-dates" id="timeline">
+          <div className="tl-wrap" data-htl>
+          <div className="tl-pin">
+          <div className="dates-head">
+            <p className="label rise">Timeline</p>
+            <Reveal className="h-dare" text={timeline.title} accent={["finale"]} />
+            <p className="soft rise">{timeline.lede}</p>
+            <a className="rubric-link rise" href="#scoring">eligibility and scoring <span aria-hidden="true">↗</span></a>
+            <div className="dates-actions rise">
+              <a className="btn" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
             </div>
-            <ol className="tl2-list">
-              <span className="tl2-line" data-draw aria-hidden="true" />
-              {timeline.items.map((t, i) => (
-                <li key={t.title} className={`rise${i === timeline.items.length - 1 ? " finale" : ""}`}>
-                  <span className="date">{t.date}</span>
-                  <h3>{t.title}</h3>
-                  <p>{t.text}</p>
-                </li>
-              ))}
-            </ol>
+          </div>
+          <div className="tl-viewport">
+          <p className="tl-hint" aria-hidden="true">Keep scrolling to move along the timeline <span>→</span></p>
+          <ol className="dates">
+            <span className="dates-line" aria-hidden="true" />
+            {timeline.items.map((t, i) => (
+              <li key={t.title} className={`rise${i === timeline.items.length - 1 ? " finale" : ""}`}>
+                <span className="date">{t.date}</span>
+                <h3>{t.title}</h3>
+                <p>{t.text}</p>
+              </li>
+            ))}
+          </ol>
+          </div>
+          </div>
           </div>
         </section>
 

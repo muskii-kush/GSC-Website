@@ -1,11 +1,21 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { asset } from "@/lib/asset";
+import { CONTACT, gmailLink } from "@/lib/content";
 
 export default function Nav({ base = "", page }: { base?: string; page?: "more" | "joining" }) {
   // On the "More" page the section links point back to the main page.
   const h = (hash: string) => `${base}${hash}`;
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // Lock the page behind the open menu; Esc closes it.
+  useEffect(() => {
+    document.documentElement.classList.toggle("is-locked", menuOpen);
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setMenuOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
   // Which section the reader is in, so the menu shows where they are in the story.
   const [current, setCurrent] = useState("#top");
   useEffect(() => {
@@ -23,14 +33,7 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
     return () => window.removeEventListener("scroll", on);
   }, []);
   const cls = (id: string) => (!base && current === id ? "is-current" : undefined);
-  // On phones the menu scrolls sideways: keep the current section's link in view.
   const links = useRef<HTMLElement>(null);
-  useEffect(() => {
-    const bar = links.current;
-    const el = bar?.querySelector<HTMLElement>(".is-current");
-    if (!bar || !el || bar.scrollWidth <= bar.clientWidth) return;
-    bar.scrollTo({ left: Math.max(0, el.offsetLeft - 16), behavior: "smooth" });
-  }, [current]);
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 24);
     on();
@@ -38,6 +41,7 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
     return () => window.removeEventListener("scroll", on);
   }, []);
   return (
+    <>
     <header className={`nav${scrolled ? " scrolled" : ""}`}>
       <div className="logo-bar">
         <a href={h("#top")} className="lb-inner" aria-label="Grand Startup Challenge home">
@@ -48,19 +52,46 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
       </div>
       <div className="link-bar">
         <div className="link-inner">
-          <nav className="nav-links" aria-label="Main navigation" ref={links}>
-            <a href={h("#top")} className={cls("#top")}>Home</a>
-            <a href={h("#challenge")} className={cls("#challenge")}><span className="nl-full">About the event</span><span className="nl-short">About</span></a>
-            <a href={h("#tracks")} className={cls("#tracks")}>Tracks</a>
-            <a href={h("#timeline")} className={cls("#timeline")}>Timeline</a>
-            <a href={h("#scoring")}>Eligibility</a>
-            <a href={h("#partners")} className={cls("#partners")}>Partners</a>
-            <a href={h("#faq")} className={cls("#faq")}>FAQ</a>
-            <a href="/joining" className={page === "joining" ? "is-current" : undefined}>The room</a>
-          </nav>
+          <button
+            type="button"
+            className={`menu-btn${menuOpen ? " is-open" : ""}`}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            aria-controls="side-menu"
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            <span /><span /><span />
+          </button>
+          <a className="menu-title" href={h("#top")}>Grand Startup Challenge</a>
           <a className="btn btn-xs" href="#register" data-register>Register <span aria-hidden="true">→</span></a>
         </div>
       </div>
+
     </header>
+      {/* Side menu: slides in from the left */}
+      <div className={`menu-scrim${menuOpen ? " is-open" : ""}`} onClick={() => setMenuOpen(false)} aria-hidden="true" />
+      <nav
+        id="side-menu"
+        className={`side-menu${menuOpen ? " is-open" : ""}`}
+        aria-label="Main navigation"
+        aria-hidden={!menuOpen}
+        ref={links}
+        onClick={(e) => { if ((e.target as HTMLElement).closest("a")) setMenuOpen(false); }}
+      >
+        <p className="side-menu-label">Menu</p>
+        <a href={h("#top")} className={cls("#top")}>Home</a>
+        <a href={h("#challenge")} className={cls("#challenge")}>About the event</a>
+        <a href={h("#tracks")} className={cls("#tracks")}>Tracks</a>
+        <a href={h("#timeline")} className={cls("#timeline")}>Timeline</a>
+        <a href={h("#scoring")}>Eligibility</a>
+        <a href={h("#partners")} className={cls("#partners")}>Partners</a>
+        <a href={h("#faq")} className={cls("#faq")}>FAQ</a>
+        <a href="/joining" className={page === "joining" ? "is-current" : undefined}>The room</a>
+        <div className="side-menu-foot">
+          <a className="btn" href="#register" data-register>Register now <span aria-hidden="true">→</span></a>
+          <a className="side-menu-mail" href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a>
+        </div>
+      </nav>
+    </>
   );
 }

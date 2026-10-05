@@ -60,7 +60,7 @@ export const gets = {
   title: "and the prize is only the beginning",
   lede: "Every startup that makes the shortlist also signs up for all of this.",
   items: [
-    { stamp: "₹1 Cr", admit: "Prize", title: "₹1 crore prize pool", text: "One shared prize pool for the winning startups across all four tracks." },
+    { stamp: "₹1,00,00,000", admit: "Prize", title: "Prize Pool", text: "One shared prize pool for the winning startups across all four tracks." },
     { stamp: "Live", admit: "Data", title: "Real problems, real data", text: "Live problem statements drawn from real operations, with real data behind them." },
     { stamp: "1:1", admit: "Mentor", title: "A month with mentors", text: "Shortlisted startups spend December refining their solution with an assigned mentor." },
     { stamp: "Deploy", admit: "Launch", title: "A chance at real deployment", text: "Solutions are built for the context where the problem actually lives, not for a demo day." },
