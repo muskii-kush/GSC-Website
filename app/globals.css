@@ -1878,3 +1878,41 @@ main section.s-closing { padding-top: 0 !important; }
 /* Starfield: crisp, no blur */
 .starfield { filter: none !important; opacity: 1 !important; }
 .banner-streaks { filter: blur(3px) !important; }
+
+/* ══ Home background: static, with a soft northern-lights glow ══════════════ */
+.banner-glow, .banner-streaks { animation: none !important; }
+.northern-lights {
+  position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; opacity: .75;
+  background:
+    /* tall mint curtains, leaning, brightest at their base */
+    radial-gradient(18% 70% at 58% 22%, rgba(99, 255, 177, .30), rgba(99, 255, 177, 0) 70%),
+    radial-gradient(14% 62% at 70% 18%, rgba(99, 255, 177, .24), rgba(99, 255, 177, 0) 70%),
+    radial-gradient(12% 55% at 82% 26%, rgba(120, 255, 200, .18), rgba(120, 255, 200, 0) 70%),
+    /* violet and blue fringes at the top of the curtains */
+    radial-gradient(30% 30% at 64% 4%, rgba(143, 132, 255, .35), rgba(143, 132, 255, 0) 70%),
+    radial-gradient(26% 26% at 86% 6%, rgba(91, 140, 255, .28), rgba(91, 140, 255, 0) 70%);
+  filter: blur(18px);
+  transform: skewX(-14deg) translateX(4%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 85%);
+          mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 85%);
+}
+/* fine vertical rays inside the curtains */
+.northern-lights::after {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, rgba(180, 255, 220, 0) 0 22px, rgba(180, 255, 220, .07) 22px 26px, rgba(180, 255, 220, 0) 26px 48px);
+  -webkit-mask-image: radial-gradient(40% 60% at 68% 20%, #000, transparent 75%); mask-image: radial-gradient(40% 60% at 68% 20%, #000, transparent 75%);
+}
+@media (max-width: 760px) {
+  .northern-lights { opacity: .65; transform: skewX(-10deg) translateX(8%); }
+}
+.northern-lights { opacity: 1 !important; filter: blur(14px) !important; }
+.northern-lights {
+  background:
+    radial-gradient(16% 68% at 58% 24%, rgba(99, 255, 177, .42), rgba(99, 255, 177, 0) 72%),
+    radial-gradient(12% 60% at 69% 20%, rgba(99, 255, 177, .34), rgba(99, 255, 177, 0) 72%),
+    radial-gradient(10% 52% at 80% 28%, rgba(130, 255, 205, .26), rgba(130, 255, 205, 0) 72%),
+    radial-gradient(28% 26% at 64% 4%, rgba(160, 140, 255, .45), rgba(160, 140, 255, 0) 72%),
+    radial-gradient(24% 24% at 86% 6%, rgba(91, 140, 255, .35), rgba(91, 140, 255, 0) 72%) !important;
+}
+/* GSC'27: never clip the last letter (negative letter-spacing + overflow:hidden cut the 7) */
+.gm-outline { overflow: visible !important; padding: 0 .12em 0 .04em !important; }

@@ -16,7 +16,7 @@ export default function StarField({ className = "" }: { className?: string }) {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = true; // static background: drawn once, never animated
     let w = 0, h = 0, dots: Dot[] = [], raf = 0, visible = false, last = 0;
 
     // One speck drawn once at high resolution: crisp centre, soft mint glow.

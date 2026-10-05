@@ -21,6 +21,7 @@ export default function HeroBanner() {
         <span className="orb orb-3" />
         <span className="banner-glow" />
         <span className="banner-streaks" />
+        <span className="northern-lights" />
         <StarField />
       </div>
 
