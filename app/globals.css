@@ -1625,3 +1625,213 @@ main section.s-closing { padding-top: 0 !important; }
   .banner-side { margin-top: 26px; }
   .banner-side .countdown { justify-content: flex-start; }
 }
+
+/* ══ Banner on phones: fits one screen, tidy left column ════════════════════ */
+@media (max-width: 760px) {
+  .banner {
+    min-height: 100svh; align-content: center; align-items: center !important;
+    padding: calc(92px + 28px) 20px 28px !important; gap: 0;
+  }
+  .banner-copy { width: 100%; }
+  .banner-mark { width: 84px !important; margin: 0 0 18px !important; }
+  .banner-name { font-size: 19px !important; }
+  .banner-title { font-size: clamp(34px, 10vw, 42px) !important; margin-top: 10px !important; line-height: 1.02 !important; }
+  .banner-when { margin-top: 16px; gap: 6px 10px; font-size: 14.5px !important; white-space: nowrap; }
+  .banner-when .dot { width: 4px; height: 4px; }
+  .banner-actions { width: auto; margin-top: 22px; gap: 10px; flex-wrap: nowrap; }
+  .banner-actions .btn { flex: 0 0 auto; height: 46px; padding: 0 18px; font-size: 11px; letter-spacing: .12em; }
+  .banner-elig { margin-top: 12px; padding-top: 6px; font-size: 11px; }
+  .banner-side { margin-top: 26px !important; width: 100%; }
+  .banner-side .countdown-label { margin-bottom: 0; }
+  .banner-side .countdown { justify-content: flex-start; gap: 8px; margin-top: 10px; }
+  .banner-side .countdown-item { flex: 1; min-width: 0; padding: 10px 2px 8px; border-radius: 12px; }
+  .banner-side .countdown-item strong { font-size: 22px; }
+}
+@media (max-width: 370px) {
+  .banner-when { font-size: 13px !important; gap: 6px 8px; }
+  .banner-actions .btn { padding: 0 14px; letter-spacing: .08em; }
+}
+
+/* About the event: three figures in one row */
+.about-stats {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0;
+  width: min(1100px, 100%); margin: 44px auto 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.about-stat { padding: 30px 24px; text-align: center; }
+.about-stat + .about-stat { border-left: 1px solid var(--line); }
+.about-stat-v { font-family: var(--f-display); font-weight: 800; font-size: clamp(34px, 3.8vw, 56px); line-height: 1; letter-spacing: -.035em; color: #fff; }
+.about-stat:nth-child(2) .about-stat-v { color: var(--mint); }
+.about-stat-l { margin-top: 12px; font-family: var(--f-label); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-90); }
+.about-stat-n { margin: 8px auto 0; max-width: 30ch; font-size: 14px; line-height: 1.55; color: var(--ink-70); }
+@media (max-width: 760px) {
+  .about-stats { grid-template-columns: 1fr; margin-top: 28px; }
+  .about-stat { padding: 20px 8px; }
+  .about-stat + .about-stat { border-left: 0; border-top: 1px solid var(--line); }
+  .about-stat-v { font-size: 36px; }
+}
+
+/* ══ Timeline: static ═══════════════════════════════════════════════════════
+   Desktop: heading on top, all six dates in one row on a horizontal line.
+   Tablet and phone: the same dates down a vertical line. Nothing scrolls sideways. */
+.tl-static, .tl-static .tl-pin { position: static !important; height: auto !important; max-height: none !important; overflow: visible !important; }
+.tl-static .tl-viewport { overflow: visible !important; -webkit-mask-image: none !important; mask-image: none !important; padding: 0 !important; }
+.tl-static .dates { transform: none !important; will-change: auto; }
+@media (min-width: 1081px) {
+  .tl-static .tl-pin { display: block !important; width: min(1240px, 100%); margin: 0 auto; }
+  .tl-static .dates-head { max-width: 760px !important; margin: 0 auto 48px; text-align: center; }
+  .tl-static .dates-head .soft { margin-inline: auto; }
+  .tl-static .dates {
+    display: grid !important; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 28px !important;
+    width: 100% !important; max-width: none !important; padding: 44px 0 0 !important; margin: 0 !important;
+  }
+  .tl-static .dates::before { left: 0 !important; right: 0 !important; top: 5px !important; bottom: auto !important; width: auto !important; height: 1px !important; }
+  .tl-static .dates-line { left: 0 !important; right: 0 !important; top: 5px !important; bottom: auto !important; width: auto !important; height: 1px !important; transform: none !important; background: linear-gradient(90deg, var(--mint), var(--blue)) !important; }
+  .tl-static .dates li { width: auto !important; }
+  .tl-static .dates li::before { left: 0 !important; top: -44px !important; }
+  .tl-static .dates h3 { font-size: 20px; }
+  .tl-static .dates p { font-size: 14px; line-height: 1.6; }
+}
+.tl-static .dates-line { transform: none !important; }
+
+/* ══ Side menu: smaller titles in the site's body font ══════════════════════ */
+.side-menu > a { font-family: var(--f-body) !important; font-weight: 500 !important; font-size: 17px !important; letter-spacing: 0 !important; padding: 13px 0 !important; }
+.side-menu > a.is-current { padding-left: 14px !important; }
+
+/* ══ Footer: partner logos, copyright and back to top in one row ════════════ */
+.site-foot {
+  display: flex !important; align-items: center; justify-content: space-between; gap: 18px 28px; flex-wrap: wrap;
+  width: min(1240px, calc(100% - 48px)); margin: 0 auto; padding: 22px 0 calc(28px + env(safe-area-inset-bottom, 0px)) !important;
+  border-top: 1px solid rgba(255, 255, 255, .25); font-family: var(--f-body); font-size: 14px; letter-spacing: 0; color: rgba(255, 255, 255, .85); text-align: left;
+}
+.foot-logos { display: inline-flex; align-items: center; gap: 14px; padding: 8px 18px; background: #fff; border-radius: 999px; }
+.foot-logos img { width: auto; object-fit: contain; }
+.fl-dpiit { height: 30px; } .fl-cars24 { height: 18px; } .fl-spf { height: 28px; }
+.fl-div { width: 1px; height: 20px; background: rgba(0, 0, 0, .15); }
+.foot-copy { flex: 1; text-align: center; }
+.site-foot .foot-top { color: #fff; text-decoration: none; font-weight: 500; }
+.site-foot .foot-top:hover { text-decoration: underline; }
+.giant-mark { margin-bottom: 4px !important; }
+
+@media (max-width: 760px) {
+  /* Banner: no empty band under the countdown */
+  .banner { min-height: 0 !important; padding-bottom: 36px !important; }
+
+  /* About the event: the three figures side by side */
+  .about-stats { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; margin-top: 26px; }
+  .about-stat { padding: 18px 4px !important; }
+  .about-stat + .about-stat { border-top: 0 !important; border-left: 1px solid var(--line) !important; }
+  .about-stat-v { font-size: 26px !important; }
+  .about-stat-l { font-size: 9.5px; letter-spacing: .1em; margin-top: 8px; }
+  .about-stat-n { display: none; }
+
+  /* Footer stacked and centred */
+  .site-foot { flex-direction: column; justify-content: center; text-align: center; gap: 14px; width: calc(100% - 32px); padding-top: 20px !important; }
+  .foot-copy { flex: none; }
+  .fl-dpiit { height: 26px; } .fl-cars24 { height: 15px; } .fl-spf { height: 24px; }
+}
+
+/* ══ GSC'27: outlined letters with a mint light passing through ═════════════ */
+.gm-outline {
+  position: relative; display: block; width: fit-content; margin: 8px auto 6px !important; padding: 0 !important;
+  font-size: clamp(64px, 13vw, 200px) !important; line-height: 1 !important; letter-spacing: -.04em;
+  color: transparent !important; -webkit-text-stroke: 1.5px rgba(255, 255, 255, .7);
+}
+.gm-outline::after {
+  content: attr(data-text); position: absolute; inset: 0; -webkit-text-stroke: 1.5px transparent;
+  background: linear-gradient(100deg, transparent 0 40%, rgba(99, 255, 177, .95) 48%, #fff 50%, rgba(143, 132, 255, .9) 52%, transparent 60% 100%);
+  background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gm-sweep 5s ease-in-out infinite;
+}
+@keyframes gm-sweep { 0% { background-position: 120% 0; } 60%, 100% { background-position: -40% 0; } }
+@media (prefers-reduced-motion: reduce) { .gm-outline::after { animation: none; } }
+
+/* ══ Phone: the banner owns the whole first screen ══════════════════════════ */
+@media (max-width: 760px) {
+  .banner { min-height: 100svh !important; display: flex !important; flex-direction: column; justify-content: center; padding-bottom: 32px !important; }
+  .banner-copy { width: 100%; }
+  .banner-mark { width: 96px !important; margin-bottom: 22px !important; }
+  .banner-title { font-size: clamp(38px, 11vw, 46px) !important; }
+  .banner-side { margin-top: 32px !important; }
+  .gm-outline { -webkit-text-stroke-width: 1px; }
+}
+.gm-outline { -webkit-text-stroke: 2px rgba(255, 255, 255, .95) !important; filter: drop-shadow(0 0 18px rgba(99, 255, 177, .35)); }
+@media (max-width: 760px) { .gm-outline { -webkit-text-stroke-width: 1.5px !important; } }
+.site-foot .foot-copy { color: #fff; }
+
+/* About: the tracks line on one line */
+.about-stat-n { max-width: none !important; }
+.about-stat:first-child .about-stat-n { white-space: nowrap; }
+@media (max-width: 1080px) { .about-stat:first-child .about-stat-n { white-space: normal; } }
+
+/* Smaller video */
+.film-stage { width: min(820px, 100%) !important; }
+
+/* "Choose your way into the room" on one line */
+.s-invites .h-center { max-width: none !important; white-space: nowrap; }
+@media (max-width: 760px) { .s-invites .h-center { font-size: clamp(20px, 6vw, 26px) !important; } }
+@media (min-width: 1081px) { .about-stats { grid-template-columns: 1.3fr 1fr 1fr !important; width: min(1180px, 100%) !important; } }
+.about-stat-v { white-space: nowrap; }
+@media (max-width: 760px) { .about-stat-v { font-size: 22px !important; } }
+
+/* Banner countdown: smaller */
+.banner-side .countdown-label { font-size: 10px; letter-spacing: .2em; }
+.banner-side .countdown { gap: 8px; margin-top: 10px; }
+.banner-side .countdown-item { min-width: 62px; padding: 9px 6px 7px; border-radius: 12px; }
+.banner-side .countdown-item strong { font-size: 22px; }
+.banner-side .countdown-item span { font-size: 8.5px; letter-spacing: .14em; }
+@media (max-width: 760px) {
+  .banner-side { margin-top: 24px !important; }
+  .banner-side .countdown { justify-content: flex-start; }
+  .banner-side .countdown-item { flex: 0 0 auto !important; min-width: 58px; padding: 8px 4px 6px !important; }
+  .banner-side .countdown-item strong { font-size: 19px !important; }
+}
+
+/* ══ Version B: aurora glow (replaces the light lines) ══════════════════════ */
+.aurora { pointer-events: none; overflow: hidden; }
+.aurora canvas { display: block; width: 100%; height: 100%; filter: blur(18px) saturate(1.15); transform: scale(1.08); }
+.aurora::after {
+  content: ""; position: absolute; inset: 0; opacity: .22; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+/* Where the aurora sits, section by section. The home page keeps its own dark glow. */
+.s-challenge, .s-tracks, .s-dates, .s-invites { position: relative; isolation: isolate; }
+.s-challenge > :not(.aurora), .s-tracks > :not(.aurora), .s-dates > :not(.aurora), .s-invites > :not(.aurora) { position: relative; z-index: 1; }
+.aurora-about, .aurora-tracks, .aurora-timeline, .aurora-partners { position: absolute !important; left: 0; right: 0; z-index: 0; }
+/* About: a soft band glowing under the three figures */
+.aurora-about { bottom: 2%; height: 170px; opacity: .85;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 35%, #000 65%, transparent); mask-image: linear-gradient(180deg, transparent, #000 35%, #000 65%, transparent); }
+/* Tracks: a faint wash behind the cards */
+.aurora-tracks { top: 0; bottom: 0; opacity: .4; }
+/* Timeline: a quieter band through the middle */
+.aurora-timeline { top: 50%; height: 220px; translate: 0 -10%; opacity: .28;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 40%, #000 60%, transparent); mask-image: linear-gradient(180deg, transparent, #000 40%, #000 60%, transparent); }
+/* Invitations: glowing up from below, cards as dark glass over it */
+.aurora-partners { bottom: 0; height: 60%; opacity: .9;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 60%); mask-image: linear-gradient(180deg, transparent, #000 60%); }
+.s-invites .glass { background: rgba(6, 4, 26, .72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+/* Second half of the page (invitations, FAQ, closing, footer): dark, as in Version B */
+.chapter-two { background: #06041A !important; }
+.chapter-two::after { display: none; }
+.s-invites, .s-faq, .s-closing { overflow: hidden; }
+@media (max-width: 760px) { .aurora-about { height: 100px; bottom: 1%; } }
+.aurora-about { bottom: -60px !important; }
+@media (max-width: 760px) { .aurora-about { bottom: -30px !important; } }
+
+/* ══ Timeline as its own band ═══════════════════════════════════════════════
+   A lighter ink-violet panel with fine top and bottom rules, so the timeline
+   reads as a separate chapter between the tracks and the invitations. */
+.s-dates {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(71, 54, 254, .22), rgba(71, 54, 254, 0) 60%),
+    linear-gradient(180deg, #17124A 0%, #120E3A 100%) !important;
+  border-top: 1px solid rgba(143, 132, 255, .28);
+  border-bottom: 1px solid rgba(143, 132, 255, .28);
+  padding-block: clamp(72px, 8vw, 110px) !important;
+}
+.s-dates::after {
+  content: ""; position: absolute; left: 50%; top: -1px; translate: -50% 0; width: min(320px, 50%); height: 2px;
+  background: linear-gradient(90deg, transparent, var(--mint), transparent);
+}
+@media (max-width: 760px) { .s-dates { padding-block: 56px !important; } }
+.detail-side .chips-lede { margin: -4px 0 16px !important; font-size: 14px; }

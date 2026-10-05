@@ -67,43 +67,6 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
           scrollTrigger: { trigger: el, start: "top bottom", end: "center 55%", scrub: true },
         }),
       );
-      // Timeline: on desktop the section holds while the timeline slides left, month by
-      // month, and the line draws across; below that it stays vertical and the line draws down.
-      const tlm = gsap.matchMedia();
-      tlm.add("(min-width: 1081px) and (min-height: 620px)", () => {
-        gsap.utils.toArray<HTMLElement>("[data-htl]").forEach((wrap) => {
-          const vp = wrap.querySelector<HTMLElement>(".tl-viewport");
-          const ol = wrap.querySelector<HTMLElement>(".dates");
-          const line = wrap.querySelector<HTMLElement>(".dates-line");
-          if (!vp || !ol) return;
-          const distance = () => Math.max(0, ol.scrollWidth - vp.clientWidth);
-          // The wrapper's extra height is exactly the sideways travel, so the hold lasts as long as the slide.
-          // The frame is only as tall as its content, so there is no empty band above or below it.
-          const pin = wrap.querySelector<HTMLElement>(".tl-pin");
-          const size = () => { wrap.style.height = `${(pin?.offsetHeight ?? 0) + distance()}px`; };
-          size();
-          ScrollTrigger.addEventListener("refreshInit", size);
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: wrap, start: "top 72px", end: () => `+=${distance()}`, scrub: 0.6, invalidateOnRefresh: true,
-            },
-          });
-          tl.to(ol, { x: () => -distance(), ease: "none" }, 0);
-          if (line) tl.fromTo(line, { scaleX: 0 }, { scaleX: 1, ease: "none" }, 0);
-          return () => {
-            ScrollTrigger.removeEventListener("refreshInit", size);
-            wrap.style.height = "";
-          };
-        });
-      });
-      tlm.add("(max-width: 1080px), (max-height: 619px)", () => {
-        gsap.utils.toArray<HTMLElement>("[data-htl] .dates-line").forEach((el) =>
-          gsap.fromTo(el, { scaleY: 0 }, {
-            scaleY: 1, ease: "none",
-            scrollTrigger: { trigger: el.parentElement, start: "top 70%", end: "bottom 60%", scrub: true },
-          }),
-        );
-      });
       gsap.utils.toArray<HTMLElement>("[data-draw]").forEach((el) =>
         gsap.fromTo(el, { scaleY: 0 }, {
           scaleY: 1, ease: "none",

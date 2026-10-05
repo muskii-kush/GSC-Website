@@ -11,7 +11,7 @@ export const APPLICATIONS_CLOSE = "2026-10-31T23:59:59+05:30";
 export const hero = {
   statement: "build what moves India forward",
   lede:
-    "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
+    "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, supply chain, and sovereign AI.",
   when: { label: "Grand finale", date: "January 2027", venue: "New Delhi" },
 };
 
@@ -29,8 +29,9 @@ export const challenge = {
   statement:
     "The Grand Startup Challenge, run with Startup India and the Startup Policy Forum, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
   metrics: [
-    { value: "₹1 Cr", label: "Prize pool" },
-    { value: "4", label: "Problem tracks" },
+    { value: "4", label: "Problem tracks", note: "Fintech, mobility and road safety, supply chain and sovereign AI" },
+    { value: "₹1 Cr", label: "Total prize pool", note: "Shared among the winning startups across all four tracks" },
+    { value: "4 months", label: "Build to deploy", note: "For India’s brightest minds to build, test and deploy" },
   ],
 };
 
@@ -144,7 +145,7 @@ export const tracks: {
       ["18.3 crore", "Indians now track their own CIBIL score, three in four of them outside the metros (TransUnion CIBIL, 2025)"],
       ["40%", "Year on year rise in the value of new retail loans in the March 2026 quarter (TransUnion CIBIL)"],
     ],
-    build: ["Credit intelligence for vehicle owners", "Fraud and identity checks", "An AI underwriter that designs the loan", "Stopping a missed EMI before it happens", "A financial garage for vehicle owners"],
+    build: ["Credit intelligence layer for vehicle owners", "AI Underwriter / Credit Decisioning Agent / Co pilot", "Pre-Delinquency Early Warning & Next Best Action"],
   },
   {
     id: "mobility",
@@ -166,16 +167,16 @@ export const tracks: {
       ["70.3%", "Of those deaths involved over-speeding (MoRTH, 2024)"],
       ["Oct 2024", "Since then, commercial vehicles can only be certified fit at automated testing stations (MoRTH)"],
     ],
-    build: ["Smartphone based vehicle inspection", "Predicting accident prone routes", "A first responder network for the golden hour", "Road safety audits with computer vision", "Turning road video into safety data", "Trusted battery health for used EVs"],
+    build: ["Computer Vision Vehicle Inspection", "Safer Route Risk Scoring", "Golden Hour First Responder Network", "Computer Vision Enabled Road Safety Audits", "Gamified Road Hazard Reporting", "Secure Video Intelligence for Road Safety", "Used EV Battery Health Assessment", "Unified Public Transport Journey Planner", "Road Safety Copilot and Safe-Driving Passport", "Car Inspection Co-Pilot for Customers", "Progressive Trust for Seller Listings", "Green Vehicle Passport and Emissions Label", "Reliable EV Charging Trip Planner"],
   },
   {
     id: "logistics",
-    num: "Track 3 · Logistics",
-    name: "Logistics & Supply Chain",
+    num: "Track 3 · Supply chain",
+    name: "Supply Chain",
     summary: "Route, load and hub optimisation across a live fleet and distributed network.",
     image: asset("/media/track-logistics-warehouse.jpg"),
     briefAspect: "2 / 1",
-    kicker: "Track 3 · Logistics & supply chain",
+    kicker: "Track 3 · Supply chain",
     title: "Make the network work harder.",
     lede: "Help a fleet, its hubs and the people running them move more with less.",
     body: "We want tools that cut empty and wasted movement: route and load planning, shared truck space for part loads, hub and yard operations, damage checks at every handover, and fuel use you can measure.",
@@ -186,7 +187,7 @@ export const tracks: {
       ["70%", "Of India’s freight moves by road (NITI Aayog and RMI)"],
       ["~2 lakh", "Cars bought, moved, refurbished and sold in FY26 on the network behind this track"],
     ],
-    build: ["Interstate car carriers for part truck loads", "Route and load planning", "Hub and yard operations", "Damage checks at handover", "Fuel optimisation"],
+    build: ["Part Truckload Car Carrier Visibility and Consolidation", "Hub Car Slotting and Location Tracking", "Retail Hub Cleaning Scheduler", "Driver Engagement and Communication Platform", "Vehicle Track and Trace Across Hubs", "In Transit Exception Alerts", "Vendor Performance and Risk Scoring", "Refurbishment Spare Parts Forecasting", "Pilot Fleet Routing and Utilisation"],
   },
   {
     id: "sovereign-ai",
@@ -205,7 +206,7 @@ export const tracks: {
       ["₹10,372 crore", "Committed to the IndiaAI Mission to build compute and models in India (Government of India)"],
       ["38,000+", "GPUs made available to Indian startups and researchers under the mission"],
     ],
-    build: ["Data privacy and consent", "Keeping data in India", "Accuracy in regional languages", "One vehicle record across Vahan, RC and insurance", "Automating RTO services", "An AI copilot for vehicle inspectors"],
+    build: ["AI Vehicle Ownership Agent", "Unified Vehicle Record and Variant Reconciliation", "Digital RTO Services", "Agentic RTO Services Assistant", "AI Car Inspection Jockey Copilot", "AI Video Reels for Car Listings", "Road Safety Data Sharing API"],
   },
 ];
 
@@ -276,7 +277,7 @@ export const invites: {
     image: asset("/media/invite-investor.jpg"),
     kicker: "Investor access",
     title: "Meet the next generation of India’s builders.",
-    lede: "Get close to a screened pipeline of founders working on problems that matter across fintech, mobility, logistics and sovereign AI.",
+    lede: "Get close to a screened pipeline of founders working on problems that matter across fintech, mobility, supply chain and sovereign AI.",
     points: [
       "Join startup mixers from October to December",
       "Receive the list of shortlisted startups, and meet the ones you choose one on one in the Investor Lounge",
@@ -309,7 +310,7 @@ export const invites: {
 // FAQ. Answers only restate what the site and application form already say.
 export const faq = {
   eyebrow: "Questions",
-  title: "curious? ask away",
+  title: "curious? Ask away",
   items: [
     {
       q: "Who can apply?",
@@ -330,7 +331,7 @@ export const faq = {
     },
     {
       q: "Which track should I apply to?",
-      a: "Pick the one closest to the problem you solve: lending and fintech, mobility and road safety, logistics and supply chain, or sovereign AI. Open a track brief to see what we are looking for.",
+      a: "Pick the one closest to the problem you solve: lending and fintech, mobility and road safety, supply chain, or sovereign AI. Open a track brief to see what we are looking for.",
     },
     {
       q: "What happens after I apply?",

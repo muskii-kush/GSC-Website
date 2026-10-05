@@ -12,7 +12,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Grand Startup Challenge — Build what moves India forward",
   description:
-    "A four-month startup challenge for early-stage teams building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
+    "A four-month startup challenge for early-stage teams building across lending and fintech, mobility and road safety, supply chain, and sovereign AI.",
 };
 
 export const viewport: Viewport = { themeColor: "#0B0826" }; // matches the ink-violet page colour

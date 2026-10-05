@@ -4,15 +4,15 @@ import ScrollProgress from "@/components/ScrollProgress";
 import Nav from "@/components/Nav";
 import Reveal from "@/components/Reveal";
 import HeroBanner from "@/components/HeroBanner";
+import Aurora from "@/components/Aurora";
 import Film from "@/components/Film";
 import { ShapeDefs } from "@/components/Shape";
 import { ShapeName, shapePath } from "@/lib/trapezoid";
 import DetailDrawer from "@/components/DetailDrawer";
 import Registration from "@/components/Registration";
-import { ticket } from "@/components/Ticket";
 import { asset } from "@/lib/asset";
 import {
-  CONTACT, gmailLink, challenge, faq, footer, gets, hero, invites, invitesIntro, timeline, tracks, tracksIntro,
+  CONTACT, gmailLink, challenge, faq, hero, invites, invitesIntro, timeline, tracks, tracksIntro,
 } from "@/lib/content";
 
 const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
@@ -50,6 +50,15 @@ export default function Page() {
         <section className="s-challenge" id="challenge">
           <Reveal className="h-center" text={challenge.title} accent={["event"]} />
           <p className="statement-sm rise">{accentPhrases(challenge.statement, ["Startup India and the Startup Policy Forum", "real problems", "national recognition"])}</p>
+          <div className="about-stats rise">
+            {challenge.metrics.map((m) => (
+              <div className="about-stat" key={m.label}>
+                <p className="about-stat-v">{m.value}</p>
+                <p className="about-stat-l">{m.label}</p>
+                <p className="about-stat-n">{m.note}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
         <Film />
@@ -78,34 +87,24 @@ export default function Page() {
           </div>
         </section>
 
-        {/* 5. What startups get: the reward, before the process. */}
-        <section className="s-gets" id="benefits">
-          {/* Eyebrow, then the headline prize as a golden ticket, then the write-up and the other five passes. */}
-          <div className="tickets tickets-lead">
-            {gets.items.slice(0, 1).map((g, i) => ticket(g, i, gets.items.length))}
-          </div>
-        </section>
 
         {/* 6. Timeline. Desktop: the section holds while the dates glide past left to right
             (as on gsc.cars24.com). Tablet and phone: the same timeline, read top to bottom. */}
         <section className="s-dates" id="timeline">
-          <div className="tl-wrap" data-htl>
+          <Aurora variant="band" className="aurora-timeline" />
+          <div className="tl-wrap tl-static">
           <div className="tl-pin">
           <div className="dates-head">
             <p className="label rise">Timeline</p>
             <Reveal className="h-dare" text={timeline.title} accent={["finale"]} />
             <p className="soft rise">{timeline.lede}</p>
             <a className="rubric-link rise" href="#scoring">eligibility and scoring <span aria-hidden="true">↗</span></a>
-            <div className="dates-actions rise">
-              <a className="btn" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
-            </div>
           </div>
           <div className="tl-viewport">
-          <p className="tl-hint" aria-hidden="true">Keep scrolling to move along the timeline <span>→</span></p>
           <ol className="dates">
             <span className="dates-line" aria-hidden="true" />
             {timeline.items.map((t, i) => (
-              <li key={t.title} className={`rise${i === timeline.items.length - 1 ? " finale" : ""}`}>
+              <li key={t.title} className={`rise${i === 0 ? " finale" : ""}`}>
                 <span className="date">{t.date}</span>
                 <h3>{t.title}</h3>
                 <p>{t.text}</p>
@@ -122,9 +121,9 @@ export default function Page() {
         <div className="chapter chapter-two">
           {/* 8. Partner with us. */}
           <section className="s-invites" id="partners">
+            <Aurora variant="glow" className="aurora-partners" />
             <p className="label rise">{invitesIntro.eyebrow}</p>
             <Reveal className="h-center" text={invitesIntro.title} accent={["room"]} />
-            <p className="soft center rise">{invitesIntro.lede}</p>
             <div className="invite-grid">
               {invites.map((v) => (
                 <a className="glass invite" href={`#invite/${v.id}`} key={v.id}>
@@ -163,17 +162,23 @@ export default function Page() {
           {/* 10. Last call, then the sign-off. */}
           <section className="s-closing">
             <div className="actions rise">
-              <a className="btn" href="#register" data-register>register now <span aria-hidden="true">→</span></a>
               <a className="btn ghost" href={gmailLink()} target="_blank" rel="noopener noreferrer">talk to the team <span aria-hidden="true">↗</span></a>
             </div>
             <p className="contact rise"><a className="contact-link" href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a></p>
           </section>
 
 
-          <p className="giant-mark" aria-hidden="true">GSC&rsquo;27</p>
-          <footer className="footer">
-            <span>{footer}</span>
-            <a href="#top">Back to top ↑</a>
+          <p className="giant-mark gm-outline" aria-hidden="true" data-text="GSC’27">GSC&rsquo;27</p>
+          <footer className="footer site-foot">
+            <div className="foot-logos" aria-label="DPIIT Startup India, Cars24 and Startup Policy Forum">
+              <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="fl-dpiit" />
+              <span className="fl-div" aria-hidden="true" />
+              <img src={asset("/media/cars24.webp")} alt="Cars24" className="fl-cars24" />
+              <span className="fl-div" aria-hidden="true" />
+              <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="fl-spf" />
+            </div>
+            <span className="foot-copy">© 2026 Grand Startup Challenge</span>
+            <a className="foot-top" href="#top">Back to top ↑</a>
           </footer>
         </div>
       </main>

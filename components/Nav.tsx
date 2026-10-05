@@ -62,7 +62,6 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
           >
             <span /><span /><span />
           </button>
-          <a className="menu-title" href={h("#top")}>Grand Startup Challenge</a>
           <a className="btn btn-xs" href="#register" data-register>Register <span aria-hidden="true">→</span></a>
         </div>
       </div>

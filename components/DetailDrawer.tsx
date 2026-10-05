@@ -191,7 +191,8 @@ export default function DetailDrawer() {
                       <li key={v}><strong>{v}</strong><span>{l}</span></li>
                     ))}
                   </ul>
-                  <h3>Problem statements</h3>
+                  <h3>Problems your startup could be solving</h3>
+                  <p className="chips-lede">Common problem statements in this track. If your startup already works on one of these, or on something close to it, this track is for you.</p>
                   <ul className="chips">
                     {track.build.map((b) => <li key={b}>{b}</li>)}
                   </ul>
