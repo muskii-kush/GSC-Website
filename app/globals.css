@@ -1023,6 +1023,37 @@ section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !
 .handoff-list li { font-size: 15px; line-height: 1.6; color: #C9CCD6; }
 .handoff-list li::marker { color: var(--mint); }
 .registration .app-fineprint { margin: 0 0 28px; }
+.register-auth { padding: 30px 0 36px; max-width: 610px; }
+.register-auth-progress { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; color: var(--mint); font: 10px var(--f-label); letter-spacing: .14em; }
+.register-auth-progress span:last-child { color: var(--ink-50); }
+.register-auth-icon { width: 52px; height: 52px; display: grid; place-items: center; margin-top: 48px; border: 1px solid rgba(99, 255, 177, .35); border-radius: 15px; background: rgba(99, 255, 177, .07); box-shadow: 0 0 40px rgba(99, 255, 177, .07); color: var(--mint); font-size: 27px; }
+.registration .register-auth h2 { max-width: 520px; margin: 26px 0 18px; font-size: clamp(44px, 7vw, 68px); }
+.register-auth .registration-lede { max-width: 510px; margin-bottom: 36px; }
+.register-auth .registration-lede strong { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.register-auth-form { display: grid; gap: 10px; max-width: 510px; }
+.register-auth-form > label { font-size: 15px; color: var(--ink); }
+.register-auth-form .app-help { margin-bottom: 6px; }
+.register-auth-form input { width: 100%; min-width: 0; height: 58px; border: 1px solid rgba(255, 255, 255, .19); border-radius: 13px; outline: none; background: rgba(255, 255, 255, .06); color: var(--ink); padding: 0 18px; font: 18px var(--f-body); transition: border-color .2s, box-shadow .2s; }
+.register-auth-form input::placeholder { color: var(--ink-50); }
+.register-auth-form input:focus { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(99, 255, 177, .12); }
+.register-auth-phone { display: flex; align-items: stretch; }
+.register-auth-prefix { display: grid; place-items: center; width: 72px; flex: 0 0 72px; border: 1px solid rgba(255, 255, 255, .19); border-right: 0; border-radius: 13px 0 0 13px; background: rgba(255, 255, 255, .09); color: var(--ink); font: 15px var(--f-label); }
+.register-auth-phone input { border-radius: 0 13px 13px 0; }
+.register-auth-form .button.primary { width: 100%; justify-content: center; margin-top: 12px; min-height: 56px; }
+.register-auth-code { font-family: var(--f-label) !important; font-size: 25px !important; letter-spacing: .34em; text-align: center; }
+.register-auth-actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 20px; margin-top: 7px; }
+.register-auth-actions button { border: 0; background: none; color: var(--mint); padding: 7px 0; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.register-auth-actions button:disabled { color: var(--ink-50); cursor: default; text-decoration: none; }
+.register-auth-error { min-height: 20px; margin-top: 14px; color: #FF9A8F; font-size: 13px; }
+.register-auth-note { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 28px; color: var(--ink-50); font-size: 12px; }
+.register-auth-loading { padding: 72px 0; color: var(--ink-70); font: 13px var(--f-label); }
+@media (max-width: 600px) {
+  .register-auth { padding-top: 22px; }
+  .register-auth-progress { font-size: 9px; }
+  .register-auth-icon { margin-top: 36px; }
+  .registration .register-auth h2 { font-size: clamp(40px, 11vw, 54px); }
+  .register-auth-form input { font-size: 16px; }
+}
 .handoff-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; }
 .handoff-actions .button.primary { display: inline-flex; text-decoration: none; }
 /* Deck upload field */
