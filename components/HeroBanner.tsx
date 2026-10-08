@@ -59,8 +59,12 @@ export default function HeroBanner() {
           <span>{hero.when.label}</span>
           <span className="dot" aria-hidden="true" />
           <span>{hero.when.date}</span>
-          <span className="dot" aria-hidden="true" />
-          <span>{hero.when.venue}</span>
+          {hero.when.venue && (
+            <>
+              <span className="dot" aria-hidden="true" />
+              <span>{hero.when.venue}</span>
+            </>
+          )}
         </p>
         <div className="banner-actions">
           <a className="btn" href="#register" data-register>Register now <span aria-hidden="true">→</span></a>
