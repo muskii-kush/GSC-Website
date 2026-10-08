@@ -206,7 +206,19 @@ export const tracks: {
       ["₹10,372 crore", "Committed to the IndiaAI Mission to build compute and models in India (Government of India)"],
       ["38,000+", "GPUs made available to Indian startups and researchers under the mission"],
     ],
-    build: ["AI Vehicle Ownership Agent", "Unified Vehicle Record and Variant Reconciliation", "Digital RTO Services", "Agentic RTO Services Assistant", "AI Car Inspection Jockey Copilot", "AI Video Reels for Car Listings", "Road Safety Data Sharing API"],
+    build: [
+      "AI Vehicle Ownership Agent",
+      "Unified Vehicle Record and Variant Reconciliation",
+      "Digital RTO Services",
+      "Agentic RTO Services Assistant",
+      "AI Car Inspection Jockey Copilot",
+      "AI Video Reels for Car Listings",
+      "Road Safety Data Sharing API",
+      "Understand Indian language speech: Handle regional accents and mixed-language conversations with locally deployable speech models.",
+      "Keep enterprise AI private: Run assistants on India-hosted infrastructure while keeping private data within the organisation's control.",
+      "Run AI on devices: Make useful models work on affordable hardware with limited connectivity.",
+      "Benchmark AI for India: Test accuracy, safety and reliability on Indian languages and real-world local tasks.",
+    ],
   },
 ];
 

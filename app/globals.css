@@ -1957,3 +1957,7 @@ main section.s-closing { padding-top: 0 !important; }
 .northern-lights { opacity: .7 !important; }
 .starfield { opacity: .85 !important; }
 @media (max-width: 760px) { .banner-glow { opacity: .68; } .northern-lights { opacity: .5 !important; } }
+
+/* Problem statements with a short description (sovereign AI) */
+.ps-t strong { display: block; font-weight: 600; color: var(--ink, #fff); }
+.ps-d { display: block; margin-top: 3px; color: var(--ink-70, rgba(255,255,255,.7)); }
