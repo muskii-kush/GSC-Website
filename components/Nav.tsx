@@ -45,7 +45,10 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
     <header className={`nav${scrolled ? " scrolled" : ""}`}>
       <div className="logo-bar">
         <a href={h("#top")} className="lb-inner" aria-label="Grand Startup Challenge home">
-          <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="lb-dpiit" />
+          <span className="lb-left">
+            <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="lb-dpiit" />
+            <img src={asset("/media/meity.svg")} alt="MeitY Startup Hub" className="lb-meity" />
+          </span>
           <img src={asset("/media/cars24.webp")} alt="Cars24" className="lb-cars24" />
           <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="lb-spf" />
         </a>

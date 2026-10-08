@@ -1961,3 +1961,15 @@ main section.s-closing { padding-top: 0 !important; }
 /* Problem statements with a short description (sovereign AI) */
 .ps-t strong { display: block; font-weight: 600; color: var(--ink, #fff); }
 .ps-d { display: block; margin-top: 3px; color: var(--ink-70, rgba(255,255,255,.7)); }
+
+/* MeitY Startup Hub logo beside DPIIT (top bar and footer) */
+.lb-left { justify-self: start; display: inline-flex; align-items: center; gap: 18px; }
+.lb-meity { height: 44px; }
+.fl-meity { height: 26px; }
+@media (max-width: 760px) {
+  .lb-inner { display: flex; justify-content: space-between; gap: 8px; }
+  .lb-left { gap: 8px; }
+  .lb-dpiit { height: 30px; } .lb-meity { height: 24px; } .lb-cars24 { height: 16px; } .lb-spf { height: 30px; }
+  .fl-meity { height: 22px; }
+  .foot-logos { gap: 10px; padding: 8px 14px; max-width: 100%; }
+}

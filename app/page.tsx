@@ -170,8 +170,10 @@ export default function Page() {
 
           <p className="giant-mark gm-outline" aria-hidden="true" data-text="GSC’27">GSC&rsquo;27</p>
           <footer className="footer site-foot">
-            <div className="foot-logos" aria-label="DPIIT Startup India, Cars24 and Startup Policy Forum">
+            <div className="foot-logos" aria-label="DPIIT Startup India, MeitY Startup Hub, Cars24 and Startup Policy Forum">
               <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="fl-dpiit" />
+              <span className="fl-div" aria-hidden="true" />
+              <img src={asset("/media/meity.svg")} alt="MeitY Startup Hub" className="fl-meity" />
               <span className="fl-div" aria-hidden="true" />
               <img src={asset("/media/cars24.webp")} alt="Cars24" className="fl-cars24" />
               <span className="fl-div" aria-hidden="true" />
