@@ -410,7 +410,7 @@ export default function SiteApplicationForm() {
                 <p className="app-fineprint">
                   Every question maps to a scoring criterion. <a href="#scoring">Read the eligibility checks and screening rubric ↗</a>
                 </p>
-                {phase === "before" && <p className="app-banner">You can start your draft now. Submissions open on 8 October 2026.</p>}
+                {phase === "before" && <p className="app-banner">You can start your draft now. Submissions open on 9 October 2026.</p>}
                 {phase === "closed" && <p className="app-banner">Applications for the 2027 edition are closed.</p>}
               </>
             )}

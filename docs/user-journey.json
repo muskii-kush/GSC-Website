@@ -34,7 +34,7 @@
       }
     ],
     "keyDates": {
-      "applicationsOpen": "2026-10-08T00:00:00+05:30",
+      "applicationsOpen": "2026-10-09T00:00:00+05:30",
       "applicationsClose": "2026-11-10T23:59:00+05:30",
       "finale": "January 2027, New Delhi (exact date intentionally not published)"
     },
@@ -107,7 +107,7 @@
         "visibility": "Hidden on load. Slides up once the hero card's bottom is above 25% of the viewport; hides again when the closing section's top reaches 85% of the viewport.",
         "content": {
           "headline": {
-            "beforeOpen": "Applications open 8 October",
+            "beforeOpen": "Applications open 9 October",
             "duringWindow": "Applications close 10 November",
             "afterClose": "Applications are closed"
           },
@@ -183,7 +183,7 @@
         "countdown": {
           "component": "components/Countdown.tsx",
           "phases": [
-            "Applications open in (to 8 Oct 2026)",
+            "Applications open in (to 9 Oct 2026)",
             "Applications close in (to 10 Nov 2026)",
             "Applications are closed"
           ],
@@ -402,7 +402,7 @@
         "lede": "Four months, from applications and shortlisting to a month of mentorship and a final pitch in New Delhi. All dates are in IST.",
         "timeline": [
           {
-            "date": "8 October 2026",
+            "date": "9 October 2026",
             "title": "Applications open"
           },
           {
@@ -410,7 +410,7 @@
             "title": "Applications close"
           },
           {
-            "date": "November to December 2026",
+            "date": "November 2026",
             "title": "Screening and interviews"
           },
           {
@@ -703,7 +703,7 @@
       "Submit → 'application received' screen; results on a rolling basis"
     ],
     "validation": "Checked when the founder leaves a field and again on Continue and Submit: CIN (21 characters, valid state code, possible year, private company type) or LLPIN (AAA-1234), matched to the incorporation answer; company name ending in Private Limited or LLP; DPIIT number format; city plus state; email format, typo domains, disposable and placeholder addresses; 10-digit Indian mobiles, placeholders rejected; LinkedIn /in/ profile links, X profile links; YouTube, Vimeo, Loom or Drive video links; deck links that point to a file; whole-rupee revenue; team size; placeholder, repeated or copy-pasted written answers; duplicate email, mobile or LinkedIn across founders; a hidden bot trap.",
-    "window": "Before 8 October 2026 founders can draft but not submit; after 10 November 2026 11:59 pm IST submissions are closed.",
+    "window": "Before 9 October 2026 founders can draft but not submit; after 10 November 2026 11:59 pm IST submissions are closed.",
     "limits": [
       "Google does not report success to other sites, so a completed request is treated as delivered.",
       "Answers cannot be edited after submitting."

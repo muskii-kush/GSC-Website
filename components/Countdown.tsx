@@ -30,7 +30,7 @@ export default function Countdown() {
         <span className="live-dot" aria-hidden="true" />
         {phase === "open" ? "Applications open in" : "Applications close in"}
       </p>
-      <div className="countdown" role="timer" aria-label={phase === "open" ? "Countdown to applications opening on 8 October 2026" : "Countdown to applications closing on 10 November 2026"}>
+      <div className="countdown" role="timer" aria-label={phase === "open" ? "Countdown to applications opening on 9 October 2026" : "Countdown to applications closing on 10 November 2026"}>
         {parts.map(([v, l]) => (
           <div className="countdown-item" key={l}>
             <strong suppressHydrationWarning>{now === null ? "--" : v}</strong>

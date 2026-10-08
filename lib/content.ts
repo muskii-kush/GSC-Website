@@ -4,7 +4,7 @@ export const CONTACT = "grandstartupchallenge@cars24.com";
 // Opens a Gmail compose window addressed to the team.
 export const gmailLink = (subject = "Grand Startup Challenge") =>
   `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACT)}&su=${encodeURIComponent(subject)}`;
-export const APPLICATIONS_OPEN = "2026-10-08T00:00:00+05:30";
+export const APPLICATIONS_OPEN = "2026-10-09T00:00:00+05:30";
 // The source gives the deadline as a date; end of day IST is assumed here.
 export const APPLICATIONS_CLOSE = "2026-11-10T23:59:00+05:30";
 
@@ -12,14 +12,14 @@ export const hero = {
   statement: "build what moves India forward",
   lede:
     "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, supply chain, and sovereign AI.",
-  when: { label: "Applications open", date: "8 October 2026", venue: "New Delhi" },
+  when: { label: "Applications open", date: "9 October 2026", venue: "New Delhi" },
 };
 
 // Floating chips around the hero statement. Every fact here is repeated elsewhere on the page.
 export const heroChips = [
   { value: "₹1 Cr", label: "prize pool" },
   { value: "4", label: "problem tracks" },
-  { value: "8 Oct", label: "applications open" },
+  { value: "9 Oct", label: "applications open" },
   { value: "Jan 2027", label: "New Delhi finale" },
 ];
 
@@ -90,9 +90,9 @@ export const timeline = {
   title: "from application to the finale",
   lede: "Four months, from applications and shortlisting to a month of mentorship and a final pitch in New Delhi. All dates are in IST.",
   items: [
-    { date: "8 October 2026", title: "Applications open", text: "Problem statements for each track are published on the same day." },
+    { date: "9 October 2026", title: "Applications open", text: "Problem statements for each track are published on the same day." },
     { date: "10 November 2026", title: "Applications close", text: "11:59 pm IST. Hard deadline. We do not extend it." },
-    { date: "November to December 2026", title: "Screening and interviews", text: "Applications are read and shortlisted startups are interviewed. You hear back either way." },
+    { date: "November 2026", title: "Screening and interviews", text: "Applications are read and shortlisted startups are interviewed. You hear back either way." },
     { date: "December 2026", title: "Mentorship month", text: "Shortlisted startups work with an assigned mentor to refine their solution." },
     { date: "Early January 2027", title: "Final refinement", text: "Startups finish the solution they will demo." },
     { date: "January 2027", title: "Finale, New Delhi", text: "Shortlisted startups pitch to the jury in their track room, with a demo. Track winners re-pitch in the main auditorium, followed by felicitation." },
@@ -207,17 +207,16 @@ export const tracks: {
       ["38,000+", "GPUs made available to Indian startups and researchers under the mission"],
     ],
     build: [
-      "AI Vehicle Ownership Agent",
-      "Unified Vehicle Record and Variant Reconciliation",
-      "Digital RTO Services",
-      "Agentic RTO Services Assistant",
-      "AI Car Inspection Jockey Copilot",
-      "AI Video Reels for Car Listings",
-      "Road Safety Data Sharing API",
       "Understand Indian language speech: Handle regional accents and mixed-language conversations with locally deployable speech models.",
       "Keep enterprise AI private: Run assistants on India-hosted infrastructure while keeping private data within the organisation's control.",
       "Run AI on devices: Make useful models work on affordable hardware with limited connectivity.",
       "Benchmark AI for India: Test accuracy, safety and reliability on Indian languages and real-world local tasks.",
+      "Speech and text data for low-resource languages: Build a community-sourced pipeline to collect, validate and license data for languages like Santali, Bodo and Tulu, with fair pay for contributors.",
+      "Indic models that reason natively: Build tokenisers and training approaches that cut the token cost of Indic text, tested on reasoning benchmarks written in Indian languages.",
+      "Consent-based data for AI training: Let people consent to their data being used to train models, with DPDP compliance, purpose limits and the right to revoke.",
+      "AI for Indian law and regulation: Answer compliance questions with citations to the current version of a rule, tracking amendments from regulators like RBI, SEBI and MoRTH.",
+      "Copilots for frontline government workers: A voice-first assistant in local languages that guides ASHA workers, patwaris and RTO clerks through procedures and flags errors.",
+      "Provenance for AI-generated media: Watermark and trace AI audio and video across Indian languages, in a way that survives WhatsApp-style compression and forwarding.",
     ],
   },
 ];
@@ -330,7 +329,7 @@ export const faq = {
     },
     {
       q: "When do applications open and close?",
-      a: "Applications open on 8 October 2026 and close on 10 November 2026 at 11:59 pm IST. The deadline is firm and will not be extended.",
+      a: "Applications open on 9 October 2026 and close on 10 November 2026 at 11:59 pm IST. The deadline is firm and will not be extended.",
     },
     {
       q: "How are applications scored?",
