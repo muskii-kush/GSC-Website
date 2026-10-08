@@ -12,7 +12,7 @@ export const hero = {
   statement: "build what moves India forward",
   lede:
     "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, supply chain, and sovereign AI.",
-  when: { label: "Applications open", date: "8 October 2026", venue: "" },
+  when: { label: "Applications open", date: "8 October 2026", venue: "New Delhi" },
 };
 
 // Floating chips around the hero statement. Every fact here is repeated elsewhere on the page.
