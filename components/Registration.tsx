@@ -403,14 +403,14 @@ export default function SiteApplicationForm() {
               <>
                 <h2>apply to the challenge</h2>
                 <p className="registration-lede">
-                  Applications close on 31 October 2026, 11:59 pm IST. Have ready: your CIN or LLPIN, a deck link that opens
+                  Applications close on 10 November 2026, 11:59 pm IST. Have ready: your CIN or LLPIN, a deck link that opens
                   without a permission request, your revenue for each of the last six months, and a 2 to 5 minute video of the
                   founders. Your answers save in this browser as you type, so you can close this and come back on the same device.
                 </p>
                 <p className="app-fineprint">
                   Every question maps to a scoring criterion. <a href="#scoring">Read the eligibility checks and screening rubric ↗</a>
                 </p>
-                {phase === "before" && <p className="app-banner">You can start your draft now. Submissions open on 1 October 2026.</p>}
+                {phase === "before" && <p className="app-banner">You can start your draft now. Submissions open on 8 October 2026.</p>}
                 {phase === "closed" && <p className="app-banner">Applications for the 2027 edition are closed.</p>}
               </>
             )}
@@ -634,7 +634,7 @@ export function GoogleFormHandoff() {
         <h2>apply to the challenge</h2>
         <p className="registration-lede">
           The application is on Google Forms. You will need to sign in with a Google account, because your pitch deck is
-          uploaded as a file. Applications close on 31 October 2026, 11:59 pm IST.
+          uploaded as a file. Applications close on 10 November 2026, 11:59 pm IST.
         </p>
         {phase === "closed" ? (
           <p className="app-banner">Applications for the 2027 edition are closed.</p>
