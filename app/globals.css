@@ -1973,3 +1973,7 @@ main section.s-closing { padding-top: 0 !important; }
   .fl-meity { height: 22px; }
   .foot-logos { gap: 10px; padding: 8px 14px; max-width: 100%; }
 }
+
+/* Top bar: four logos spread with equal gaps between them */
+.lb-inner { display: flex !important; justify-content: space-between; align-items: center; }
+.lb-left { display: contents; }
