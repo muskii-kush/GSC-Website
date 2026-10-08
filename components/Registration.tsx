@@ -7,7 +7,6 @@ import {
 } from "@/lib/application-checks";
 import { APPLICATIONS_CLOSE, APPLICATIONS_OPEN, CONTACT, gmailLink } from "@/lib/content";
 import RegistrationAuth from "@/components/RegistrationAuth";
-import { restoreBifrostSession } from "@/lib/bifrost-auth";
 
 /**
  * The application, in the site's own design. Answers autosave in this browser
@@ -137,7 +136,7 @@ export default function SiteApplicationForm() {
   const [submittedAt, setSubmittedAt] = useState<string | undefined>();
   const [loaded, setLoaded] = useState(false);
   const [phase, setPhase] = useState<"before" | "open" | "closed">("open");
-  const [authState, setAuthState] = useState<"guest" | "authenticated">("guest");
+  const [phoneVerified, setPhoneVerified] = useState(false);
   const panel = useRef<HTMLElement>(null);
   const honeypot = useRef<HTMLInputElement>(null);
 
@@ -170,9 +169,6 @@ export default function SiteApplicationForm() {
   }, [answers, step, submittedAt, loaded]);
 
   const show = useCallback((track?: string) => {
-    const session = restoreBifrostSession();
-    if (session?.phone) setAnswers((current) => current[BY_KEY.phone] ? current : { ...current, [BY_KEY.phone]: session.phone });
-    setAuthState(session ? "authenticated" : "guest");
     if (track) setAnswers((a) => (text(a[TRACK_ENTRY]) ? a : { ...a, [TRACK_ENTRY]: track }));
     setOpen(true);
     lock(true);
@@ -363,10 +359,10 @@ export default function SiteApplicationForm() {
           <button className="close" type="button" onClick={hide}>Close ×</button>
         </div>
 
-        {authState === "guest" ? (
+        {!phoneVerified ? (
           open ? <RegistrationAuth onVerified={(phone) => {
             setAnswers((current) => current[BY_KEY.phone] ? current : { ...current, [BY_KEY.phone]: phone });
-            setAuthState("authenticated");
+            setPhoneVerified(true);
             toTop();
           }} /> : null
         ) : status === "sent" ? (

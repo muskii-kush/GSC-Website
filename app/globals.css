@@ -1046,7 +1046,6 @@ section[class^="s-"]:has(.bridge-row) { padding-bottom: clamp(24px, 3vw, 40px) !
 .register-auth-actions button:disabled { color: var(--ink-50); cursor: default; text-decoration: none; }
 .register-auth-error { min-height: 20px; margin-top: 14px; color: #FF9A8F; font-size: 13px; }
 .register-auth-note { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 28px; color: var(--ink-50); font-size: 12px; }
-.register-auth-loading { padding: 72px 0; color: var(--ink-70); font: 13px var(--f-label); }
 @media (max-width: 600px) {
   .register-auth { padding-top: 22px; }
   .register-auth-progress { font-size: 9px; }

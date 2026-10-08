@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { sendOtp, verifyOtp, resendOtp, type OtpFlow } from "@/lib/bifrost-auth";
-import { bifrostConfig } from "@/lib/bifrost-config";
+import { requestOtp, verifyPhoneOtp } from "@/lib/otp-auth";
 
-const otpLength = bifrostConfig.otpLength;
+const otpLength = 4;
+const retrySeconds = 30;
 
 type AuthError = Error & { errorMessage?: string };
 
@@ -21,7 +21,7 @@ export default function RegistrationAuth({ onVerified }: { onVerified: (phone: s
   const [error, setError] = useState("");
   const [retryAt, setRetryAt] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(0);
-  const flow = useRef<OtpFlow | null>(null);
+  const [sentPhone, setSentPhone] = useState("");
   const inFlight = useRef(false);
   const codeInput = useRef<HTMLInputElement>(null);
   const phoneInput = useRef<HTMLInputElement>(null);
@@ -50,10 +50,10 @@ export default function RegistrationAuth({ onVerified }: { onVerified: (phone: s
     setBusy(true);
     setError("");
     try {
-      const sent = await sendOtp(digits);
-      flow.current = sent.flow;
-      setRetryAt(Date.now() + sent.retryAfter * 1000);
-      setSecondsLeft(sent.retryAfter);
+      await requestOtp(digits);
+      setSentPhone(digits);
+      setRetryAt(Date.now() + retrySeconds * 1000);
+      setSecondsLeft(retrySeconds);
       setOtp("");
       setStep("otp");
     } catch (cause) {
@@ -66,7 +66,7 @@ export default function RegistrationAuth({ onVerified }: { onVerified: (phone: s
 
   const verify = async (event: FormEvent) => {
     event.preventDefault();
-    if (inFlight.current || !flow.current) return;
+    if (inFlight.current || !sentPhone) return;
     if (otp.length !== otpLength) {
       setError(`Enter the ${otpLength}-digit code sent to your phone.`);
       return;
@@ -75,8 +75,8 @@ export default function RegistrationAuth({ onVerified }: { onVerified: (phone: s
     setBusy(true);
     setError("");
     try {
-      const session = await verifyOtp(flow.current, otp);
-      onVerified(session.phone);
+      await verifyPhoneOtp(sentPhone, otp);
+      onVerified(sentPhone);
     } catch (cause) {
       setError(message(cause));
     } finally {
@@ -86,15 +86,15 @@ export default function RegistrationAuth({ onVerified }: { onVerified: (phone: s
   };
 
   const resend = async () => {
-    if (inFlight.current || Date.now() < retryAt || !flow.current) return;
+    if (inFlight.current || Date.now() < retryAt || !sentPhone) return;
     inFlight.current = true;
     setBusy(true);
     setError("");
     try {
-      const sent = await resendOtp(flow.current);
+      await requestOtp(sentPhone);
       setOtp("");
-      setRetryAt(Date.now() + sent.retryAfter * 1000);
-      setSecondsLeft(sent.retryAfter);
+      setRetryAt(Date.now() + retrySeconds * 1000);
+      setSecondsLeft(retrySeconds);
       codeInput.current?.focus();
     } catch (cause) {
       setError(message(cause));
@@ -112,7 +112,7 @@ export default function RegistrationAuth({ onVerified }: { onVerified: (phone: s
       <p className="registration-lede">
         {step === "phone"
           ? "Enter your mobile number to start your application. We’ll text you a one-time code to keep your details secure."
-          : <>We sent a {otpLength}-digit code to <strong>+91 {flow.current?.phone.slice(0, 5)} {flow.current?.phone.slice(5)}</strong>.</>}
+          : <>We sent a {otpLength}-digit code to <strong>+91 {sentPhone.slice(0, 5)} {sentPhone.slice(5)}</strong>.</>}
       </p>
 
       {step === "phone" ? (
@@ -136,7 +136,7 @@ export default function RegistrationAuth({ onVerified }: { onVerified: (phone: s
           <button className="button primary" type="submit" disabled={busy}>{busy ? "Verifying…" : "Verify & continue →"}</button>
           <div className="register-auth-actions">
             <button type="button" onClick={resend} disabled={busy || secondsLeft > 0}>Retry{secondsLeft ? ` in ${secondsLeft}s` : ""}</button>
-            <button type="button" disabled={busy} onClick={() => { flow.current = null; setStep("phone"); setOtp(""); setError(""); }}>Change number</button>
+            <button type="button" disabled={busy} onClick={() => { setSentPhone(""); setStep("phone"); setOtp(""); setError(""); }}>Change number</button>
           </div>
         </form>
       )}
