@@ -1,4 +1,4 @@
-import { cp, mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -21,9 +21,10 @@ try {
   run(process.execPath, [join(root, "node_modules/wrangler/bin/wrangler.js"), "pages", "functions", "build", "functions", "--outdir", bundle, "--compatibility-date", "2026-10-09", "--minify"]);
   await cp(join(bundle, "index.js"), join(ready, "out/_worker.js"));
   run(process.execPath, ["--check", join(ready, "out/_worker.js")]);
+  if (!(await readFile(join(ready, "out/_worker.js"), "utf8")).includes("/api/admin/export")) throw new Error("Release is missing the existing Google Sheet CSV route");
   await writeFile(join(ready, "out/_routes.json"), JSON.stringify({ version: 1, include: ["/api/*"], exclude: [] }, null, 2));
   for (const name of ["functions", "lib", "docs", "scripts", "package.json", "package-lock.json"]) await cp(join(root, name), join(ready, name), { recursive: true });
-  await writeFile(join(ready, "README-DEPLOY.txt"), "Deploy from this directory with:\n  npx wrangler login\n  npx wrangler pages deploy out --project-name <existing-project-name>\n\nKeep the existing DECKS R2 binding, APPLICANTS KV binding and DECK_LINK_SECRET.\nThe compiled out/_worker.js records complete applications in R2 immediately.\nOptional Google Sheet delivery setup is in docs/DEPLOY-CLOUDFLARE.md.\n");
+  await writeFile(join(ready, "README-DEPLOY.txt"), "SHEET RESTORATION RELEASE\n\nDeploy from this directory to the existing gsc.cars24.com project:\n  npx wrangler login\n  npx wrangler pages deploy out --project-name <existing-project-name> --branch <production-branch>\n\nPreserve DECKS, SHEET_KEY, APPLICANTS and DECK_LINK_SECRET.\nThis release restores /api/admin/export?key=<existing SHEET_KEY>.\nThe original GSC 2027 Applications / Sheet1 imports that CSV.\nAll existing R2 applications are included automatically. No new Google credentials or replay are required.\nAfter deployment, refresh Sheet1 A1 by adding &v=20261009 to its existing import URL while preserving the key.\nSee docs/DEPLOY-CLOUDFLARE.md for verification steps.\n");
   await rm(source, { recursive: true, force: true });
   await mkdir(source);
   for (const name of ["app", "components", "lib", "public", "functions", "docs", "scripts", "tests", ".github", "package.json", "package-lock.json", "tsconfig.json", "next.config.mjs", "next-env.d.ts", "README.md", ".env.example", ".gitignore"]) {
@@ -34,5 +35,6 @@ try {
     await rm(zip, { force: true });
     run("zip", ["-qr", zip, name], { cwd: handoff });
   }
+  await cp(join(handoff, "GSC-Website-deploy-ready.zip"), join(handoff, "GSC-Website-sheet-fix.zip"));
   console.log(`Release packages: ${handoff}`);
 } finally { await rm(stage, { recursive: true, force: true }); }

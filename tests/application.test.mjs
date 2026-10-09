@@ -11,11 +11,12 @@ import { fixture as makeFixture } from "./application-fixture.mjs";
 
 globalThis.crypto ||= webcrypto;
 const dir = await mkdtemp(join(tmpdir(), "gsc-test-"));
-for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["schema", "lib/application-questions.ts"]]) {
+for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["export", "functions/api/admin/export.js"], ["schema", "lib/application-questions.ts"]]) {
   await build({ entryPoints: [entry], outfile: join(dir, `${name}.mjs`), bundle: true, platform: "node", format: "esm", logLevel: "silent" });
 }
 const apply = await import(pathToFileURL(join(dir, "apply.mjs")));
 const admin = await import(pathToFileURL(join(dir, "admin.mjs")));
+const sheetExport = await import(pathToFileURL(join(dir, "export.mjs")));
 const { pages } = await import(pathToFileURL(join(dir, "schema.mjs")));
 test.after(() => rm(dir, { recursive: true, force: true }));
 
@@ -49,6 +50,74 @@ async function submit(payload, bucket = new Bucket(), extra = {}, pdf = true) {
   return { response, result: await response.json(), bucket };
 }
 const archives = (bucket) => [...bucket.records].filter(([key]) => key.startsWith("applications/")).map(([, object]) => JSON.parse(object.value));
+
+function parseCsv(text) {
+  const rows = []; let row = [], value = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === '"') {
+      if (quoted && text[i + 1] === '"') { value += '"'; i++; } else quoted = !quoted;
+    } else if (c === ',' && !quoted) { row.push(value); value = ""; }
+    else if (c === '\n' && !quoted) { row.push(value.replace(/\r$/, "")); rows.push(row); row = []; value = ""; }
+    else value += c;
+  }
+  return rows;
+}
+const exportRequest = (key = "sheet-secret") => new Request(`https://gsc.cars24.com/api/admin/export?key=${encodeURIComponent(key)}`);
+
+test("the existing SHEET_KEY protects the CSV before reading storage", async () => {
+  let reads = 0;
+  const env = { SHEET_KEY: "sheet-secret", DECKS: { list() { reads++; throw new Error("Must not read"); } } };
+  for (const request of [exportRequest("wrong"), new Request("https://gsc.cars24.com/api/admin/export")]) {
+    assert.equal((await sheetExport.onRequestGet({ request, env })).status, 401);
+  }
+  assert.equal((await sheetExport.onRequestGet({ request: exportRequest(), env: { ...env, SHEET_KEY: undefined } })).status, 401);
+  assert.equal(reads, 0);
+  assert.equal((await sheetExport.onRequestGet({ request: exportRequest(), env: { SHEET_KEY: "sheet-secret" } })).status, 503);
+});
+
+test("saved submissions export every answer, CSV punctuation and deck link to the existing Sheet", async () => {
+  const { result, bucket } = await submit(fixture(), new Bucket(), { SHEET_KEY: "sheet-secret" });
+  const [record] = archives(bucket);
+  assert.equal(record.delivery.reason, "sheet-export");
+  record.company = '=untrusted()';
+  record.answers[0].value = 'Hindi, English "quotes"\nand a second line';
+  record.answers.push({ entry: "entry.retired", title: "Historical question", value: "Preserved answer" });
+  await bucket.put(`applications/${record.applicationId}.json`, JSON.stringify(record));
+  const response = await sheetExport.onRequestGet({ request: exportRequest(), env: { DECKS: bucket, SHEET_KEY: "sheet-secret" } });
+  assert.equal(response.status, 200); assert.match(response.headers.get("content-type"), /^text\/csv/);
+  assert.match(response.headers.get("cache-control"), /no-store/);
+  const rows = parseCsv(await response.text());
+  assert.equal(rows.length, 2); assert.equal(rows[1][0], result.applicationId); assert.equal(rows[1][3], "'=untrusted()");
+  assert.equal(rows[1][5], record.deck.url);
+  for (const answer of record.answers.filter((answer) => answer.entry !== "entry.retired")) {
+    const column = rows[0].findIndex((header) => header.startsWith(`${answer.entry} |`));
+    const expected = Array.isArray(answer.value) ? answer.value.join("\n") : String(answer.value);
+    assert.equal(rows[1][column], /^[\s\uFEFF]*[=+@-]/.test(expected) ? "'" + expected : expected);
+  }
+  assert.equal(JSON.parse(rows[1].at(-1))[0].value, "Preserved answer");
+});
+
+test("CSV exports every R2 page in submission order and never silently truncates failed reads", async () => {
+  const bucket = new Bucket(), cursors = [];
+  for (const [id, submittedAt] of [["c", "2026-10-01T00:00:00Z"], ["a", "2026-10-02T00:00:00Z"], ["b", "2026-10-03T00:00:00Z"]]) {
+    await bucket.put(`applications/${id}.json`, JSON.stringify({ applicationId: id, submittedAt, answers: [], deck: {} }));
+  }
+  bucket.list = async ({ prefix, cursor, include }) => {
+    assert.equal(prefix, "applications/"); assert.deepEqual(include, ["customMetadata"]); cursors.push(cursor);
+    const keys = [...bucket.records.keys()].sort(), index = Number(cursor || 0), key = keys[index];
+    return { objects: [{ key, customMetadata: { submittedAt: JSON.parse(bucket.records.get(key).value).submittedAt } }], truncated: index < keys.length - 1, cursor: String(index + 1) };
+  };
+  const env = { DECKS: bucket, SHEET_KEY: "sheet-secret" };
+  const response = await sheetExport.onRequestGet({ request: exportRequest(), env });
+  assert.deepEqual(parseCsv(await response.text()).slice(1).map((row) => row[0]), ["c", "a", "b"]);
+  assert.deepEqual(cursors, [undefined, "1", "2"]);
+  bucket.get = async () => null;
+  const broken = await sheetExport.onRequestGet({ request: exportRequest(), env });
+  await assert.rejects(() => broken.text(), /Application export unavailable/);
+  bucket.list = async () => { throw new Error("R2 unavailable"); };
+  assert.equal((await sheetExport.onRequestGet({ request: exportRequest(), env })).status, 503);
+});
 
 test("complete application and PDF are durable before receipt; no public Google request", async () => {
   const original = globalThis.fetch;

@@ -90,7 +90,9 @@ export async function onRequestPost(context) {
       version: 1, applicationId: id, submissionId, submittedAt, email, cin, company: answers[E.company],
       deck: { key: deckKey, name, size: deck.size, url: deckUrl },
       answers: shown.flatMap((p) => p.questions.filter((q) => q.kind !== "file").map((q) => ({ entry: q.entry, title: q.title, value: answers[q.entry] ?? "" }))),
-      delivery: { status: "pending", reason: env.APPLICATION_SYNC_URL && env.APPLICATION_SYNC_SECRET ? "queued" : "not-configured" },
+      delivery: env.APPLICATION_SYNC_URL && env.APPLICATION_SYNC_SECRET
+        ? { status: "pending", reason: "queued" }
+        : env.SHEET_KEY ? { status: "available", reason: "sheet-export" } : { status: "pending", reason: "not-configured" },
     };
     await env.DECKS.put(applicationKey(id), JSON.stringify(application), { httpMetadata: { contentType: "application/json" }, customMetadata: { submittedAt } });
     recorded = true;
