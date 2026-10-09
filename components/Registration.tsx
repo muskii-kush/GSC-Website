@@ -2,23 +2,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GOOGLE_FORM_VIEW_URL, INELIGIBLE, MAX_DECK_BYTES, PENDING, SUBMIT_URL, pages, type Page, type Question } from "@/lib/application-form";
 import {
-  E, FOUNDER_CORE, checkApplication, checkEmail, checkField, checkFounders, checkLinkedinProfile, checkPhone, checkRevenue,
-  checkWritten, checkXProfile, normalise,
+  E, checkApplication, checkFounders, normalise,
 } from "@/lib/application-checks";
 import { APPLICATIONS_CLOSE, APPLICATIONS_OPEN, CONTACT, gmailLink } from "@/lib/content";
 import RegistrationAuth from "@/components/RegistrationAuth";
+import { BY_KEY, validateAnswer, visiblePages } from "@/lib/application-validation";
 
 /**
  * The application, in the site's own design. Answers autosave in this browser
- * as the founder types; on submit they are posted to the Google Form, so every
- * application lands in the same Form and response Sheet.
+ * as the founder types; on submit the receiver records all answers and the PDF
+ * in private storage before confirming receipt.
  *
  * Any element with [data-register] opens it. [data-track="<choice>"] on that
  * element preselects the track.
  */
 
 type Answers = Record<string, string | string[]>;
-type Draft = { answers: Answers; step: number; submittedAt?: string };
+type Draft = { answers: Answers; step: number; submissionId?: string; submittedAt?: string };
 
 const DRAFT_KEY = "gsc-application-v3";
 const TRACK_ENTRY = "entry.1532659170";
@@ -39,19 +39,6 @@ function lock(on: boolean) {
 const text = (v: Answers[string] | undefined) => (typeof v === "string" ? v : "");
 const list = (v: Answers[string] | undefined) => (Array.isArray(v) ? v : []);
 
-/** Question entry by stable key, e.g. BY_KEY["f2.email"]. */
-const BY_KEY: Record<string, string> = Object.fromEntries(
-  pages.flatMap((p) => p.questions).filter((q) => q.key).map((q) => [q.key!, q.entry]),
-);
-
-/** Founder slots 2 to 4: optional, but once started, the core fields are required. */
-function required(q: Question, answers: Answers): boolean {
-  if (q.required) return true;
-  const m = q.key?.match(/^f([2-4])\.(\w+)$/);
-  if (!m || !FOUNDER_CORE.includes(m[2])) return false;
-  return FOUNDER_CORE.some((f) => text(answers[BY_KEY[`f${m[1]}.${f}`]]).trim());
-}
-
 /** The chosen deck file. Files cannot be kept in the saved draft, so this lives only for the visit. */
 let DECK: File | null = null;
 
@@ -65,51 +52,11 @@ function checkDeckFile(hadDraft: boolean): string | null {
 
 
 function validate(q: Question, v: Answers[string] | undefined, answers: Answers): string | null {
-  if (q.kind === "file") return checkDeckFile(!!text(v));
-  if (q.kind === "checkbox") {
-    const picked = list(v);
-    if (q.required && picked.length < (q.choices?.length ?? 1)) return `Please tick all ${q.choices?.length === 6 ? "six" : q.choices?.length}.`;
-    return null;
-  }
-  const s = text(v).trim();
-  if (!s) {
-    if (!required(q, answers)) return null;
-    return q.required ? "This question needs an answer." : "You have started this founder's details, so this is needed too.";
-  }
-  if (q.max && s.length > q.max) return `Keep it to ${q.max} characters. You are at ${s.length}.`;
-  if (q.kind === "phone") return checkPhone(s);
-  if (q.key?.endsWith(".linkedin")) return checkLinkedinProfile(s);
-  if (q.key?.endsWith(".x")) return checkXProfile(s);
-  if (q.key?.endsWith(".name") && (s.length < 3 || !/^[\p{L} .'-]+$/u.test(s) || !/\s/.test(s))) return "Give the founder's full name, first and last.";
-  if (q.kind === "email") return checkEmail(s);
-  if (q.kind === "number") return checkRevenue(s);
-  const specific = checkField(q.entry, s, answers);
-  if (specific) return specific;
-  if (q.kind === "url") {
-    try {
-      const u = new URL(s);
-      if (!/^https?:$/.test(u.protocol) || !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(u.hostname)) throw new Error();
-    } catch { return "Paste the full link, starting with https://"; }
-  }
-  // Written answers: no placeholders, keyboard mash or one-word answers.
-  if (q.kind === "paragraph" && q.required && q.entry !== E.linkedin && q.entry !== E.family) return checkWritten(s, 30);
-  if (q.kind === "paragraph" && q.entry !== E.linkedin && q.entry !== E.family) return checkWritten(s, 5);
-  return null;
+  return q.kind === "file" ? checkDeckFile(!!text(v)) : validateAnswer(q, v, answers);
 }
 
 const PARAGRAPHS = pages.flatMap((p) => p.questions.filter((q) => q.kind === "paragraph").map((q) => q.entry));
 
-/** Pages the founder actually sees, given their answers so far. */
-function visiblePages(answers: Answers): Page[] {
-  const out: Page[] = [];
-  let skip = false;
-  for (const p of pages) {
-    if (p.conditional && skip) { skip = false; continue; }
-    skip = p.questions.some((q) => q.skipNext?.includes(text(answers[q.entry])));
-    out.push(p);
-  }
-  return out;
-}
 
 function windowState() {
   const now = Date.now();
@@ -122,8 +69,7 @@ function windowState() {
 
 /**
  * The site's own application form. Answers and the deck PDF go to the Cloudflare Pages Function
- * at /api/apply (functions/api/apply.js), which stores the deck in R2 and submits the response to
- * the Google Form.
+ * at /api/apply (functions/api/apply.js), which records the complete application and deck in R2.
  */
 export default function SiteApplicationForm() {
   const [open, setOpen] = useState(false);
@@ -139,6 +85,7 @@ export default function SiteApplicationForm() {
   const [phoneVerified, setPhoneVerified] = useState(false);
   const panel = useRef<HTMLElement>(null);
   const honeypot = useRef<HTMLInputElement>(null);
+  const submissionId = useRef("");
 
   const shown = useMemo(() => visiblePages(answers), [answers]);
   const page = shown[Math.min(step, shown.length - 1)];
@@ -153,6 +100,7 @@ export default function SiteApplicationForm() {
   // Restore the draft once, on the client.
   useEffect(() => {
     const d = loadDraft();
+    submissionId.current = d?.submissionId || crypto.randomUUID();
     if (d) {
       setAnswers(d.answers || {});
       setStep(d.step || 0);
@@ -165,7 +113,7 @@ export default function SiteApplicationForm() {
 
   // Autosave on every change.
   useEffect(() => {
-    if (loaded) saveDraft({ answers, step, submittedAt });
+    if (loaded) saveDraft({ answers, step, submissionId: submissionId.current, submittedAt });
   }, [answers, step, submittedAt, loaded]);
 
   const show = useCallback((track?: string) => {
@@ -301,7 +249,7 @@ export default function SiteApplicationForm() {
     // Bots fill every field, including this hidden one. People never see it.
     if (honeypot.current?.value) { setStatus("sent"); return; }
     // Answers as [entry, value] pairs. Email and the deck travel separately: the receiver
-    // saves the deck to Drive and adds its link to the Form's "Pitch deck link" question.
+    // records the full application and its deck together.
     const fields: [string, string][] = [];
     shown.forEach((p) => p.questions.forEach((q) => {
       if (q.kind === "file" || q.entry === "emailAddress") return;
@@ -316,6 +264,7 @@ export default function SiteApplicationForm() {
       const company = text(answers[E.company]).replace(/\s+/g, "");
       const founder = text(answers[BY_KEY["f1.name"]]).replace(/\s+/g, "");
       const payload = {
+        submissionId: submissionId.current,
         email: normalise("emailAddress", text(answers.emailAddress)),
         pageHistory: shown.map((p) => p.section).join(","),
         fields,
@@ -327,6 +276,10 @@ export default function SiteApplicationForm() {
       const res = await fetch(SUBMIT_URL, { method: "POST", body });
       const out = await res.json().catch(() => ({ ok: false, message: "" }));
       if (!out.ok) {
+        if (typeof out.entry === "string") {
+          const at = shown.findIndex((p) => p.questions.some((q) => q.entry === out.entry));
+          if (at >= 0) { setStep(at); setErrors({ [out.entry]: out.message }); focusError(out.entry); }
+        }
         setFailMsg(out.message || "That did not go through. Please try again in a minute. Your answers are still saved.");
         setStatus("failed");
         return;

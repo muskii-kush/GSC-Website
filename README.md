@@ -22,7 +22,7 @@ that receive applications. Full steps (build settings, R2 bucket, KV namespace,
 Build command used on Cloudflare:
 
 ```bash
-rm -rf app/api && STATIC_EXPORT=true NEXT_PUBLIC_STATIC_SITE=true npm run build   # → ./out
+npm run build:cloudflare   # → ./IT-handoff/GSC-Website-deploy-ready.zip
 ```
 
 `.github/workflows/pages.yml` also publishes the static pages to GitHub Pages on
@@ -31,13 +31,19 @@ not submit there because GitHub Pages cannot run the functions.
 
 ## Applications
 
-- Form UI: `components/Registration.tsx`. Questions, page order and Google Form
-  entry IDs: `lib/application-form.ts`. Answer checks: `lib/application-checks.ts`.
+- Form UI: `components/Registration.tsx`. Shared questions: `lib/application-questions.ts`.
+  Browser settings: `lib/application-form.ts`. Shared validation: `lib/application-validation.ts`.
 - On submit, answers and the pitch-deck PDF (max 50MB) go to `/api/apply`
-  (`functions/api/apply.js`), which stores the deck in R2, blocks duplicate
-  applications (KV), and submits the answers to the Google Form, so responses
-  land in the Form's response Sheet. Keep the entry IDs in sync with the Form.
+  (`functions/api/apply.js`), which validates and records the complete application
+  and deck in private R2 storage before confirming receipt. Conditional R2 writes
+  prevent duplicate applications, including simultaneous submissions. Existing KV
+  applicant entries remain supported.
+- Google Forms' public endpoint requires reCAPTCHA and rejects server submissions.
+  Optional authenticated Sheet delivery uses `docs/apps-script/gsc_sheet_receiver.gs`.
+  Applications remain saved if delivery fails and can be exported or replayed using
+  `scripts/applications.mjs`. See `docs/DEPLOY-CLOUDFLARE.md` for setup.
 - Drafts autosave in the applicant's browser (localStorage).
+- Run `npm run test:application` to verify storage, validation, retries and delivery.
 
 ## Phone verification
 

@@ -1,3 +1,5 @@
+// LEGACY RECEIVER: do not deploy. Its public formResponse POST is blocked by reCAPTCHA.
+// Use gsc_sheet_receiver.gs for authenticated Sheet delivery from the Cloudflare receiver.
 /**
  * Grand Startup Challenge 2027: receiver for applications sent from the website.
  *
