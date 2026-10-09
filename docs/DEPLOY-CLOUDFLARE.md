@@ -27,6 +27,7 @@ Use the Cloudflare account and **existing Pages project serving gsc.cars24.com**
    | `SHEET_KEY` | Existing key used by Sheet1 A1 |
    | `APPLICANTS` | Existing KV binding, if configured |
    | `DECK_LINK_SECRET` | Existing deck access secret, if configured |
+   | `SESSION_SECRET` | **New.** A long random value (for example `openssl rand -hex 32`), set as an encrypted secret. Signs the mobile-number sign-in. If it is missing, sign-in falls back to `DECK_LINK_SECRET` or `SHEET_KEY`. |
 
 3. Redeploy from the extracted folder, replacing the project name and using the project's production branch:
 
@@ -50,7 +51,9 @@ The unused **Website applications** tab and undeployed Apps Script receiver crea
 - Saved records are `applications/<applicationId>.json`; deck links use `/api/deck/...`.
 - `/api/admin/export` requires the existing `SHEET_KEY` and exports all saved records as CSV with application ID, submission date, email, company, CIN/LLPIN, deck URL and one column per question. Historical answers outside the current schema are preserved in an additional JSON column.
 - The feed paginates R2 and orders records by submission date. CSV quoting preserves commas, quotes, newlines and checkbox answers. Formula-like applicant input is escaped as literal text.
-- R2 identity records prevent duplicate email/company applications. Retrying the same browser submission returns its original receipt.
+- Founders sign in with a mobile OTP before the form opens. `/api/auth/verify` checks the code with the Cars24 OTP service on the server and sets a signed, HttpOnly cookie (12 hours). `/api/apply` refuses any submission without it and always records the verified number, not one typed into the form.
+- After sign-in, `/api/auth/verify` reports whether that number has already applied, so the site shows the "already applied" screen on any device. `/api/auth/logout` signs out ("Not you? Use a different number").
+- R2 identity records prevent duplicate mobile number, email and company applications. Retrying the same browser submission returns its original receipt.
 - Public Google Forms server submissions were failing with a reCAPTCHA rejection. Application storage now works independently of that endpoint.
 
 ## Building future releases

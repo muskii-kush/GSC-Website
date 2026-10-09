@@ -3,6 +3,7 @@ import { pages } from "../../lib/application-questions";
 import { E, checkApplication, checkFounders, normalise } from "../../lib/application-checks";
 import { BY_KEY, validateAnswer, visiblePages } from "../../lib/application-validation";
 import { applicationKey, deliverApplication, reply } from "../_lib/applications";
+import { phoneKey, sessionPhone, sessionSecret } from "../_lib/session";
 
 const MAX_DECK_BYTES = 50 * 1024 * 1024;
 const QUESTIONS = new Map(pages.flatMap((p) => p.questions).map((q) => [q.entry, q]));
@@ -26,6 +27,11 @@ export async function onRequestPost(context) {
     return reply(false, "bad-request", "We could not read the application. Please try again.", 400);
   }
 
+  // Only a founder who verified their mobile number by OTP, on the server, can apply.
+  if (!sessionSecret(env)) return reply(false, "not-configured", "Applications are being switched on. Your answers are saved; please try again shortly.", 503);
+  const phone = await sessionPhone(request, env);
+  if (!phone) return reply(false, "signed-out", "Your sign-in has expired. Verify your mobile number again; your answers are still saved.", 401);
+
   // Google now requires interactive reCAPTCHA. Validate with the browser's shared rules.
   const answers = { emailAddress: typeof payload.email === "string" ? payload.email.trim().toLowerCase() : "" };
   for (const pair of payload.fields) {
@@ -38,6 +44,8 @@ export async function onRequestPost(context) {
       answers[entry] = normalise(entry, value, q.key);
     }
   }
+  // The mobile number on the application is always the one verified by OTP.
+  answers[BY_KEY.phone] = `+91${phone}`;
   const shown = visiblePages(answers);
   for (const q of shown.flatMap((p) => p.questions)) {
     const error = validateAnswer(q, answers[q.entry], answers);
@@ -64,9 +72,9 @@ export async function onRequestPost(context) {
     if (env.APPLICANTS && (await env.APPLICANTS.get(`email:${email}`) || await env.APPLICANTS.get(`cin:${cin}`))) {
       if (!await env.DECKS.head(`applicants/email/${await hash(email)}.json`)) return reply(false, "duplicate", "An application with this email or company has already been submitted.", 409);
     }
-    // Conditional R2 writes stop simultaneous submissions by the same email/company.
-    for (const [kind, value] of [["email", email], ["cin", cin]]) {
-      const key = `applicants/${kind}/${await hash(value)}.json`;
+    // Conditional R2 writes stop simultaneous submissions by the same mobile number, email or company.
+    for (const [kind, value] of [["phone", phone], ["email", email], ["cin", cin]]) {
+      const key = kind === "phone" ? await phoneKey(value) : `applicants/${kind}/${await hash(value)}.json`;
       const identity = JSON.stringify({ applicationId: id, submissionId, submittedAt, leaseExpiresAt });
       let claim = await env.DECKS.put(key, identity, { onlyIf: { etagDoesNotMatch: "*" }, httpMetadata: { contentType: "application/json" } });
       if (!claim) {
@@ -78,7 +86,8 @@ export async function onRequestPost(context) {
         if (!previous && owner?.leaseExpiresAt && new Date(owner.leaseExpiresAt).getTime() < Date.now()) {
           claim = await env.DECKS.put(key, identity, { onlyIf: { etagMatches: existing.etag }, httpMetadata: { contentType: "application/json" } });
         }
-        if (!claim) return reply(false, previous ? "duplicate" : "submission-in-progress", previous ? "An application with this email or company has already been submitted." : "Your application is still being recorded. Please try again in a moment.", previous ? 409 : 503);
+        const taken = kind === "phone" ? "An application from this mobile number has already been submitted." : "An application with this email or company has already been submitted.";
+        if (!claim) return reply(false, previous ? (kind === "phone" ? "already-submitted" : "duplicate") : "submission-in-progress", previous ? taken : "Your application is still being recorded. Please try again in a moment.", previous ? 409 : 503, previous && kind === "phone" ? { submittedAt: owner.submittedAt } : {});
       }
       claimed.push(key);
     }
@@ -87,7 +96,7 @@ export async function onRequestPost(context) {
     await env.DECKS.put(deckKey, deck, { httpMetadata: { contentType: "application/pdf", contentDisposition: `inline; filename="${name}"` }, customMetadata: { email, cin, submittedAt } });
     const deckUrl = `${new URL(request.url).origin}/api/deck/${deckKey}${env.DECK_LINK_SECRET ? `?k=${encodeURIComponent(env.DECK_LINK_SECRET)}` : ""}`;
     const application = {
-      version: 1, applicationId: id, submissionId, submittedAt, email, cin, company: answers[E.company],
+      version: 1, applicationId: id, submissionId, submittedAt, phone: `+91${phone}`, email, cin, company: answers[E.company],
       deck: { key: deckKey, name, size: deck.size, url: deckUrl },
       answers: shown.flatMap((p) => p.questions.filter((q) => q.kind !== "file").map((q) => ({ entry: q.entry, title: q.title, value: answers[q.entry] ?? "" }))),
       delivery: env.APPLICATION_SYNC_URL && env.APPLICATION_SYNC_SECRET

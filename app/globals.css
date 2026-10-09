@@ -1977,3 +1977,9 @@ main section.s-closing { padding-top: 0 !important; }
 /* Top bar: four logos spread with equal gaps between them */
 .lb-inner { display: flex !important; justify-content: space-between; align-items: center; }
 .lb-left { display: contents; }
+
+/* Application: who is signed in, with a way out for the next person on this computer */
+.app-signed-in { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0 0 18px; font-size: 13px; color: var(--ink-70); }
+.app-signed-in strong { color: var(--ink); font-weight: 500; }
+.app-signed-in button { background: none; border: 0; padding: 0; color: var(--mint); font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.app-field input[readonly] { opacity: .7; cursor: not-allowed; }

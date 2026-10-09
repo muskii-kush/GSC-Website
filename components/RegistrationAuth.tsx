@@ -3,6 +3,19 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { requestOtp, verifyPhoneOtp } from "@/lib/otp-auth";
 
+/**
+ * Checks the code on the server (functions/api/auth/verify.js), which signs the founder in and
+ * says whether this number has already applied. `next dev` has no Pages Functions, so local
+ * previews fall back to checking the code in the browser.
+ */
+async function verifyOnServer(phone: string, otp: string): Promise<{ submittedAt?: string } | undefined> {
+  const res = await fetch("/api/auth/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ phone, otp }) });
+  if (res.status === 404 && process.env.NODE_ENV !== "production") { await verifyPhoneOtp(phone, otp); return undefined; }
+  const out = await res.json().catch(() => null);
+  if (!out?.ok) throw new Error(out?.message || "Could not verify the code. Please try again.");
+  return out.submitted ? { submittedAt: out.submittedAt } : undefined;
+}
+
 const otpLength = 4;
 const retrySeconds = 30;
 
@@ -13,7 +26,7 @@ function message(error: unknown) {
   return value?.errorMessage || value?.message || "Something went wrong. Please try again.";
 }
 
-export default function RegistrationAuth({ onVerified }: { onVerified: (phone: string) => void }) {
+export default function RegistrationAuth({ onVerified }: { onVerified: (phone: string, done?: { submittedAt?: string }) => void }) {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState<"phone" | "otp">("phone");
@@ -75,8 +88,7 @@ export default function RegistrationAuth({ onVerified }: { onVerified: (phone: s
     setBusy(true);
     setError("");
     try {
-      await verifyPhoneOtp(sentPhone, otp);
-      onVerified(sentPhone);
+      onVerified(sentPhone, await verifyOnServer(sentPhone, otp));
     } catch (cause) {
       setError(message(cause));
     } finally {
@@ -141,7 +153,7 @@ export default function RegistrationAuth({ onVerified }: { onVerified: (phone: s
         </form>
       )}
       <p id="register-auth-error" className="register-auth-error" role="alert" aria-live="polite">{error}</p>
-      <p className="register-auth-note">Your application answers will be saved in this browser as you type.</p>
+      <p className="register-auth-note">One application per mobile number. If you have already applied, you will see your application status after verifying.</p>
     </div>
   );
 }

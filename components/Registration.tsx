@@ -23,11 +23,20 @@ type Draft = { answers: Answers; step: number; submissionId?: string; submittedA
 const DRAFT_KEY = "gsc-application-v3";
 const TRACK_ENTRY = "entry.1532659170";
 
-function loadDraft(): Draft | null {
-  try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); } catch { return null; }
+/** Drafts are kept per verified mobile number, so two founders on one computer never see each other's answers. */
+const draftKey = (phone: string) => `${DRAFT_KEY}:${phone}`;
+function loadDraft(phone: string): Draft | null {
+  try {
+    const own = localStorage.getItem(draftKey(phone));
+    if (own) return JSON.parse(own);
+    // A draft started before sign-in was per number: hand it to the first number that verifies here.
+    const legacy = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null") as Draft | null;
+    localStorage.removeItem(DRAFT_KEY);
+    return legacy && !legacy.submittedAt ? legacy : null;
+  } catch { return null; }
 }
-function saveDraft(d: Draft) {
-  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch { /* storage blocked: the form still works */ }
+function saveDraft(phone: string, d: Draft) {
+  try { localStorage.setItem(draftKey(phone), JSON.stringify(d)); } catch { /* storage blocked: the form still works */ }
 }
 
 function lock(on: boolean) {
@@ -82,7 +91,9 @@ export default function SiteApplicationForm() {
   const [submittedAt, setSubmittedAt] = useState<string | undefined>();
   const [loaded, setLoaded] = useState(false);
   const [phase, setPhase] = useState<"before" | "open" | "closed">("open");
-  const [phoneVerified, setPhoneVerified] = useState(false);
+  /** The mobile number verified by OTP on the server; empty until then. */
+  const [phone, setPhone] = useState("");
+  const phoneVerified = !!phone;
   const panel = useRef<HTMLElement>(null);
   const honeypot = useRef<HTMLInputElement>(null);
   const submissionId = useRef("");
@@ -97,24 +108,42 @@ export default function SiteApplicationForm() {
     if (step > shown.length - 1) setStep(shown.length - 1);
   }, [step, shown.length]);
 
-  // Restore the draft once, on the client.
-  useEffect(() => {
-    const d = loadDraft();
-    submissionId.current = d?.submissionId || crypto.randomUUID();
-    if (d) {
-      setAnswers(d.answers || {});
-      setStep(d.step || 0);
-      setSubmittedAt(d.submittedAt);
-      if (d.submittedAt) setStatus("sent");
-    }
-    setPhase(windowState());
-    setLoaded(true);
-  }, []);
+  useEffect(() => { setPhase(windowState()); }, []);
 
-  // Autosave on every change.
+  /** After OTP: the server says whether this number has applied; otherwise open this number's own draft. */
+  const signIn = (verified: string, done?: { submittedAt?: string }) => {
+    const d = loadDraft(verified);
+    submissionId.current = d?.submissionId || crypto.randomUUID();
+    setAnswers({ ...(d?.answers || {}), [BY_KEY.phone]: verified });
+    setStep(d?.step || 0);
+    setErrors({});
+    setStopped(null);
+    setFailMsg("");
+    setSubmittedAt(done ? done.submittedAt || d?.submittedAt || new Date().toISOString() : undefined);
+    setStatus(done ? "sent" : "idle");
+    setPhone(verified);
+    setLoaded(true);
+  };
+
+  /** "Not you?": sign out so the next person starts from the mobile number screen. */
+  const signOut = async () => {
+    try { await fetch("/api/auth/logout", { method: "POST" }); } catch { /* the cookie also expires on its own */ }
+    setLoaded(false);
+    setPhone("");
+    setAnswers({});
+    setStep(0);
+    setErrors({});
+    setStopped(null);
+    setStatus("idle");
+    setSubmittedAt(undefined);
+    DECK = null;
+    toTop();
+  };
+
+  // Autosave on every change, under the signed-in number.
   useEffect(() => {
-    if (loaded) saveDraft({ answers, step, submissionId: submissionId.current, submittedAt });
-  }, [answers, step, submittedAt, loaded]);
+    if (loaded && phone) saveDraft(phone, { answers, step, submissionId: submissionId.current, submittedAt });
+  }, [answers, step, submittedAt, loaded, phone]);
 
   const show = useCallback((track?: string) => {
     if (track) setAnswers((a) => (text(a[TRACK_ENTRY]) ? a : { ...a, [TRACK_ENTRY]: track }));
@@ -276,6 +305,20 @@ export default function SiteApplicationForm() {
       const res = await fetch(SUBMIT_URL, { method: "POST", body });
       const out = await res.json().catch(() => ({ ok: false, message: "" }));
       if (!out.ok) {
+        if (out.code === "already-submitted") {
+          DECK = null;
+          setSubmittedAt(out.submittedAt || new Date().toISOString());
+          setStatus("sent");
+          toTop();
+          return;
+        }
+        if (out.code === "signed-out") {
+          setLoaded(false);
+          setPhone("");
+          setStatus("idle");
+          toTop();
+          return;
+        }
         if (typeof out.entry === "string") {
           const at = shown.findIndex((p) => p.questions.some((q) => q.entry === out.entry));
           if (at >= 0) { setStep(at); setErrors({ [out.entry]: out.message }); focusError(out.entry); }
@@ -312,16 +355,20 @@ export default function SiteApplicationForm() {
           <button className="close" type="button" onClick={hide}>Close ×</button>
         </div>
 
+        {phoneVerified && (
+          <p className="app-signed-in">
+            Signed in as <strong>+91 {phone.slice(0, 5)} {phone.slice(5)}</strong>
+            <button type="button" onClick={signOut}>Not you? Use a different number</button>
+          </p>
+        )}
+
         {!phoneVerified ? (
-          open ? <RegistrationAuth onVerified={(phone) => {
-            setAnswers((current) => current[BY_KEY.phone] ? current : { ...current, [BY_KEY.phone]: phone });
-            setPhoneVerified(true);
-            toTop();
-          }} /> : null
+          open ? <RegistrationAuth onVerified={(verified, done) => { signIn(verified, done); toTop(); }} /> : null
         ) : status === "sent" ? (
           <div className="app-done">
-            <h2>application received</h2>
+            <h2>{submittedAt && Date.now() - new Date(submittedAt).getTime() > 5 * 60_000 ? "you have already applied" : "application received"}</h2>
             <p className="registration-lede">
+              {submittedAt && <>Submitted on {new Date(submittedAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}. </>}
               Thank you. Your application for the Grand Startup Challenge 2027 has been received.
               Applications are reviewed on a rolling basis, and we will write
               {email ? <> to <strong>{email}</strong></> : null} with the outcome. We may contact you for clarification before then;
@@ -347,7 +394,7 @@ export default function SiteApplicationForm() {
             <div className="wizard-progress">
               <div className="wizard-progress-top">
                 <span>Section {step + 1} of {shown.length}</span>
-                <span className="wizard-progress-pct">Saved in this browser</span>
+                <span className="wizard-progress-pct">Saved on this device</span>
               </div>
               <div className="wizard-progress-track"><div className="wizard-progress-fill" style={{ width: `${pct}%` }} /></div>
             </div>
@@ -358,7 +405,7 @@ export default function SiteApplicationForm() {
                 <p className="registration-lede">
                   Applications close on 10 November 2026, 11:59 pm IST. Have ready: your CIN or LLPIN, a deck link that opens
                   without a permission request, your revenue for each of the last six months, and a 2 to 5 minute video of the
-                  founders. Your answers save in this browser as you type, so you can close this and come back on the same device.
+                  founders. Your answers save on this device as you type, so you can close this and come back later by verifying the same mobile number here.
                 </p>
                 <p className="app-fineprint">
                   Every question maps to a scoring criterion. <a href="#scoring">Read the eligibility checks and screening rubric ↗</a>
@@ -382,7 +429,7 @@ export default function SiteApplicationForm() {
                           {group.help && <p>{group.help}</p>}
                         </div>
                       )}
-                      <Field q={q} value={answers[q.entry]} error={errors[q.entry]} onChange={(v) => set(q, v)} onBlur={() => blurCheck(q)} />
+                      <Field q={q} value={answers[q.entry]} error={errors[q.entry]} onChange={(v) => set(q, v)} onBlur={() => blurCheck(q)} locked={q.key === "phone"} />
                     </div>
                   );
                 })}
@@ -418,10 +465,12 @@ export default function SiteApplicationForm() {
   );
 }
 
-function Field({ q, value, error, onChange, onBlur }: { q: Question; value: Answers[string] | undefined; error?: string; onChange: (v: string | string[]) => void; onBlur: () => void }) {
+function Field({ q, value, error, onChange, onBlur, locked }: { q: Question; value: Answers[string] | undefined; error?: string; onChange: (v: string | string[]) => void; onBlur: () => void; locked?: boolean }) {
   const id = `q-${q.entry}`;
   const req = q.required ? <span className="app-req" aria-hidden="true">{"\u00a0*"}</span> : null;
-  const help = q.help ? <span className="app-help">{q.help}</span> : null;
+  const help = locked
+    ? <span className="app-help">The number you verified with the one-time code. To use another number, choose “Not you?” at the top.</span>
+    : q.help ? <span className="app-help">{q.help}</span> : null;
 
   if (q.kind === "radio" || q.kind === "checkbox") {
     const picked = q.kind === "radio" ? [text(value)] : list(value);
@@ -506,6 +555,7 @@ function Field({ q, value, error, onChange, onBlur }: { q: Question; value: Answ
               : q.kind === "url" ? "https://" : q.kind === "number" ? "0" : q.kind === "email" ? "you@company.com" : q.kind === "phone" ? "98765 43210" : undefined
           }
           autoComplete={q.kind === "email" ? "email" : q.kind === "phone" ? "tel-national" : "off"}
+          readOnly={locked}
         />
       )}
       <span className="app-meta">

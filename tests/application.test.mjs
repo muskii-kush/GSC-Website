@@ -11,13 +11,18 @@ import { fixture as makeFixture } from "./application-fixture.mjs";
 
 globalThis.crypto ||= webcrypto;
 const dir = await mkdtemp(join(tmpdir(), "gsc-test-"));
-for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["export", "functions/api/admin/export.js"], ["schema", "lib/application-questions.ts"]]) {
+for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["export", "functions/api/admin/export.js"], ["schema", "lib/application-questions.ts"], ["session", "functions/_lib/session.js"], ["verify", "functions/api/auth/verify.js"]]) {
   await build({ entryPoints: [entry], outfile: join(dir, `${name}.mjs`), bundle: true, platform: "node", format: "esm", logLevel: "silent" });
 }
 const apply = await import(pathToFileURL(join(dir, "apply.mjs")));
 const admin = await import(pathToFileURL(join(dir, "admin.mjs")));
 const sheetExport = await import(pathToFileURL(join(dir, "export.mjs")));
 const { pages } = await import(pathToFileURL(join(dir, "schema.mjs")));
+const session = await import(pathToFileURL(join(dir, "session.mjs")));
+const verify = await import(pathToFileURL(join(dir, "verify.mjs")));
+const SECRET = { SESSION_SECRET: "session-secret" };
+const PHONE = "9176578432";
+const cookieFor = async (phone, env = SECRET) => (await session.sessionCookie(phone, env)).split(";")[0];
 test.after(() => rm(dir, { recursive: true, force: true }));
 
 class Bucket {
@@ -37,15 +42,16 @@ class Bucket {
 }
 
 const fixture = () => makeFixture(pages);
-function request(payload, pdf = true) {
+function request(payload, pdf = true, cookie = "") {
   const form = new FormData();
   form.set("payload", JSON.stringify(payload));
   form.set("deck", new Blob([pdf ? "%PDF-1.7\n" : "NOT A PDF", " ".repeat(12_000)], { type: "application/pdf" }), "Diagnostic.pdf");
-  return new Request("https://gsc.cars24.com/api/apply", { method: "POST", body: form });
+  return new Request("https://gsc.cars24.com/api/apply", { method: "POST", body: form, headers: cookie ? { cookie } : {} });
 }
-async function submit(payload, bucket = new Bucket(), extra = {}, pdf = true) {
+async function submit(payload, bucket = new Bucket(), extra = {}, pdf = true, phone = PHONE) {
   const work = [];
-  const response = await apply.onRequestPost({ request: request(payload, pdf), env: { DECKS: bucket, ...extra }, waitUntil: (p) => work.push(p) });
+  const cookie = phone ? await cookieFor(phone) : "";
+  const response = await apply.onRequestPost({ request: request(payload, pdf, cookie), env: { DECKS: bucket, ...SECRET, ...extra }, waitUntil: (p) => work.push(p) });
   await Promise.all(work);
   return { response, result: await response.json(), bucket };
 }
@@ -171,7 +177,7 @@ test("email and company duplicates are refused, including simultaneous requests"
   const results = await Promise.all([submit(a, bucket), submit(b, bucket)]);
   assert.equal(results.filter((x) => x.result.ok).length, 1); assert.equal(archives(bucket).length, 1);
   const c = fixture(); c.email = "other.diagnostic@cars24.com";
-  assert.equal((await submit(c, bucket)).result.code, "duplicate");
+  assert.equal((await submit(c, bucket, {}, true, "9176578433")).result.code, "duplicate");
   assert.equal([...bucket.records.keys()].filter((k) => k.startsWith("applicants/email/")).length, 1);
 });
 test("Google delivery failure never deletes a received application or its PDF", async () => {
@@ -231,4 +237,72 @@ test("Sheet receiver keeps headers, records once, and treats formulas as literal
   assert.equal(call("wrong").ok, false); assert.equal(rows.length, 0);
   assert.equal(call().ok, true); assert.equal(call().ok, true); assert.equal(rows.length, 2);
   assert.equal(rows[0][0], "Application ID"); assert.equal(rows[1][0], app.applicationId); assert.equal(rows[1][3], "'=malicious()"); assert.equal(rows[1][6], "0");
+});
+
+// ── Mobile number sign-in ───────────────────────────────────────────────
+const verifyRequest = (body) => new Request("https://gsc.cars24.com/api/auth/verify", { method: "POST", body: JSON.stringify(body), headers: { "content-type": "application/json" } });
+async function withOtpApi(answer, run) {
+  const original = globalThis.fetch, calls = [];
+  globalThis.fetch = async (url, init) => { calls.push({ url: String(url), body: JSON.parse(init.body) }); return answer(); };
+  try { return await run(calls); } finally { globalThis.fetch = original; }
+}
+
+test("applying needs a mobile number verified on the server", async () => {
+  const bucket = new Bucket();
+  assert.equal((await submit(fixture(), bucket, {}, true, "")).response.status, 401);
+  const forged = request(fixture(), true, `gsc_session=9176578432.${Math.floor(Date.now() / 1000) + 3600}.${"A".repeat(43)}`);
+  assert.equal((await apply.onRequestPost({ request: forged, env: { DECKS: bucket, ...SECRET } })).status, 401);
+  const otherKey = await session.sessionCookie(PHONE, { SESSION_SECRET: "someone-else" });
+  const signedElsewhere = request(fixture(), true, otherKey.split(";")[0]);
+  assert.equal((await apply.onRequestPost({ request: signedElsewhere, env: { DECKS: bucket, ...SECRET } })).status, 401);
+  assert.equal(bucket.records.size, 0);
+});
+
+test("the application records the verified number, not the one typed in the form", async () => {
+  const payload = fixture();
+  payload.fields.find(([entry]) => entry === "entry.893177443")[1] = "9123412341";
+  const { result, bucket } = await submit(payload, new Bucket(), {}, true, "9988776655");
+  assert.equal(result.ok, true);
+  const [record] = archives(bucket);
+  assert.equal(record.phone, "+919988776655");
+  assert.equal(record.answers.find((x) => x.entry === "entry.893177443").value, "+919988776655");
+});
+
+test("one application per mobile number, even with a different email and company", async () => {
+  const bucket = new Bucket();
+  assert.equal((await submit(fixture(), bucket)).result.ok, true);
+  const again = fixture(); again.email = "second.diagnostic@cars24.com";
+  again.fields.find(([entry]) => entry === "entry.1619968075")[1] = "U72900KA2026PTC654321";
+  const { response, result } = await submit(again, bucket);
+  assert.equal(response.status, 409); assert.equal(result.code, "already-submitted"); assert.equal(archives(bucket).length, 1);
+});
+
+test("OTP sign-in checks the code with Cars24, signs in, and reports an earlier application", async () => {
+  const bucket = new Bucket();
+  await withOtpApi(() => new Response(JSON.stringify({ success: true, verified: true })), async (calls) => {
+    const fresh = await verify.onRequestPost({ request: verifyRequest({ phone: "91765 78432", otp: "1234" }), env: { DECKS: bucket, ...SECRET } });
+    const out = await fresh.json();
+    assert.equal(out.ok, true); assert.equal(out.submitted, false);
+    assert.deepEqual(calls[0].body, { identifier: "+919176578432", otp: "1234" });
+    const cookie = fresh.headers.get("set-cookie");
+    assert.match(cookie, /HttpOnly/); assert.match(cookie, /Secure/);
+    assert.equal(await session.sessionPhone(new Request("https://x", { headers: { cookie: cookie.split(";")[0] } }), SECRET), PHONE);
+  });
+  const { result } = await submit(fixture(), bucket);
+  await withOtpApi(() => new Response(JSON.stringify({ success: true, verified: true })), async () => {
+    const out = await (await verify.onRequestPost({ request: verifyRequest({ phone: PHONE, otp: "1234" }), env: { DECKS: bucket, ...SECRET } })).json();
+    assert.equal(out.submitted, true); assert.equal(out.applicationId, result.applicationId); assert.ok(out.submittedAt);
+  });
+});
+
+test("a wrong or expired OTP does not sign in", async () => {
+  await withOtpApi(() => new Response(JSON.stringify({ error_code: "US_NA_02", error: "OTP not found or expired" }), { status: 400 }), async () => {
+    const res = await verify.onRequestPost({ request: verifyRequest({ phone: PHONE, otp: "0000" }), env: { DECKS: new Bucket(), ...SECRET } });
+    assert.equal(res.status, 401); assert.equal(res.headers.get("set-cookie"), null);
+    assert.equal((await res.json()).message, "OTP not found or expired");
+  });
+  await withOtpApi(() => new Response(JSON.stringify({ success: true, verified: false })), async () => {
+    const res = await verify.onRequestPost({ request: verifyRequest({ phone: PHONE, otp: "1111" }), env: { DECKS: new Bucket(), ...SECRET } });
+    assert.equal(res.status, 401); assert.equal(res.headers.get("set-cookie"), null);
+  });
 });
