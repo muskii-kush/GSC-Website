@@ -2,6 +2,7 @@
 // mobile number on an application is one the founder actually received a code on.
 // The browser only ever holds an HttpOnly cookie: "<phone>.<expiry>.<signature>".
 import { applicationKey } from "./applications";
+import { reference } from "./confirmation";
 
 export const OTP_API_URL = "https://api.cars24.com/gw/plt/bffsvc/api/v1/otp";
 const COOKIE = "gsc_session";
@@ -46,5 +47,5 @@ export async function submittedFor(phone, env) {
   const existing = await env.DECKS.get(await phoneKey(phone));
   const owner = existing ? await existing.json().catch(() => null) : null;
   if (!owner?.applicationId || !await env.DECKS.head(applicationKey(owner.applicationId))) return null;
-  return { applicationId: owner.applicationId, submittedAt: owner.submittedAt };
+  return { applicationId: owner.applicationId, reference: reference(owner.applicationId), submittedAt: owner.submittedAt };
 }

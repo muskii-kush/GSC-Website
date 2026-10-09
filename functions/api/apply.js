@@ -4,6 +4,7 @@ import { E, checkApplication, checkFounders, normalise } from "../../lib/applica
 import { BY_KEY, validateAnswer, visiblePages } from "../../lib/application-validation";
 import { applicationKey, deliverApplication, reply } from "../_lib/applications";
 import { phoneKey, sessionPhone, sessionSecret } from "../_lib/session";
+import { reference, sendConfirmation } from "../_lib/confirmation";
 
 const MAX_DECK_BYTES = 50 * 1024 * 1024;
 const QUESTIONS = new Map(pages.flatMap((p) => p.questions).map((q) => [q.entry, q]));
@@ -80,14 +81,14 @@ export async function onRequestPost(context) {
       if (!claim) {
         const existing = await env.DECKS.get(key), owner = existing ? await existing.json() : null;
         const previous = owner ? await env.DECKS.head(applicationKey(owner.applicationId)) : null;
-        if (submissionId && owner?.submissionId === submissionId && previous) return reply(true, "ok", "Application received.", 200, { applicationId: owner.applicationId });
+        if (submissionId && owner?.submissionId === submissionId && previous) return reply(true, "ok", "Application received.", 200, { applicationId: owner.applicationId, reference: reference(owner.applicationId) });
         // Recover a reservation abandoned by a terminated request. Recorded applications
         // remain permanent duplicates; only an expired claim without a record can be replaced.
         if (!previous && owner?.leaseExpiresAt && new Date(owner.leaseExpiresAt).getTime() < Date.now()) {
           claim = await env.DECKS.put(key, identity, { onlyIf: { etagMatches: existing.etag }, httpMetadata: { contentType: "application/json" } });
         }
         const taken = kind === "phone" ? "An application from this mobile number has already been submitted." : "An application with this email or company has already been submitted.";
-        if (!claim) return reply(false, previous ? (kind === "phone" ? "already-submitted" : "duplicate") : "submission-in-progress", previous ? taken : "Your application is still being recorded. Please try again in a moment.", previous ? 409 : 503, previous && kind === "phone" ? { submittedAt: owner.submittedAt } : {});
+        if (!claim) return reply(false, previous ? (kind === "phone" ? "already-submitted" : "duplicate") : "submission-in-progress", previous ? taken : "Your application is still being recorded. Please try again in a moment.", previous ? 409 : 503, previous && kind === "phone" ? { submittedAt: owner.submittedAt, reference: reference(owner.applicationId) } : {});
       }
       claimed.push(key);
     }
@@ -112,12 +113,13 @@ export async function onRequestPost(context) {
         catch { console.error(JSON.stringify({ event: "applicant-index-failed", applicationId: id })); }
       }
       await deliverApplication(application, env);
+      await sendConfirmation(application, env);
     };
     if (context.waitUntil) context.waitUntil(finish()); else await finish();
-    return reply(true, "ok", "Application received.", 200, { applicationId: id });
+    return reply(true, "ok", "Application received.", 200, { applicationId: id, reference: reference(id), emailed: !!(env.MAIL_URL && env.MAIL_SECRET) });
   } catch {
     console.error(JSON.stringify({ event: "application-storage-failed", applicationId: id, recorded }));
-    if (recorded) return reply(true, "ok", "Application received.", 200, { applicationId: id });
+    if (recorded) return reply(true, "ok", "Application received.", 200, { applicationId: id, reference: reference(id) });
     return reply(false, "storage-unavailable", "We could not save the application. Your answers are still saved in this browser; please try again shortly.", 503);
   } finally {
     if (!recorded) {

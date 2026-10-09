@@ -89,6 +89,8 @@ export default function SiteApplicationForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
   const [failMsg, setFailMsg] = useState("");
   const [submittedAt, setSubmittedAt] = useState<string | undefined>();
+  const [reference, setReference] = useState<string | undefined>();
+  const [emailed, setEmailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [phase, setPhase] = useState<"before" | "open" | "closed">("open");
   /** The mobile number verified by OTP on the server; empty until then. */
@@ -111,7 +113,7 @@ export default function SiteApplicationForm() {
   useEffect(() => { setPhase(windowState()); }, []);
 
   /** After OTP: the server says whether this number has applied; otherwise open this number's own draft. */
-  const signIn = (verified: string, done?: { submittedAt?: string }) => {
+  const signIn = (verified: string, done?: { submittedAt?: string; reference?: string }) => {
     const d = loadDraft(verified);
     submissionId.current = d?.submissionId || crypto.randomUUID();
     setAnswers({ ...(d?.answers || {}), [BY_KEY.phone]: verified });
@@ -121,6 +123,8 @@ export default function SiteApplicationForm() {
     setFailMsg("");
     setSubmittedAt(done ? done.submittedAt || d?.submittedAt || new Date().toISOString() : undefined);
     setStatus(done ? "sent" : "idle");
+    setReference(done?.reference);
+    setEmailed(false);
     setPhone(verified);
     setLoaded(true);
   };
@@ -136,6 +140,7 @@ export default function SiteApplicationForm() {
     setStopped(null);
     setStatus("idle");
     setSubmittedAt(undefined);
+    setReference(undefined);
     DECK = null;
     toTop();
   };
@@ -308,6 +313,7 @@ export default function SiteApplicationForm() {
         if (out.code === "already-submitted") {
           DECK = null;
           setSubmittedAt(out.submittedAt || new Date().toISOString());
+          setReference(out.reference);
           setStatus("sent");
           toTop();
           return;
@@ -328,6 +334,8 @@ export default function SiteApplicationForm() {
         return;
       }
       DECK = null;
+      setReference(out.reference);
+      setEmailed(!!out.emailed);
       setSubmittedAt(new Date().toISOString());
       setStatus("sent");
       toTop();
@@ -374,6 +382,9 @@ export default function SiteApplicationForm() {
               {email ? <> to <strong>{email}</strong></> : null} with the outcome. We may contact you for clarification before then;
               that does not mean the application has been selected.
             </p>
+            {reference && <p className="app-ref"><span>Application ID</span><strong>{reference}</strong></p>}
+            {emailed && email && <p className="app-fineprint">A confirmation with a copy of your answers is on its way to <strong>{email}</strong>. Quote your application ID if you write to us.</p>}
+            <MyApplication />
             <p className="app-fineprint">
               Answers cannot be edited once submitted. If something is wrong, write to{" "}
               <a href={gmailLink("Grand Startup Challenge application")} target="_blank" rel="noopener noreferrer">{CONTACT}</a>.
@@ -462,6 +473,47 @@ export default function SiteApplicationForm() {
         )}
       </div>
     </aside>
+  );
+}
+
+type Mine = { reference: string; submittedAt: string; company?: string; email?: string; answers: { title: string; value: string | string[] }[]; deck: { name?: string; size?: number } };
+
+/** A read-only copy of the signed-in founder's submitted application, loaded from the server on request. */
+function MyApplication() {
+  const [state, setState] = useState<"closed" | "loading" | "open" | "failed">("closed");
+  const [app, setApp] = useState<Mine | null>(null);
+  const load = async () => {
+    if (state === "open") { setState("closed"); return; }
+    if (app) { setState("open"); return; }
+    setState("loading");
+    try {
+      const out = await (await fetch("/api/application")).json();
+      if (!out?.ok) throw new Error();
+      setApp(out.application);
+      setState("open");
+    } catch { setState("failed"); }
+  };
+  return (
+    <div className="app-mine">
+      <button type="button" className="wizard-save-exit" onClick={load} aria-expanded={state === "open"}>
+        {state === "open" ? "Hide your answers" : state === "loading" ? "Loading…" : "View your answers"}
+      </button>
+      {state === "failed" && <p className="auth-error" role="alert">Your answers could not be loaded just now. Please try again in a minute.</p>}
+      {state === "open" && app && (
+        <dl className="app-mine-list">
+          {app.answers.filter((a) => (Array.isArray(a.value) ? a.value.length : String(a.value).trim())).map((a, i) => (
+            <div key={i}>
+              <dt>{a.title}</dt>
+              <dd>{Array.isArray(a.value) ? a.value.map((v) => <span key={v}>{v}</span>) : a.value}</dd>
+            </div>
+          ))}
+          <div>
+            <dt>Pitch deck</dt>
+            <dd><a href="/api/application/deck" target="_blank" rel="noopener noreferrer">{app.deck.name || "Open your deck"} ↗</a></dd>
+          </div>
+        </dl>
+      )}
+    </div>
   );
 }
 

@@ -28,6 +28,8 @@ Use the Cloudflare account and **existing Pages project serving gsc.cars24.com**
    | `APPLICANTS` | Existing KV binding, if configured |
    | `DECK_LINK_SECRET` | Existing deck access secret, if configured |
    | `SESSION_SECRET` | **New.** A long random value (for example `openssl rand -hex 32`), set as an encrypted secret. Signs the mobile-number sign-in. If it is missing, sign-in falls back to `DECK_LINK_SECRET` or `SHEET_KEY`. |
+   | `MAIL_URL` | **New, for confirmation emails.** The `/exec` URL of the mailer web app (see "Confirmation email" below). |
+   | `MAIL_SECRET` | **New, for confirmation emails.** Same value as `GSC_MAIL_SECRET` in the mailer's Script Properties. Without these two, applications still work but no email is sent. |
 
 3. Redeploy from the extracted folder, replacing the project name and using the project's production branch:
 
@@ -55,6 +57,23 @@ The unused **Website applications** tab and undeployed Apps Script receiver crea
 - After sign-in, `/api/auth/verify` reports whether that number has already applied, so the site shows the "already applied" screen on any device. `/api/auth/logout` signs out ("Not you? Use a different number").
 - R2 identity records prevent duplicate mobile number, email and company applications. Retrying the same browser submission returns its original receipt.
 - Public Google Forms server submissions were failing with a reCAPTCHA rejection. Application storage now works independently of that endpoint.
+
+## Confirmation email
+
+After an application is recorded, the founder is emailed their application ID (for example `GSC27-2A7C9B18`) and a full copy of their answers. The email is sent by a small Apps Script web app, so it comes from the Google account that owns it.
+
+1. Signed in as the account that should send the email (ideally grandstartupchallenge@cars24.com), create a new Apps Script project and paste `docs/apps-script/gsc_mailer.gs`.
+2. Project Settings > Script Properties: add `GSC_MAIL_SECRET` with a long random value.
+3. Run `checkMailSetup` once from the editor and approve the email permission.
+4. Deploy > New deployment > Web app: Execute as **Me**, access **Anyone**. Copy the `/exec` URL.
+5. In Cloudflare, add `MAIL_URL` (the `/exec` URL) and `MAIL_SECRET` (the same random value) as secrets, then redeploy.
+6. Submit a clearly marked test application and confirm the email arrives. Each record stores `confirmation.status` (`sent` or `not-sent`), so missed emails can be found later.
+
+Google Workspace accounts can send to about 1,500 recipients a day through Apps Script.
+
+## Founder's own copy
+
+- `GET /api/application` returns the signed-in founder's own submitted answers (read-only); `GET /api/application/deck` returns their own deck. Both require the mobile-number sign-in and only ever return the application recorded for that number.
 
 ## Building future releases
 

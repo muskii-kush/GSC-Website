@@ -1983,3 +1983,15 @@ main section.s-closing { padding-top: 0 !important; }
 .app-signed-in strong { color: var(--ink); font-weight: 500; }
 .app-signed-in button { background: none; border: 0; padding: 0; color: var(--mint); font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .app-field input[readonly] { opacity: .7; cursor: not-allowed; }
+
+/* Submitted application: ID and read-only copy of the answers */
+.app-ref { display: inline-flex; flex-direction: column; gap: 4px; margin: 6px 0 22px; padding: 14px 20px; border: 1px solid var(--line); border-radius: 14px; }
+.app-ref span { font-family: var(--f-label); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-50); }
+.app-ref strong { font-family: var(--f-label); font-size: 22px; letter-spacing: .06em; color: var(--mint); font-weight: 500; }
+.app-mine { margin: 8px 0 26px; }
+.app-mine-list { margin: 18px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.app-mine-list > div { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.app-mine-list dt { font-size: 13px; color: var(--ink-50); margin: 0 0 5px; }
+.app-mine-list dd { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-90); white-space: pre-wrap; overflow-wrap: anywhere; }
+.app-mine-list dd span { display: block; }
+.app-mine-list a { color: var(--mint); }

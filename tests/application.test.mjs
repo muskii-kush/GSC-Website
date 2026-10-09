@@ -11,7 +11,7 @@ import { fixture as makeFixture } from "./application-fixture.mjs";
 
 globalThis.crypto ||= webcrypto;
 const dir = await mkdtemp(join(tmpdir(), "gsc-test-"));
-for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["export", "functions/api/admin/export.js"], ["schema", "lib/application-questions.ts"], ["session", "functions/_lib/session.js"], ["verify", "functions/api/auth/verify.js"]]) {
+for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["export", "functions/api/admin/export.js"], ["schema", "lib/application-questions.ts"], ["session", "functions/_lib/session.js"], ["verify", "functions/api/auth/verify.js"], ["mine", "functions/api/application/index.js"], ["mydeck", "functions/api/application/deck.js"]]) {
   await build({ entryPoints: [entry], outfile: join(dir, `${name}.mjs`), bundle: true, platform: "node", format: "esm", logLevel: "silent" });
 }
 const apply = await import(pathToFileURL(join(dir, "apply.mjs")));
@@ -20,6 +20,8 @@ const sheetExport = await import(pathToFileURL(join(dir, "export.mjs")));
 const { pages } = await import(pathToFileURL(join(dir, "schema.mjs")));
 const session = await import(pathToFileURL(join(dir, "session.mjs")));
 const verify = await import(pathToFileURL(join(dir, "verify.mjs")));
+const mine = await import(pathToFileURL(join(dir, "mine.mjs")));
+const mydeck = await import(pathToFileURL(join(dir, "mydeck.mjs")));
 const SECRET = { SESSION_SECRET: "session-secret" };
 const PHONE = "9176578432";
 const cookieFor = async (phone, env = SECRET) => (await session.sessionCookie(phone, env)).split(";")[0];
@@ -36,7 +38,7 @@ class Bucket {
     return { key };
   }
   async head(key) { return this.records.has(key) ? { key } : null; }
-  async get(key) { const obj = this.records.get(key); return obj ? { etag: obj.etag, json: async () => JSON.parse(obj.value) } : null; }
+  async get(key) { const obj = this.records.get(key); return obj ? { etag: obj.etag, body: obj.value, json: async () => JSON.parse(obj.value) } : null; }
   async delete(keys) { for (const key of Array.isArray(keys) ? keys : [keys]) this.records.delete(key); }
   async list({ prefix }) { return { objects: [...this.records].filter(([key]) => key.startsWith(prefix)).map(([key, value]) => ({ key, uploaded: value.uploaded })), truncated: false }; }
 }
@@ -305,4 +307,49 @@ test("a wrong or expired OTP does not sign in", async () => {
     const res = await verify.onRequestPost({ request: verifyRequest({ phone: PHONE, otp: "1111" }), env: { DECKS: new Bucket(), ...SECRET } });
     assert.equal(res.status, 401); assert.equal(res.headers.get("set-cookie"), null);
   });
+});
+
+// ── Confirmation email and read-only copy ───────────────────────────────
+const MAIL = { MAIL_URL: "https://script.google.com/macros/s/mailer/exec", MAIL_SECRET: "mail-secret" };
+
+test("a confirmation email with the application ID and every answer goes to the applicant", async () => {
+  const original = globalThis.fetch, sent = [];
+  globalThis.fetch = async (url, init) => { sent.push({ url: String(url), body: JSON.parse(init.body) }); return new Response(JSON.stringify({ ok: true })); };
+  try {
+    const { result, bucket } = await submit(fixture(), new Bucket(), MAIL);
+    assert.match(result.reference, /^GSC27-[0-9A-F]{8}$/);
+    assert.equal(sent.length, 1);
+    const mail = sent[0].body;
+    assert.equal(sent[0].url, MAIL.MAIL_URL); assert.equal(mail.secret, "mail-secret");
+    assert.equal(mail.to, "gsc.diagnostic@cars24.com"); assert.ok(mail.subject.includes(result.reference));
+    assert.ok(mail.text.includes("GSC Diagnostic Private Limited")); assert.ok(mail.html.includes(result.reference));
+    assert.ok(mail.text.includes("Is your company incorporated in India?"));
+    assert.equal(archives(bucket)[0].confirmation.status, "sent");
+  } finally { globalThis.fetch = original; }
+});
+
+test("a failed confirmation email never loses the application", async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = async () => new Response("<html>down</html>", { status: 500 });
+  try {
+    const { result, bucket } = await submit(fixture(), new Bucket(), MAIL);
+    assert.equal(result.ok, true); assert.equal(archives(bucket)[0].confirmation.status, "not-sent");
+  } finally { globalThis.fetch = original; }
+  const quiet = await submit(fixture(), new Bucket());
+  assert.equal(archives(quiet.bucket)[0].confirmation.reason, "not-configured");
+});
+
+test("a signed-in founder can read back their own application and deck, and nobody else's", async () => {
+  const bucket = new Bucket();
+  const { result } = await submit(fixture(), bucket);
+  const get = async (handler, phone) => handler.onRequestGet({ request: new Request("https://gsc.cars24.com/api/application", { headers: phone ? { cookie: await cookieFor(phone) } : {} }), env: { DECKS: bucket, ...SECRET } });
+  const own = await (await get(mine, PHONE)).json();
+  assert.equal(own.application.reference, result.reference);
+  assert.ok(own.application.answers.some((a) => a.title === "Company name" && a.value === "GSC Diagnostic Private Limited"));
+  assert.equal(own.application.deck.name, "Diagnostic.pdf");
+  assert.equal((await get(mydeck, PHONE)).status, 200);
+  assert.equal((await get(mine, "9000012345")).status, 404);
+  assert.equal((await get(mydeck, "9000012345")).status, 404);
+  assert.equal((await get(mine, "")).status, 401);
+  assert.equal((await get(mydeck, "")).status, 404);
 });
