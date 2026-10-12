@@ -71,10 +71,8 @@ export function checkEmail(raw: string): string | null {
 // LLPIN: three letters, a hyphen and four digits, e.g. AAB-1234.
 const CIN_RE = /^([LU])(\d{5})([A-Z]{2})(\d{4})([A-Z]{3})(\d{6})$/;
 const LLPIN_RE = /^[A-Z]{3}-\d{4}$/;
-const STATE_CODES = new Set([
-  "AN", "AP", "AR", "AS", "BR", "CH", "CT", "CG", "DD", "DL", "DN", "GA", "GJ", "HP", "HR", "JH", "JK", "KA", "KL", "LA",
-  "LD", "MH", "ML", "MN", "MP", "MZ", "NL", "OR", "OD", "PB", "PY", "RJ", "SK", "TG", "TS", "TN", "TR", "UP", "UR", "UK", "WB",
-]);
+// Characters 7 and 8 are no longer always a state code: newer CINs use the RoC office code
+// (for example PN for RoC Pune), so any two letters are accepted there.
 const PRIVATE_TYPES = new Set(["PTC", "OPC", "FTC"]);
 const ALL_TYPES = new Set(["PTC", "OPC", "FTC", "PLC", "FLC", "GOI", "SGC", "GAP", "GAT", "NPL", "ULL", "ULT"]);
 
@@ -92,8 +90,7 @@ export function checkRegNo(raw: string, incorporated: string): string | null {
   if (s.length !== 21) return `A CIN is exactly 21 characters. This one has ${s.length}. Copy it from your certificate of incorporation or the MCA portal.`;
   const m = CIN_RE.exec(s);
   if (!m) return "That is not a valid CIN. It should look like U72900KA2021PTC123456: a letter, 5 digits, 2 letters, 4 digits, 3 letters, 6 digits.";
-  const [, , , state, year, type] = m;
-  if (!STATE_CODES.has(state)) return `“${state}” is not an Indian state code. Check characters 7 and 8 of your CIN.`;
+  const [, , , , year, type] = m;
   const y = Number(year);
   if (y < 1900 || y > new Date().getFullYear()) return `The year in this CIN (${year}) is not possible. Check characters 9 to 12.`;
   if (!ALL_TYPES.has(type)) return `“${type}” is not a company type used in a CIN. Check characters 13 to 15.`;
