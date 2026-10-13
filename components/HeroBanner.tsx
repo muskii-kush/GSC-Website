@@ -56,8 +56,12 @@ export default function HeroBanner() {
           ))}
         </h1>
         <p className="banner-when">
-          <span>{hero.when.label}</span>
-          <span className="dot" aria-hidden="true" />
+          {hero.when.label && (
+            <>
+              <span>{hero.when.label}</span>
+              <span className="dot" aria-hidden="true" />
+            </>
+          )}
           <span>{hero.when.date}</span>
           {hero.when.venue && (
             <>
