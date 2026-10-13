@@ -1,5 +1,6 @@
 import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,6 +29,7 @@ try {
   await rm(source, { recursive: true, force: true });
   await mkdir(source);
   for (const name of ["app", "components", "lib", "public", "functions", "docs", "scripts", "tests", ".github", "package.json", "package-lock.json", "tsconfig.json", "next.config.mjs", "next-env.d.ts", "README.md", ".env.example", ".gitignore"]) {
+    if (!existsSync(join(root, name))) continue; // e.g. .github was removed
     await cp(join(root, name), join(source, name), { recursive: true, filter: (path) => !/\/\.env(?:\.|$)/.test(path) || path.endsWith("/.env.example") });
   }
   for (const name of ["GSC-Website-deploy-ready", "GSC-Website-source"]) {
