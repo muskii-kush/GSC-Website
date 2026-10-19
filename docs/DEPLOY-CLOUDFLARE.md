@@ -1,5 +1,19 @@
 # GSC Cloudflare deployment and Google Sheet restoration
 
+## 19 October: submission retry repair
+
+Deploy the latest `GSC-Website-submission-fix.zip` to the existing project using the steps below. Deploy the complete `out/` folder so the browser code and Worker update together. Keep all existing storage bindings and secrets, including `SESSION_SECRET` and the Sheet configuration.
+
+- The browser checks `POST /api/application/status` before uploading and after a lost response. A receipt is shown only when the server confirms a saved application for the OTP-verified number.
+- Applications saved before the phone index was introduced can be recovered through their email/CIN indexes after the number recorded on the application matches the verified number. The phone index is then restored, allowing the read-only copy to open.
+- Expired R2 reservations without an accepted archive can be reclaimed, including older timestamp-only reservations. Accepted archives remain protected.
+- If an archive write commits but its acknowledgement is lost, cleanup preserves the accepted application's deck and indexes.
+- Genuine duplicate errors identify the blocked email or CIN/LLPIN field. Production logs record `application-conflict` with `kind` and `source` (`application`, `reservation` or `legacy-index`), without logging applicant details.
+
+An older KV duplicate marker with no R2 index is kept because it may represent a valid submission from before R2 archives were introduced. If logs report `legacy-index`, the production owner must inspect that marker against the original records; do not bulk-delete duplicate indexes. An email missing from the CSV does not prove that its company has never applied under a different email.
+
+Verification: submit a marked test application, simulate loss of the success response, and confirm receipt recovery, one archived application, the private read-only copy, its PDF and the Sheet export. Run `npm run test:application` for automated regression checks. `npm run build:cloudflare` rejects a release missing the status, sign-in, application or CSV routes.
+
 ## Existing production integration
 
 Applications go to **[GSC 2027 Applications — Sheet1](https://docs.google.com/spreadsheets/d/1YkL9tQyJrpG4sUsNDl7XVIQag9VvEGCowMY0MMnhT5c/edit#gid=0)**.

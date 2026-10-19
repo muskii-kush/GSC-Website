@@ -22,10 +22,13 @@ try {
   run(process.execPath, [join(root, "node_modules/wrangler/bin/wrangler.js"), "pages", "functions", "build", "functions", "--outdir", bundle, "--compatibility-date", "2026-10-09", "--minify"]);
   await cp(join(bundle, "index.js"), join(ready, "out/_worker.js"));
   run(process.execPath, ["--check", join(ready, "out/_worker.js")]);
-  if (!(await readFile(join(ready, "out/_worker.js"), "utf8")).includes("/api/admin/export")) throw new Error("Release is missing the existing Google Sheet CSV route");
+  const worker = await readFile(join(ready, "out/_worker.js"), "utf8");
+  for (const route of ["/api/admin/export", "/api/application/status", "/api/auth/verify", "/api/apply"]) {
+    if (!worker.includes(route)) throw new Error(`Release is missing required route ${route}`);
+  }
   await writeFile(join(ready, "out/_routes.json"), JSON.stringify({ version: 1, include: ["/api/*"], exclude: [] }, null, 2));
   for (const name of ["functions", "lib", "docs", "scripts", "package.json", "package-lock.json"]) await cp(join(root, name), join(ready, name), { recursive: true });
-  await writeFile(join(ready, "README-DEPLOY.txt"), "SHEET RESTORATION RELEASE\n\nDeploy from this directory to the existing gsc.cars24.com project:\n  npx wrangler login\n  npx wrangler pages deploy out --project-name <existing-project-name> --branch <production-branch>\n\nPreserve DECKS, SHEET_KEY, APPLICANTS and DECK_LINK_SECRET.\nThis release restores /api/admin/export?key=<existing SHEET_KEY>.\nThe original GSC 2027 Applications / Sheet1 imports that CSV.\nAll existing R2 applications are included automatically. No new Google credentials or replay are required.\nAfter deployment, refresh Sheet1 A1 by adding &v=20261009 to its existing import URL while preserving the key.\nSee docs/DEPLOY-CLOUDFLARE.md for verification steps.\n");
+  await writeFile(join(ready, "README-DEPLOY.txt"), "SUBMISSION RETRY REPAIR - 19 OCTOBER 2026\n\nDeploy the complete out/ folder to the existing gsc.cars24.com project:\n  npx wrangler login\n  npx wrangler pages deploy out --project-name <existing-project-name> --branch <production-branch>\n\nPreserve DECKS, SHEET_KEY, APPLICANTS, DECK_LINK_SECRET, SESSION_SECRET and existing delivery/mail secrets.\nThe browser and Worker must deploy together. This package includes /api/application/status, verified-mobile receipt recovery, and the existing Google Sheet CSV feed.\nNo applicant resubmission or new Google credentials are required for already saved applications.\nSee docs/DEPLOY-CLOUDFLARE.md for tests, deployment verification, and legacy-index diagnostics.\n");
   await rm(source, { recursive: true, force: true });
   await mkdir(source);
   for (const name of ["app", "components", "lib", "public", "functions", "docs", "scripts", "tests", ".github", "package.json", "package-lock.json", "tsconfig.json", "next.config.mjs", "next-env.d.ts", "README.md", ".env.example", ".gitignore"]) {
@@ -38,5 +41,6 @@ try {
     run("zip", ["-qr", zip, name], { cwd: handoff });
   }
   await cp(join(handoff, "GSC-Website-deploy-ready.zip"), join(handoff, "GSC-Website-sheet-fix.zip"));
+  await cp(join(handoff, "GSC-Website-deploy-ready.zip"), join(handoff, "GSC-Website-submission-fix.zip"));
   console.log(`Release packages: ${handoff}`);
 } finally { await rm(stage, { recursive: true, force: true }); }

@@ -4,30 +4,37 @@ Next.js 14 (App Router) + GSAP ScrollTrigger + Lenis, deployed on Cloudflare Pag
 
 ## Run locally
 
-Requires Node 18.17+ (CI uses Node 20).
+Requires Node 20 or newer.
 
 ```bash
 npm ci
 npm run dev      # http://localhost:3000
 ```
 
+This starts Next.js and the Cloudflare Functions API together. Next.js proxies
+`/api/apply`, `/api/deck/*` and `/api/admin/*` to Wrangler on port 8788. Applications
+and decks are saved in local R2/KV under `.wrangler/local-development`; they do not
+appear in the production Google Sheet. Local CSV: `http://localhost:3000/api/admin/export?key=local-development`.
+If Next.js is already running, `npm run dev:api` starts only the local backend.
+See [Cloudflare's local development guide](https://developers.cloudflare.com/pages/functions/local-development/).
+
 Do not run `npm run build` while `npm run dev` is running (both write to `.next`).
 
 ## Deploy
 
-The site is a static export plus two Cloudflare Pages Functions in `functions/`
+The site is a static export plus Cloudflare Pages Functions in `functions/`
 that receive applications. Full steps (build settings, R2 bucket, KV namespace,
 `DECK_LINK_SECRET`, Wrangler zip deploy) are in **`docs/DEPLOY-CLOUDFLARE.md`**.
 
-Build command used on Cloudflare:
+Build the deployable Cloudflare release:
 
 ```bash
 npm run build:cloudflare   # → ./IT-handoff/GSC-Website-deploy-ready.zip
 ```
 
-`.github/workflows/pages.yml` also publishes the static pages to GitHub Pages on
-every push to `main` (only while the repo is public); the application form does
-not submit there because GitHub Pages cannot run the functions.
+Deploy the generated `IT-handoff/GSC-Website-deploy-ready/out` directory to the
+existing Cloudflare Pages project. The GitHub Pages workflow has been removed;
+pushing the repository is not itself a verified Cloudflare deployment.
 
 ## Applications
 
@@ -38,11 +45,14 @@ not submit there because GitHub Pages cannot run the functions.
   and deck in private R2 storage before confirming receipt. Conditional R2 writes
   prevent duplicate applications, including simultaneous submissions. Existing KV
   applicant entries remain supported.
-- Google Forms' public endpoint requires reCAPTCHA and rejects server submissions.
-  Optional authenticated Sheet delivery uses `docs/apps-script/gsc_sheet_receiver.gs`.
-  Applications remain saved if delivery fails and can be exported or replayed using
-  `scripts/applications.mjs`. See `docs/DEPLOY-CLOUDFLARE.md` for setup.
+- The original GSC 2027 Applications / Sheet1 uses `IMPORTDATA` to read
+  `/api/admin/export?key=<SHEET_KEY>`. The feed includes all saved R2 applications.
+  Google Sheets refreshes imports periodically, so new rows may not appear immediately.
+  See `docs/DEPLOY-CLOUDFLARE.md` for deployment and import refresh instructions.
 - Drafts autosave in the applicant's browser (localStorage).
+- Submission retries check `/api/application/status` for an existing receipt before
+  uploading again and after a lost response. Receipt recovery requires the verified
+  mobile number saved on that application; genuine company/email conflicts remain blocked.
 - Run `npm run test:application` to verify storage, validation, retries and delivery.
 
 ## Phone verification

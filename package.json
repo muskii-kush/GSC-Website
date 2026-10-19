@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "build:cloudflare": "node scripts/build-cloudflare-release.mjs",
-    "test:application": "node --test tests/application.test.mjs",
-    "dev": "next dev",
+    "test:application": "node --test tests/application.test.mjs tests/submission.test.mjs",
+    "dev": "node scripts/dev.mjs",
+    "dev:api": "node scripts/dev.mjs --api-only",
     "build": "next build",
     "start": "next start"
   },
