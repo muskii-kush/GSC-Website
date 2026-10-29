@@ -27,7 +27,7 @@ export const challenge = {
   title: "about the event",
   // From the GSC 2027 concept note (objective, format and outcomes).
   statement:
-    "The Grand Startup Challenge, run with Startup India and the Startup Policy Forum, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
+    "The Grand Startup Challenge, run with Startup India, MeitY Startup Hub and the Startup Policy Forum, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
   metrics: [
     { value: "4", label: "Problem tracks", note: "Fintech, mobility and road safety, supply chain and sovereign AI" },
     { value: "₹1 Cr", label: "Total prize pool", note: "Shared among the winning startups across all four tracks" },
@@ -42,7 +42,6 @@ export const proof = [
   "4 problem tracks",
   "Funding opportunities",
   "Mentorship support",
-  "12 winning startups",
   ];
 
 // Why this challenge. Leads with the Government of India collaboration; the host's 2015 roots are the credential.
@@ -91,7 +90,7 @@ export const timeline = {
   lede: "Four months, from applications and shortlisting to a month of mentorship and a final pitch in New Delhi. All dates are in IST.",
   items: [
     { date: "9 October 2026", title: "Applications open", text: "Problem statements for each track are published on the same day." },
-    { date: "10 November 2026", title: "Applications close", text: "11:59 pm IST. Hard deadline. We do not extend it." },
+    { date: "10 November 2026", title: "Applications close", text: "11:59 pm IST." },
     { date: "November 2026", title: "Screening and interviews", text: "Applications are read and shortlisted startups are interviewed. You hear back either way." },
     { date: "December 2026", title: "Mentorship month", text: "Shortlisted startups work with an assigned mentor to refine their solution." },
     { date: "Early January 2027", title: "Final refinement", text: "Startups finish the solution they will demo." },

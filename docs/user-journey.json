@@ -236,8 +236,7 @@
         "₹1 Cr prize pool",
         "4 problem tracks",
         "Funding opportunities",
-        "Mentorship support",
-        "12 winning startups"
+        "Mentorship support"
       ],
       "motion": [
         "Continuous horizontal marquee (38s loop), pauses on hover"
@@ -347,7 +346,7 @@
         "leadTicket": {
           "stamp": "₹1 Cr",
           "title": "₹1 crore prize pool",
-          "text": "One pool, shared among twelve winners: the top three startups in each of the four tracks.",
+          "text": "One pool, shared among the winning startups across all four tracks.",
           "style": "full-width golden (mint) pass"
         },
         "eyebrow": "What startups get",
