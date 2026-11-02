@@ -1,0 +1,155 @@
+/* ─────────────────────────────────────────────────────────────
+   Light theme (preview). Applied when <html data-theme="light">.
+   Same brand colours on a warm off-white page: ink text, brand blue
+   for emphasis, a deeper mint for small accents so it stays readable
+   on white, and the glows turned into soft pastel washes.
+   Nothing here changes the dark theme.
+   ───────────────────────────────────────────────────────────── */
+html[data-theme="light"] {
+  --page-deep: #F6F5FB;
+  --page: #FFFFFF;
+  --page-lift: #EFEDFB;
+  --base: #FFFFFF;
+  --ink: #14121C;
+  --ink-90: rgba(20, 18, 28, .88);
+  --ink-70: rgba(20, 18, 28, .68);
+  --ink-50: rgba(20, 18, 28, .5);
+  --line: rgba(20, 18, 28, .12);
+  --glass: linear-gradient(to bottom, rgba(255, 255, 255, .95), rgba(255, 255, 255, .7));
+  /* Mint as text, lines and small dots: deep enough to read on white. */
+  --mint: #0A8F5A;
+  --mint-bright: #63FFB1;
+  --lilac: #5B49F0;
+  color-scheme: light;
+  background: var(--page-deep);
+}
+html[data-theme="light"] body { background: var(--page-deep); color: var(--ink); }
+
+/* Lavender text and gradients that were tuned for a dark page */
+html[data-theme="light"] .it-soft,
+html[data-theme="light"] .when-label { color: var(--lilac); }
+html[data-theme="light"] .when-item svg,
+html[data-theme="light"] .why-icon svg { stroke: var(--lilac); }
+html[data-theme="light"] .rw-word.it { background: linear-gradient(180deg, var(--ink) 10%, var(--blue) 100%); -webkit-background-clip: text; background-clip: text; }
+html[data-theme="light"] .gets-big { background: linear-gradient(180deg, var(--ink) 30%, var(--blue) 100%); -webkit-background-clip: text; background-clip: text; }
+
+/* Buttons */
+html[data-theme="light"] .btn, html[data-theme="light"] .registration .button.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+html[data-theme="light"] .btn:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+html[data-theme="light"] .btn.ghost { background: transparent; color: var(--ink); border-color: rgba(20, 18, 28, .3); }
+html[data-theme="light"] .btn.ghost:hover { background: rgba(71, 54, 254, .06); border-color: var(--blue); color: var(--blue); }
+html[data-theme="light"] .btn:focus-visible, html[data-theme="light"] a:focus-visible, html[data-theme="light"] button:focus-visible { outline-color: var(--blue); }
+
+/* Nav, menu and floating dock */
+html[data-theme="light"] .link-bar { background: rgba(255, 255, 255, .72); border-bottom-color: var(--line); backdrop-filter: blur(14px); }
+html[data-theme="light"] .nav.scrolled .link-bar { background: rgba(255, 255, 255, .92); }
+html[data-theme="light"] .menu-scrim { background: rgba(20, 18, 28, .25); }
+html[data-theme="light"] .side-menu { background: #fff; box-shadow: 30px 0 80px rgba(20, 18, 28, .12); }
+html[data-theme="light"] .dock { background: rgba(255, 255, 255, .9); border-color: var(--line); box-shadow: 0 24px 60px rgba(20, 18, 28, .14), 0 0 0 1px rgba(71, 54, 254, .08); }
+html[data-theme="light"] .dock-primary { background: var(--ink); color: #fff; }
+html[data-theme="light"] .dock-primary:hover { background: var(--blue); }
+
+/* Hero banner: light page, soft brand glow behind the headline */
+html[data-theme="light"] .banner { background: #F4F2FE !important; }
+html[data-theme="light"] .banner::after { background: linear-gradient(180deg, rgba(246, 245, 251, 0) 55%, rgba(246, 245, 251, .9) 100%) !important; }
+html[data-theme="light"] .banner-glow { background: radial-gradient(70% 70% at 72% 40%, rgba(143, 132, 255, .45) 0%, rgba(185, 178, 255, .3) 40%, rgba(246, 245, 251, 0) 78%) !important; }
+html[data-theme="light"] .banner-streaks { opacity: .5; }
+html[data-theme="light"] .banner-title { color: var(--ink) !important; }
+html[data-theme="light"] .banner-name { color: var(--blue) !important; }
+html[data-theme="light"] .banner-kicker { color: var(--blue); }
+html[data-theme="light"] .bw-accent { background: linear-gradient(100deg, #2B2098 0%, var(--blue) 40%, #7A68FF 70%, #0A8F5A 100%); -webkit-background-clip: text; background-clip: text; }
+html[data-theme="light"] .northern-lights { opacity: .45 !important; mix-blend-mode: multiply; }
+html[data-theme="light"] .starfield { opacity: .35 !important; mix-blend-mode: multiply; filter: hue-rotate(110deg) saturate(1.6) !important; }
+html[data-theme="light"] .orb { mix-blend-mode: multiply; opacity: .5; }
+
+/* Page backgrounds and chapters */
+html[data-theme="light"] main { background: linear-gradient(to bottom, var(--page-deep) 0%, var(--page) 20%, var(--page-lift) 50%, var(--page) 80%, var(--page-deep) 100%); }
+html[data-theme="light"] .chapter-one { background: radial-gradient(120% 80% at 50% 95%, #E3DFFF 0%, rgba(227, 223, 255, 0) 60%), var(--page); }
+html[data-theme="light"] .chapter-two { background: radial-gradient(124% 70% at 50% 100%, #E3DFFF 0%, #F1EFFE 40%, var(--page-deep) 80%) !important; }
+html[data-theme="light"] .s-dates { background: linear-gradient(180deg, #F1EFFE, #FFFFFF) !important; border-color: rgba(71, 54, 254, .14) !important; }
+html[data-theme="light"] .aurora { mix-blend-mode: multiply; }
+html[data-theme="light"] .aurora-about { opacity: .35; }
+html[data-theme="light"] .aurora-tracks { opacity: .18; }
+html[data-theme="light"] .aurora-timeline { opacity: .16; }
+html[data-theme="light"] .aurora-partners { opacity: .4; }
+
+/* Glass cards, chips and panels */
+html[data-theme="light"] .glass { border-color: var(--line); box-shadow: 0 20px 50px -30px rgba(20, 18, 28, .25); }
+html[data-theme="light"] .room-card { border-color: var(--line); box-shadow: 0 18px 40px -28px rgba(20, 18, 28, .3); }
+html[data-theme="light"] .fan-grid .room-card { background: #fff; border-color: var(--line); box-shadow: 0 24px 50px -24px rgba(43, 32, 152, .3); }
+html[data-theme="light"] .room-n { -webkit-text-stroke-color: rgba(20, 18, 28, .3); }
+html[data-theme="light"] .why-grid .room-card::after { background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(71, 54, 254, .06), transparent 55%); }
+html[data-theme="light"] .why-icon { background: rgba(71, 54, 254, .07); border-color: rgba(71, 54, 254, .18); }
+html[data-theme="light"] .s-invites .glass { background: rgba(255, 255, 255, .85); }
+html[data-theme="light"] .invite:hover { background: linear-gradient(to bottom, rgba(71, 54, 254, .08), rgba(71, 54, 254, 0)); }
+html[data-theme="light"] .hero-chip-in { background: rgba(255, 255, 255, .85); border-color: var(--line); box-shadow: 0 18px 40px rgba(20, 18, 28, .1); }
+html[data-theme="light"] .countdown-item { background: rgba(255, 255, 255, .7); }
+html[data-theme="light"] .proof { background: rgba(255, 255, 255, .7); }
+html[data-theme="light"] .chips li, html[data-theme="light"] .rubric-tab, html[data-theme="light"] .rubric-gates li, html[data-theme="light"] .rubric-criterion { background: #fff; }
+html[data-theme="light"] .rubric-score { background: rgba(20, 18, 28, .05); }
+
+/* Glow effects become quiet shadows on white */
+html[data-theme="light"] .reg-link { text-shadow: none; }
+html[data-theme="light"] .reg-link::after, html[data-theme="light"] .reg-link:hover::after { box-shadow: none; }
+html[data-theme="light"] .gets-line, html[data-theme="light"] .proof li::after, html[data-theme="light"] .hero-chip-dot,
+html[data-theme="light"] .dates li.finale::before, html[data-theme="light"] .tl-line li.finale::before, html[data-theme="light"] .tl2-list li.finale::before { box-shadow: 0 0 0 4px rgba(10, 143, 90, .14); }
+html[data-theme="light"] .why-grid .room-n { color: rgba(10, 143, 90, .1); text-shadow: none; }
+html[data-theme="light"] .circuit-edge { stroke: rgba(10, 143, 90, .22); }
+html[data-theme="light"] .circuit-trace { stroke: rgba(10, 143, 90, .45); }
+html[data-theme="light"] .circuit-pad, html[data-theme="light"] .circuit-spark { filter: none; }
+html[data-theme="light"] .invite::before, html[data-theme="light"] .s-room .room-card::before { filter: none; }
+
+/* Fills that keep the bright mint (dark text sits on them) */
+html[data-theme="light"] .faq-item[open] .faq-plus { background: var(--mint-bright); border-color: var(--mint-bright); color: #04130B; }
+html[data-theme="light"] .ticket-gold { --stub: var(--mint-bright); }
+html[data-theme="light"] .live-dot { background: var(--mint); }
+
+/* Timeline dots sit on the page colour */
+html[data-theme="light"] .dates li::before, html[data-theme="light"] .tl-line li::before, html[data-theme="light"] .tl2-list li::before { background: #fff; border-color: rgba(20, 18, 28, .35); }
+html[data-theme="light"] .track-line path { stroke: var(--ink); }
+html[data-theme="light"] .track-go { background: var(--ink); color: #fff; }
+
+/* The film sits on white: give its frame an edge */
+html[data-theme="light"] .film-frame { box-shadow: 0 40px 90px -40px rgba(71, 54, 254, .45), 0 0 0 1px rgba(20, 18, 28, .08) !important; }
+
+/* Numbers, wordmark and footer */
+html[data-theme="light"] .about-stat-v { color: var(--ink); }
+html[data-theme="light"] .giant-mark { color: rgba(20, 18, 28, .9); }
+html[data-theme="light"] .gm-outline { -webkit-text-stroke: 2px rgba(43, 32, 152, .55) !important; filter: none !important; }
+html[data-theme="light"] .site-foot { border-top-color: var(--line); color: var(--ink-70); }
+html[data-theme="light"] .site-foot .foot-top, html[data-theme="light"] .site-foot .foot-copy { color: var(--ink); }
+html[data-theme="light"] .foot-logos, html[data-theme="light"] .partners, html[data-theme="light"] .logo-bar { box-shadow: 0 0 0 1px var(--line); }
+
+/* Overlays: briefs, rubric and the application form */
+html[data-theme="light"] .overlay { background: rgba(250, 249, 255, .97); }
+html[data-theme="light"] .detail-head { background: rgba(250, 249, 255, .95); }
+html[data-theme="light"] .wizard-progress, html[data-theme="light"] .application-form .wizard-nav { background: #FAF9FF !important; box-shadow: 0 10px 18px -14px rgba(20, 18, 28, .25) !important; }
+html[data-theme="light"] .wizard-progress-track { background: rgba(20, 18, 28, .1); }
+html[data-theme="light"] .auth-gate label, html[data-theme="light"] .application-form label,
+html[data-theme="light"] .auth-sent-to, html[data-theme="light"] .account-bar, html[data-theme="light"] .wizard-progress-top,
+html[data-theme="light"] .wizard-save-exit, html[data-theme="light"] .handoff-list li, html[data-theme="light"] .app-file-name,
+html[data-theme="light"] .application-form label.app-choice { color: var(--ink-70); }
+html[data-theme="light"] .application-form label.app-choice.is-picked { color: var(--ink); }
+html[data-theme="light"] .auth-gate input, html[data-theme="light"] .application-form input, html[data-theme="light"] .application-form select,
+html[data-theme="light"] .application-form textarea, html[data-theme="light"] .register-auth-form input { background: #fff; border-color: rgba(20, 18, 28, .18); color: var(--ink); }
+html[data-theme="light"] .auth-gate input::placeholder, html[data-theme="light"] .application-form input::placeholder, html[data-theme="light"] .application-form textarea::placeholder { color: rgba(20, 18, 28, .35); }
+html[data-theme="light"] .application-form select option { background: #fff; color: var(--ink); }
+html[data-theme="light"] .phone-prefix, html[data-theme="light"] .register-auth-prefix { background: rgba(20, 18, 28, .05); border-color: rgba(20, 18, 28, .18); }
+html[data-theme="light"] .app-choice { background: #fff; border-color: rgba(20, 18, 28, .14); }
+html[data-theme="light"] .app-choice:hover { border-color: rgba(20, 18, 28, .3); }
+html[data-theme="light"] .app-choice.is-picked { background: rgba(10, 143, 90, .06); }
+html[data-theme="light"] .app-file { background: #fff; border-color: rgba(20, 18, 28, .25); }
+html[data-theme="light"] .app-file-btn { border-color: rgba(20, 18, 28, .25); }
+html[data-theme="light"] .wizard-back { border-color: rgba(20, 18, 28, .22); color: var(--ink-70); }
+html[data-theme="light"] .app-error, html[data-theme="light"] .app-count.over, html[data-theme="light"] .register-auth-error, html[data-theme="light"] .auth-error { color: #C2341C; }
+html[data-theme="light"] .app-field.has-error input, html[data-theme="light"] .app-field.has-error textarea { border-color: #C2341C; }
+html[data-theme="light"] .register-auth-icon { box-shadow: none; }
+
+/* Theme switch used while reviewing the light theme */
+.theme-toggle {
+  position: fixed; right: 16px; bottom: 16px; z-index: 90; display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 14px; border-radius: 999px; cursor: pointer;
+  font-family: var(--f-label); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  background: rgba(13, 10, 46, .85); color: #fff; border: 1px solid rgba(255, 255, 255, .2);
+}
+html[data-theme="light"] .theme-toggle { background: #fff; color: var(--ink); border-color: var(--line); box-shadow: 0 10px 30px rgba(20, 18, 28, .12); }
