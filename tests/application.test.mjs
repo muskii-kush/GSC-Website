@@ -11,7 +11,7 @@ import { fixture as makeFixture } from "./application-fixture.mjs";
 
 globalThis.crypto ||= webcrypto;
 const dir = await mkdtemp(join(tmpdir(), "gsc-test-"));
-for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["export", "functions/api/admin/export.js"], ["schema", "lib/application-questions.ts"], ["session", "functions/_lib/session.js"], ["verify", "functions/api/auth/verify.js"], ["mine", "functions/api/application/index.js"], ["mydeck", "functions/api/application/deck.js"]]) {
+for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["export", "functions/api/admin/export.js"], ["schema", "lib/application-questions.ts"], ["session", "functions/_lib/session.js"], ["verify", "functions/api/auth/verify.js"], ["mine", "functions/api/application/index.js"], ["mydeck", "functions/api/application/deck.js"], ["status", "functions/api/application/status.js"]]) {
   await build({ entryPoints: [entry], outfile: join(dir, `${name}.mjs`), bundle: true, platform: "node", format: "esm", logLevel: "silent" });
 }
 const apply = await import(pathToFileURL(join(dir, "apply.mjs")));
@@ -22,6 +22,7 @@ const session = await import(pathToFileURL(join(dir, "session.mjs")));
 const verify = await import(pathToFileURL(join(dir, "verify.mjs")));
 const mine = await import(pathToFileURL(join(dir, "mine.mjs")));
 const mydeck = await import(pathToFileURL(join(dir, "mydeck.mjs")));
+const status = await import(pathToFileURL(join(dir, "status.mjs")));
 const SECRET = { SESSION_SECRET: "session-secret" };
 const PHONE = "9176578432";
 const cookieFor = async (phone, env = SECRET) => (await session.sessionCookie(phone, env)).split(";")[0];
@@ -38,7 +39,7 @@ class Bucket {
     return { key };
   }
   async head(key) { return this.records.has(key) ? { key } : null; }
-  async get(key) { const obj = this.records.get(key); return obj ? { etag: obj.etag, body: obj.value, json: async () => JSON.parse(obj.value) } : null; }
+  async get(key) { const obj = this.records.get(key); return obj ? { uploaded: obj.uploaded, etag: obj.etag, body: obj.value, json: async () => JSON.parse(obj.value) } : null; }
   async delete(keys) { for (const key of Array.isArray(keys) ? keys : [keys]) this.records.delete(key); }
   async list({ prefix }) { return { objects: [...this.records].filter(([key]) => key.startsWith(prefix)).map(([key, value]) => ({ key, uploaded: value.uploaded })), truncated: false }; }
 }
@@ -352,4 +353,94 @@ test("a signed-in founder can read back their own application and deck, and nobo
   assert.equal((await get(mydeck, "9000012345")).status, 404);
   assert.equal((await get(mine, "")).status, 401);
   assert.equal((await get(mydeck, "")).status, 404);
+});
+
+// Regression cases: interrupted submissions, old indexes, and receipt recovery.
+const identityKeyFor = async (kind, value) => `applicants/${kind}/${Buffer.from(await webcrypto.subtle.digest('SHA-256', new TextEncoder().encode(value))).toString('hex')}.json`;
+async function receiptStatus(bucket, hints = {}, phone = PHONE) {
+  return status.onRequestPost({ request: new Request('https://gsc.cars24.com/api/application/status', { method: 'POST', headers: { 'content-type': 'application/json', ...(phone ? { cookie: await cookieFor(phone) } : {}) }, body: JSON.stringify(hints) }), env: { DECKS: bucket, ...SECRET } });
+}
+async function legacyRecord(bucket) {
+  const saved = await submit(fixture(), bucket), [app] = archives(bucket);
+  await bucket.delete(await session.phoneKey(PHONE));
+  delete app.phone; app.submissionId = null;
+  await bucket.put(`applications/${app.applicationId}.json`, JSON.stringify(app));
+  return { saved, app };
+}
+
+test('an older application recovers by verified mobile, even when its browser ID changed', async () => {
+  const bucket = new Bucket(), { app } = await legacyRecord(bucket);
+  const again = await submit(fixture(), bucket);
+  assert.equal(again.result.ok, true); assert.equal(again.result.code, 'ok');
+  assert.equal(again.result.applicationId, app.applicationId); assert.equal(archives(bucket).length, 1);
+  assert.equal((await session.submittedFor(PHONE, { DECKS: bucket })).applicationId, app.applicationId);
+  assert.ok(bucket.records.has(app.deck.key));
+});
+
+test('status recovery restores an older founder phone index without uploading a PDF', async () => {
+  const bucket = new Bucket(), { app } = await legacyRecord(bucket);
+  const response = await receiptStatus(bucket, { email: app.email.toUpperCase() });
+  const out = await response.json();
+  assert.equal(response.status, 200); assert.equal(out.applicationId, app.applicationId);
+  assert.equal(out.submittedAt, app.submittedAt); assert.equal(out.recovered, true);
+  const copy = await mine.onRequestGet({ request: new Request('https://gsc.cars24.com/api/application', { headers: { cookie: await cookieFor(PHONE) } }), env: { DECKS: bucket, ...SECRET } });
+  assert.equal(copy.status, 200);
+});
+
+test('knowing an email, CIN or submission ID never recovers another mobile number\'s application', async () => {
+  const bucket = new Bucket(), payload = fixture();
+  await submit(payload, bucket);
+  const [app] = archives(bucket), stranger = '9988776655';
+  const denied = await receiptStatus(bucket, { email: app.email, cin: app.cin }, stranger);
+  assert.equal(denied.status, 404);
+  assert.equal((await receiptStatus(bucket, { email: app.email }, '')).status, 401);
+  const duplicate = await submit(payload, bucket, {}, true, stranger);
+  assert.equal(duplicate.result.code, 'duplicate'); assert.equal(duplicate.result.reference, undefined);
+  assert.equal(duplicate.result.entry, 'emailAddress');
+  assert.equal(bucket.records.has(await session.phoneKey(stranger)), false);
+});
+
+test('an old timestamp-only reservation is reclaimed only if no accepted archive exists', async () => {
+  const bucket = new Bucket(), payload = fixture();
+  const key = await identityKeyFor('email', payload.email);
+  await bucket.put(key, JSON.stringify({ applicationId: randomUUID(), submittedAt: '2020-01-01T00:00:00Z' }));
+  assert.equal((await submit(payload, bucket)).result.ok, true);
+  const [app] = archives(bucket); await bucket.delete(await session.phoneKey(PHONE));
+  const retry = await receiptStatus(bucket, { email: payload.email });
+  assert.equal((await retry.json()).applicationId, app.applicationId);
+  assert.equal(archives(bucket).length, 1);
+});
+
+test('an active reservation is retained and an interrupted failed request leaves no duplicate claims', async () => {
+  const bucket = new Bucket(), payload = fixture();
+  const key = await identityKeyFor('email', payload.email);
+  await bucket.put(key, JSON.stringify({ applicationId: randomUUID(), submittedAt: new Date().toISOString() }));
+  const active = await submit(payload, bucket);
+  assert.equal(active.result.code, 'submission-in-progress');
+  assert.equal(bucket.records.size, 1); assert.equal(bucket.records.has(key), true);
+});
+
+test('a lost R2 archive acknowledgement never deletes an accepted application\'s deck or indexes', async () => {
+  const bucket = new Bucket(), put = bucket.put.bind(bucket);
+  let loseAcknowledgement = true;
+  bucket.put = async (key, value, options) => {
+    const result = await put(key, value, options);
+    if (loseAcknowledgement && key.startsWith('applications/')) { loseAcknowledgement = false; throw new Error('Acknowledgement lost after commit'); }
+    return result;
+  };
+  const payload = fixture(), accepted = await submit(payload, bucket);
+  assert.equal(accepted.result.ok, true);
+  const [app] = archives(bucket); assert.ok(bucket.records.has(app.deck.key));
+  assert.ok(bucket.records.has(await session.phoneKey(PHONE)));
+  const retried = await submit(payload, bucket);
+  assert.equal(retried.result.applicationId, app.applicationId); assert.equal(archives(bucket).length, 1);
+});
+
+test('legacy duplicate messages identify the actual blocked field and preserve accepted legacy records', async () => {
+  for (const [kind, value, entry] of [['email', 'gsc.diagnostic@cars24.com', 'emailAddress'], ['cin', 'U72900KA2026PTC123456', 'entry.1619968075']]) {
+    const data = new Map([[`${kind}:${value}`, '2026-10-01T00:00:00Z']]);
+    const result = await submit(fixture(), new Bucket(), { APPLICANTS: { get: async (key) => data.get(key) || null } });
+    assert.equal(result.result.code, 'duplicate'); assert.equal(result.result.entry, entry);
+    assert.equal(result.result.reason, 'legacy-index'); assert.equal(result.bucket.records.size, 0); assert.equal(data.size, 1);
+  }
 });

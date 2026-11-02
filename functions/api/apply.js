@@ -5,6 +5,7 @@ import { BY_KEY, validateAnswer, visiblePages } from "../../lib/application-vali
 import { applicationKey, deliverApplication, reply } from "../_lib/applications";
 import { phoneKey, sessionPhone, sessionSecret } from "../_lib/session";
 import { reference, sendConfirmation } from "../_lib/confirmation";
+import { applicationPhone, identityKey, linkPhone, ownApplication, receipt, reservationExpired } from "../_lib/recovery";
 
 const MAX_DECK_BYTES = 50 * 1024 * 1024;
 const QUESTIONS = new Map(pages.flatMap((p) => p.questions).map((q) => [q.entry, q]));
@@ -12,8 +13,6 @@ const safeName = (n) => {
   const clean = String(n || "PitchDeck.pdf").replace(/[^A-Za-z0-9._-]+/g, "_").replace(/_+/g, "_").slice(0, 120);
   return /\.pdf$/i.test(clean) ? clean : `${clean}.pdf`;
 };
-const hash = async (value) => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))))
-  .map((x) => x.toString(16).padStart(2, "0")).join("");
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -67,28 +66,50 @@ export async function onRequestPost(context) {
   const submissionId = typeof payload.submissionId === "string" && /^[0-9a-f-]{36}$/i.test(payload.submissionId) ? payload.submissionId : null;
   const submittedAt = new Date().toISOString(), claimed = [];
   const leaseExpiresAt = new Date(Date.now() + 15 * 60_000).toISOString();
-  let deckKey, recorded = false;
+  let deckKey, recorded = false, archiveAttempted = false, preserve = false;
   try {
+    const own = await ownApplication(phone, { email, cin }, env);
+    if (own) {
+      await linkPhone(phone, own, env);
+      const retry = (submissionId && own.submissionId === submissionId) || (own.email === email && own.cin === cin);
+      return reply(!!retry, retry ? "ok" : "already-submitted", "Your application has already been received.", retry ? 200 : 409, receipt(own));
+    }
     // Preserve checks for applications accepted before this change.
-    if (env.APPLICANTS && (await env.APPLICANTS.get(`email:${email}`) || await env.APPLICANTS.get(`cin:${cin}`))) {
-      if (!await env.DECKS.head(`applicants/email/${await hash(email)}.json`)) return reply(false, "duplicate", "An application with this email or company has already been submitted.", 409);
+    for (const [kind, value, entry] of [["email", email, "emailAddress"], ["cin", cin, E.cin]]) {
+      if (env.APPLICANTS && await env.APPLICANTS.get(`${kind}:${value}`) && !await env.DECKS.head(await identityKey(kind, value))) {
+        console.log(JSON.stringify({ event: "application-conflict", kind, source: "legacy-index" }));
+        return reply(false, "duplicate", kind === "email" ? "A previous submission is recorded for this email. Sign in with the mobile number originally used, or contact grandstartupchallenge@cars24.com if you did not submit it." : "A previous submission is recorded for this CIN/LLPIN. Check the registration number or contact grandstartupchallenge@cars24.com if your company has not applied.", 409, { entry, reason: "legacy-index" });
+      }
     }
     // Conditional R2 writes stop simultaneous submissions by the same mobile number, email or company.
     for (const [kind, value] of [["phone", phone], ["email", email], ["cin", cin]]) {
-      const key = kind === "phone" ? await phoneKey(value) : `applicants/${kind}/${await hash(value)}.json`;
+      const key = kind === "phone" ? await phoneKey(value) : await identityKey(kind, value);
       const identity = JSON.stringify({ applicationId: id, submissionId, submittedAt, leaseExpiresAt });
       let claim = await env.DECKS.put(key, identity, { onlyIf: { etagDoesNotMatch: "*" }, httpMetadata: { contentType: "application/json" } });
       if (!claim) {
         const existing = await env.DECKS.get(key), owner = existing ? await existing.json() : null;
-        const previous = owner ? await env.DECKS.head(applicationKey(owner.applicationId)) : null;
-        if (submissionId && owner?.submissionId === submissionId && previous) return reply(true, "ok", "Application received.", 200, { applicationId: owner.applicationId, reference: reference(owner.applicationId) });
+        const previous = owner?.applicationId ? await env.DECKS.get(applicationKey(owner.applicationId)) : null;
+        if (previous) {
+          const saved = await previous.json();
+          if (applicationPhone(saved) === phone) {
+            await linkPhone(phone, saved, env, id);
+            const heldPhone = claimed.indexOf(await phoneKey(phone));
+            if (heldPhone >= 0) claimed.splice(heldPhone, 1); // Preserve the repaired index in finally.
+            const retry = (submissionId && saved.submissionId === submissionId) || (saved.email === email && saved.cin === cin);
+            return reply(!!retry, retry ? "ok" : "already-submitted", "Your application has already been received.", retry ? 200 : 409, receipt(saved));
+          }
+        }
         // Recover a reservation abandoned by a terminated request. Recorded applications
         // remain permanent duplicates; only an expired claim without a record can be replaced.
-        if (!previous && owner?.leaseExpiresAt && new Date(owner.leaseExpiresAt).getTime() < Date.now()) {
+        if (!existing) claim = await env.DECKS.put(key, identity, { onlyIf: { etagDoesNotMatch: "*" }, httpMetadata: { contentType: "application/json" } });
+        else if (!previous && reservationExpired(owner, existing)) {
           claim = await env.DECKS.put(key, identity, { onlyIf: { etagMatches: existing.etag }, httpMetadata: { contentType: "application/json" } });
         }
-        const taken = kind === "phone" ? "An application from this mobile number has already been submitted." : "An application with this email or company has already been submitted.";
-        if (!claim) return reply(false, previous ? (kind === "phone" ? "already-submitted" : "duplicate") : "submission-in-progress", previous ? taken : "Your application is still being recorded. Please try again in a moment.", previous ? 409 : 503, previous && kind === "phone" ? { submittedAt: owner.submittedAt, reference: reference(owner.applicationId) } : {});
+        if (!claim) {
+          console.log(JSON.stringify({ event: "application-conflict", kind, source: previous ? "application" : "reservation" }));
+          const taken = kind === "email" ? "This email is already on a submitted application. Sign in with the mobile number used for that application, or contact grandstartupchallenge@cars24.com if this is unexpected." : kind === "cin" ? "An application for this CIN/LLPIN has already been submitted. Check the registration number. If a cofounder submitted it, use that application's mobile number to view its receipt." : "This mobile number is linked to another application. Contact grandstartupchallenge@cars24.com for help.";
+          return reply(false, previous ? "duplicate" : "submission-in-progress", previous ? taken : "Your application is still being recorded. Please wait a moment and check its status before retrying.", previous ? 409 : 503, previous && kind !== "phone" ? { entry: kind === "email" ? "emailAddress" : E.cin } : {});
+        }
       }
       claimed.push(key);
     }
@@ -104,6 +125,7 @@ export async function onRequestPost(context) {
         ? { status: "pending", reason: "queued" }
         : env.SHEET_KEY ? { status: "available", reason: "sheet-export" } : { status: "pending", reason: "not-configured" },
     };
+    archiveAttempted = true;
     await env.DECKS.put(applicationKey(id), JSON.stringify(application), { httpMetadata: { contentType: "application/json" }, customMetadata: { submittedAt } });
     recorded = true;
     console.log(JSON.stringify({ event: "application-recorded", applicationId: id }));
@@ -118,11 +140,17 @@ export async function onRequestPost(context) {
     if (context.waitUntil) context.waitUntil(finish()); else await finish();
     return reply(true, "ok", "Application received.", 200, { applicationId: id, reference: reference(id), emailed: !!(env.MAIL_URL && env.MAIL_SECRET) });
   } catch {
+    // A storage acknowledgement can be lost after the write committed. Never
+    // delete the deck or identity indexes of an application that may be saved.
+    if (archiveAttempted && !recorded) {
+      try { recorded = !!await env.DECKS.head(applicationKey(id)); }
+      catch { preserve = true; }
+    }
     console.error(JSON.stringify({ event: "application-storage-failed", applicationId: id, recorded }));
     if (recorded) return reply(true, "ok", "Application received.", 200, { applicationId: id, reference: reference(id) });
     return reply(false, "storage-unavailable", "We could not save the application. Your answers are still saved in this browser; please try again shortly.", 503);
   } finally {
-    if (!recorded) {
+    if (!recorded && !preserve) {
       try {
         if (Date.now() < new Date(leaseExpiresAt).getTime() && claimed.length) await env.DECKS.delete(claimed);
         if (deckKey) await env.DECKS.delete(deckKey);

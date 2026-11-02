@@ -7,6 +7,7 @@ import {
 import { APPLICATIONS_CLOSE, APPLICATIONS_OPEN, CONTACT, gmailLink } from "@/lib/content";
 import RegistrationAuth from "@/components/RegistrationAuth";
 import { BY_KEY, validateAnswer, visiblePages } from "@/lib/application-validation";
+import { submitApplication } from "@/lib/application-submission";
 
 /**
  * The application, in the site's own design. Answers autosave in this browser
@@ -86,7 +87,7 @@ export default function SiteApplicationForm() {
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [stopped, setStopped] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "failed">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "checking" | "sent" | "failed">("idle");
   const [failMsg, setFailMsg] = useState("");
   const [submittedAt, setSubmittedAt] = useState<string | undefined>();
   const [reference, setReference] = useState<string | undefined>();
@@ -99,6 +100,7 @@ export default function SiteApplicationForm() {
   const panel = useRef<HTMLElement>(null);
   const honeypot = useRef<HTMLInputElement>(null);
   const submissionId = useRef("");
+  const inFlight = useRef(false);
 
   const shown = useMemo(() => visiblePages(answers), [answers]);
   const page = shown[Math.min(step, shown.length - 1)];
@@ -248,6 +250,7 @@ export default function SiteApplicationForm() {
   const back = () => { setStopped(null); setErrors({}); setStep((s) => Math.max(0, s - 1)); toTop(); };
 
   const submit = async () => {
+    if (inFlight.current) return;
     if (!checkPage() || phase !== "open") return;
     // Re-check every visible page, in case a saved draft skipped a rule.
     for (let i = 0; i < shown.length; i++) {
@@ -291,6 +294,7 @@ export default function SiteApplicationForm() {
       if (Array.isArray(v)) v.forEach((x) => fields.push([q.entry, x]));
       else if (v && v.trim()) fields.push([q.entry, normalise(q.entry, v, q.key)]);
     }));
+    inFlight.current = true;
     setStatus("sending");
     setFailMsg("");
     try {
@@ -307,8 +311,7 @@ export default function SiteApplicationForm() {
       const body = new FormData();
       body.append("payload", JSON.stringify(payload));
       body.append("deck", deck, payload.deckName);
-      const res = await fetch(SUBMIT_URL, { method: "POST", body });
-      const out = await res.json().catch(() => ({ ok: false, message: "" }));
+      const out = await submitApplication(SUBMIT_URL, body, { email: payload.email, cin: text(answers[E.cin]) }, () => setStatus("checking"));
       if (!out.ok) {
         if (out.code === "already-submitted") {
           DECK = null;
@@ -327,7 +330,7 @@ export default function SiteApplicationForm() {
         }
         if (typeof out.entry === "string") {
           const at = shown.findIndex((p) => p.questions.some((q) => q.entry === out.entry));
-          if (at >= 0) { setStep(at); setErrors({ [out.entry]: out.message }); focusError(out.entry); }
+          if (at >= 0) { setStep(at); setErrors({ [out.entry]: out.message || "Please check this answer." }); focusError(out.entry); }
         }
         setFailMsg(out.message || "That did not go through. Please try again in a minute. Your answers are still saved.");
         setStatus("failed");
@@ -336,12 +339,14 @@ export default function SiteApplicationForm() {
       DECK = null;
       setReference(out.reference);
       setEmailed(!!out.emailed);
-      setSubmittedAt(new Date().toISOString());
+      setSubmittedAt(out.submittedAt || new Date().toISOString());
       setStatus("sent");
       toTop();
     } catch {
-      setFailMsg("That did not go through. Check your connection and press submit again. Your answers are still saved.");
+      setFailMsg("We could not read the selected PDF. Your answers are still saved. Please attach the PDF again and try submitting.");
       setStatus("failed");
+    } finally {
+      inFlight.current = false;
     }
   };
 
@@ -366,7 +371,7 @@ export default function SiteApplicationForm() {
         {phoneVerified && (
           <p className="app-signed-in">
             Signed in as <strong>+91 {phone.slice(0, 5)} {phone.slice(5)}</strong>
-            <button type="button" onClick={signOut}>Not you? Use a different number</button>
+            <button type="button" onClick={signOut} disabled={status === "sending" || status === "checking"}>Not you? Use a different number</button>
           </p>
         )}
 
@@ -452,8 +457,8 @@ export default function SiteApplicationForm() {
                 <div className="wizard-nav-right">
                   <button type="button" className="wizard-save-exit" onClick={hide}>Save and close</button>
                   {last ? (
-                    <button type="submit" className="button primary" disabled={status === "sending" || phase !== "open"}>
-                      {status === "sending" ? "Sending…" : "Submit application ↗"}
+                    <button type="submit" className="button primary" disabled={status === "sending" || status === "checking" || phase !== "open"}>
+                      {status === "checking" ? "Checking receipt…" : status === "sending" ? "Sending…" : "Submit application ↗"}
                     </button>
                   ) : (
                     <button type="submit" className="button primary wizard-next">Continue →</button>

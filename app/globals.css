@@ -1995,3 +1995,12 @@ main section.s-closing { padding-top: 0 !important; }
 .app-mine-list dd { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink-90); white-space: pre-wrap; overflow-wrap: anywhere; }
 .app-mine-list dd span { display: block; }
 .app-mine-list a { color: var(--mint); }
+
+/* Large monitors: keep the banner text and countdown inside the same centred column as the top bar,
+   instead of pinned to the far edges of a wide screen. Laptops are unchanged. */
+@media (min-width: 761px) {
+  .banner {
+    padding-left: max(clamp(20px, 4vw, 56px), calc((100% - var(--max)) / 2)) !important;
+    padding-right: max(clamp(20px, 4vw, 56px), calc((100% - var(--max)) / 2)) !important;
+  }
+}

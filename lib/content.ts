@@ -11,7 +11,7 @@ export const APPLICATIONS_CLOSE = "2026-11-10T23:59:00+05:30";
 export const hero = {
   statement: "build what moves India forward",
   lede:
-    "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, supply chain, and sovereign AI.",
+    "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
   when: { label: "", date: "Last date to apply: 10 November", venue: "Finale in New Delhi, January 2027" },
 };
 
@@ -27,9 +27,9 @@ export const challenge = {
   title: "about the event",
   // From the GSC 2027 concept note (objective, format and outcomes).
   statement:
-    "The Grand Startup Challenge, run with Startup India and the Startup Policy Forum, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
+    "The Grand Startup Challenge, run with Startup India, MeitY Startup Hub and the Startup Policy Forum, puts early-stage startups on real problems, with real deployment, capital, mentorship, investor visibility and national recognition.",
   metrics: [
-    { value: "4", label: "Problem tracks", note: "Fintech, mobility and road safety, supply chain and sovereign AI" },
+    { value: "4", label: "Problem tracks", note: "Fintech, mobility and road safety, logistics and supply chain, and sovereign AI" },
     { value: "₹1 Cr", label: "Total prize pool", note: "Shared among the winning startups across all four tracks" },
     { value: "4 months", label: "Build to deploy", note: "For India’s brightest minds to build, test and deploy" },
   ],
@@ -42,7 +42,6 @@ export const proof = [
   "4 problem tracks",
   "Funding opportunities",
   "Mentorship support",
-  "12 winning startups",
   ];
 
 // Why this challenge. Leads with the Government of India collaboration; the host's 2015 roots are the credential.
@@ -91,7 +90,7 @@ export const timeline = {
   lede: "Four months, from applications and shortlisting to a month of mentorship and a final pitch in New Delhi. All dates are in IST.",
   items: [
     { date: "9 October 2026", title: "Applications open", text: "Problem statements for each track are published on the same day." },
-    { date: "10 November 2026", title: "Applications close", text: "11:59 pm IST. Hard deadline. We do not extend it." },
+    { date: "10 November 2026", title: "Applications close", text: "11:59 pm IST." },
     { date: "November 2026", title: "Screening and interviews", text: "Applications are read and shortlisted startups are interviewed. You hear back either way." },
     { date: "December 2026", title: "Mentorship month", text: "Shortlisted startups work with an assigned mentor to refine their solution." },
     { date: "Early January 2027", title: "Final refinement", text: "Startups finish the solution they will demo." },
@@ -171,12 +170,12 @@ export const tracks: {
   },
   {
     id: "logistics",
-    num: "Track 3 · Supply chain",
-    name: "Supply Chain",
+    num: "Track 3 · Logistics",
+    name: "Logistics & Supply Chain",
     summary: "Route, load and hub optimisation across a live fleet and distributed network.",
     image: asset("/media/track-logistics-warehouse.jpg"),
     briefAspect: "2 / 1",
-    kicker: "Track 3 · Supply chain",
+    kicker: "Track 3 · Logistics & supply chain",
     title: "Make the network work harder.",
     lede: "Help a fleet, its hubs and the people running them move more with less.",
     body: "We want tools that cut empty and wasted movement: route and load planning, shared truck space for part loads, hub and yard operations, damage checks at every handover, and fuel use you can measure.",
@@ -288,7 +287,7 @@ export const invites: {
     image: asset("/media/invite-investor.jpg"),
     kicker: "Investor access",
     title: "Meet the next generation of India’s builders.",
-    lede: "Get close to a screened pipeline of founders working on problems that matter across fintech, mobility, supply chain and sovereign AI.",
+    lede: "Get close to a screened pipeline of founders working on problems that matter across fintech, mobility, logistics and supply chain, and sovereign AI.",
     points: [
       "Join startup mixers from October to December",
       "Receive the list of shortlisted startups, and meet the ones you choose one on one in the Investor Lounge",
@@ -342,7 +341,7 @@ export const faq = {
     },
     {
       q: "Which track should I apply to?",
-      a: "Pick the one closest to the problem you solve: lending and fintech, mobility and road safety, supply chain, or sovereign AI. Open a track brief to see what we are looking for.",
+      a: "Pick the one closest to the problem you solve: lending and fintech, mobility and road safety, logistics and supply chain, or sovereign AI. Open a track brief to see what we are looking for.",
     },
     {
       q: "What happens after I apply?",
