@@ -23,11 +23,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={GeistSans.variable} suppressHydrationWarning>
       <head>
-        {/* Theme review: opening the site once with ?theme=light or ?theme=dark turns on the switch in that browser
-            and remembers the choice. Everyone else sees the dark site with no switch. Applied before first paint. */}
+        {/* Dark by default. A saved choice from the theme switch (or ?theme=light / ?theme=dark) is applied before first paint. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var q=new URLSearchParams(location.search).get("theme");if(q==="light"||q==="dark")localStorage.setItem("gsc-theme",q);var t=localStorage.getItem("gsc-theme");if(t)document.documentElement.dataset.themeReview="1";if(t==="light")document.documentElement.dataset.theme="light";}catch(e){}`,
+            __html: `try{var q=new URLSearchParams(location.search).get("theme");if(q==="light"||q==="dark")localStorage.setItem("gsc-theme",q);var t=localStorage.getItem("gsc-theme");if(t==="light")document.documentElement.dataset.theme="light";}catch(e){}`,
           }}
         />
       </head>

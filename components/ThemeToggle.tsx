@@ -2,17 +2,14 @@
 import { useEffect, useState } from "react";
 
 /**
- * Light / dark switch for the team to compare themes. It only appears in a browser
- * that has opened the site once with ?theme=light (or ?theme=dark); visitors never see it.
- * The choice is remembered there. The theme is applied before paint by app/layout.tsx.
+ * Light / dark switch shown to every visitor. The site is dark by default; the choice
+ * is remembered in this browser. The theme is applied before paint by app/layout.tsx.
  */
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [review, setReview] = useState(false);
 
   useEffect(() => {
     setTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
-    setReview(document.documentElement.dataset.themeReview === "1");
   }, []);
 
   const flip = () => {
@@ -22,7 +19,6 @@ export default function ThemeToggle() {
     setTheme(next);
   };
 
-  if (!review) return null;
   return (
     <button type="button" className="theme-toggle" onClick={flip} aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}>
       <span aria-hidden="true">{theme === "light" ? "☾" : "☀"}</span>

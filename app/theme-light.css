@@ -145,7 +145,7 @@ html[data-theme="light"] .app-error, html[data-theme="light"] .app-count.over, h
 html[data-theme="light"] .app-field.has-error input, html[data-theme="light"] .app-field.has-error textarea { border-color: #C2341C; }
 html[data-theme="light"] .register-auth-icon { box-shadow: none; }
 
-/* Theme switch used while reviewing the light theme */
+/* Light / dark theme switch */
 .theme-toggle {
   position: fixed; right: 16px; bottom: 16px; z-index: 90; display: inline-flex; align-items: center; gap: 8px;
   padding: 9px 14px; border-radius: 999px; cursor: pointer;
