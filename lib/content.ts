@@ -5,14 +5,14 @@ export const CONTACT = "grandstartupchallenge@cars24.com";
 export const gmailLink = (subject = "Grand Startup Challenge") =>
   `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONTACT)}&su=${encodeURIComponent(subject)}`;
 export const APPLICATIONS_OPEN = "2026-10-09T00:00:00+05:30";
-// The source gives the deadline as a date; end of day IST is assumed here.
-export const APPLICATIONS_CLOSE = "2026-11-10T23:59:00+05:30";
+// Extended through the end of 20 November in India Standard Time.
+export const APPLICATIONS_CLOSE = "2026-11-20T23:59:59.999+05:30";
 
 export const hero = {
   statement: "build what moves India forward",
   lede:
     "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
-  when: { label: "", date: "Last date to apply: 10 November", venue: "Finale in New Delhi, January 2027" },
+  when: { label: "", date: "Last date to apply: 20 November", venue: "Finale in New Delhi, January 2027" },
 };
 
 // Floating chips around the hero statement. Every fact here is repeated elsewhere on the page.
@@ -90,7 +90,7 @@ export const timeline = {
   lede: "Four months, from applications and shortlisting to a month of mentorship and a final pitch in New Delhi. All dates are in IST.",
   items: [
     { date: "9 October 2026", title: "Applications open", text: "Problem statements for each track are published on the same day." },
-    { date: "10 November 2026", title: "Applications close", text: "11:59 pm IST." },
+    { date: "20 November 2026", title: "Applications close", text: "11:59 pm IST." },
     { date: "November 2026", title: "Screening and interviews", text: "Applications are read and shortlisted startups are interviewed. You hear back either way." },
     { date: "December 2026", title: "Mentorship month", text: "Shortlisted startups work with an assigned mentor to refine their solution." },
     { date: "Early January 2027", title: "Final refinement", text: "Startups finish the solution they will demo." },
@@ -328,7 +328,7 @@ export const faq = {
     },
     {
       q: "When do applications open and close?",
-      a: "Applications open on 9 October 2026 and close on 10 November 2026 at 11:59 pm IST. The deadline is firm and will not be extended.",
+      a: "Applications opened on 9 October 2026. The deadline has been extended to 20 November 2026 at 11:59 pm IST.",
     },
     {
       q: "How are applications scored?",

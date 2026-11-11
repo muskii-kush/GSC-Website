@@ -35,7 +35,7 @@ export default function FloatingDock() {
   const close = new Date(APPLICATIONS_CLOSE).getTime();
   const headline = now === null || now < open
     ? "Applications open 9 October"
-    : now < close ? "Applications close 10 November" : "Applications are closed";
+    : now < close ? "Applications close 20 November" : "Applications are closed";
 
   const shown = pastHero && !atClosing;
   return (

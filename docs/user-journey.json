@@ -35,7 +35,7 @@
     ],
     "keyDates": {
       "applicationsOpen": "2026-10-09T00:00:00+05:30",
-      "applicationsClose": "2026-11-10T23:59:00+05:30",
+      "applicationsClose": "2026-11-20T23:59:59.999+05:30",
       "finale": "January 2027, New Delhi (exact date intentionally not published)"
     },
     "contact": "grandstartupchallenge@cars24.com",
@@ -108,7 +108,7 @@
         "content": {
           "headline": {
             "beforeOpen": "Applications open 9 October",
-            "duringWindow": "Applications close 10 November",
+            "duringWindow": "Applications close 20 November",
             "afterClose": "Applications are closed"
           },
           "subline": "Register now or email the team"
@@ -405,7 +405,7 @@
             "title": "Applications open"
           },
           {
-            "date": "10 November 2026",
+            "date": "20 November 2026",
             "title": "Applications close"
           },
           {
@@ -702,7 +702,7 @@
       "Submit → 'application received' screen; results on a rolling basis"
     ],
     "validation": "Checked when the founder leaves a field and again on Continue and Submit: CIN (21 characters, valid state code, possible year, private company type) or LLPIN (AAA-1234), matched to the incorporation answer; company name ending in Private Limited or LLP; DPIIT number format; city plus state; email format, typo domains, disposable and placeholder addresses; 10-digit Indian mobiles, placeholders rejected; LinkedIn /in/ profile links, X profile links; YouTube, Vimeo, Loom or Drive video links; deck links that point to a file; whole-rupee revenue; team size; placeholder, repeated or copy-pasted written answers; duplicate email, mobile or LinkedIn across founders; a hidden bot trap.",
-    "window": "Before 9 October 2026 founders can draft but not submit; after 10 November 2026 11:59 pm IST submissions are closed.",
+    "window": "Before 9 October 2026 founders can draft but not submit; applications remain open through 20 November 2026 11:59 pm IST, then submissions close.",
     "limits": [
       "Google does not report success to other sites, so a completed request is treated as delivered.",
       "Answers cannot be edited after submitting."
