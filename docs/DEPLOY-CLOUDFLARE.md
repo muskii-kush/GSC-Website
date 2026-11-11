@@ -1,5 +1,9 @@
 # GSC Cloudflare deployment and Google Sheet restoration
 
+## 11 November: Sheet import size limit
+
+If Sheet1 A1 reports `Resource at url contents exceeded maximum size`, use the [scheduled Sheet sync setup](./SHEET-SYNC.md). It replaces the full-file `IMPORTDATA` formula while preserving the existing spreadsheet and export endpoint. This is a Google Sheets setup step; it does not require a Cloudflare redeployment. The older formula refresh instructions below do not resolve an oversized import.
+
 ## Structured error logging
 
 The current release adds stage timings, result codes, safe error categories and correlated background delivery logs. Authenticated failures also save bounded, sanitized diagnostics in the existing private R2 bucket under `diagnostics/<UTC-date>/<support-reference>/`. See [ERROR-LOGGING.md](./ERROR-LOGGING.md) for dashboard navigation, examples, privacy boundaries and interpretation. No new binding, public endpoint or deployment step is required.
