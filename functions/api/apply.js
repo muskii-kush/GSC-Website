@@ -6,6 +6,7 @@ import { applicationKey, deliverApplication, reply } from "../_lib/applications"
 import { phoneKey, sessionPhone, sessionSecret } from "../_lib/session";
 import { reference, sendConfirmation } from "../_lib/confirmation";
 import { applicationPhone, identityKey, linkPhone, ownApplication, receipt, reservationExpired } from "../_lib/recovery";
+import { applicationEndpoint } from "../_lib/request-diagnostics";
 
 const MAX_DECK_BYTES = 50 * 1024 * 1024;
 const QUESTIONS = new Map(pages.flatMap((p) => p.questions).map((q) => [q.entry, q]));
@@ -14,8 +15,14 @@ const safeName = (n) => {
   return /\.pdf$/i.test(clean) ? clean : `${clean}.pdf`;
 };
 
-export async function onRequestPost(context) {
+async function apply(context, requestId) {
   const { request, env } = context;
+  // Reject expired sessions before receiving and parsing a potentially 50MB PDF.
+  if (!sessionSecret(env)) return reply(false, "not-configured", "Applications are being switched on. Your answers are saved; please try again shortly.", 503);
+  const phone = await sessionPhone(request, env);
+  if (!phone) return reply(false, "signed-out", "Your sign-in has expired. Verify your mobile number again; your answers are still saved.", 401);
+  const length = Number(request.headers.get("content-length"));
+  if (length > MAX_DECK_BYTES + 128 * 1024) return reply(false, "deck-too-large", "The upload is too large. Please attach a PDF of 50MB or smaller.", 413);
   let form, payload;
   try {
     form = await request.formData();
@@ -26,11 +33,6 @@ export async function onRequestPost(context) {
   } catch {
     return reply(false, "bad-request", "We could not read the application. Please try again.", 400);
   }
-
-  // Only a founder who verified their mobile number by OTP, on the server, can apply.
-  if (!sessionSecret(env)) return reply(false, "not-configured", "Applications are being switched on. Your answers are saved; please try again shortly.", 503);
-  const phone = await sessionPhone(request, env);
-  if (!phone) return reply(false, "signed-out", "Your sign-in has expired. Verify your mobile number again; your answers are still saved.", 401);
 
   // Google now requires interactive reCAPTCHA. Validate with the browser's shared rules.
   const answers = { emailAddress: typeof payload.email === "string" ? payload.email.trim().toLowerCase() : "" };
@@ -77,7 +79,7 @@ export async function onRequestPost(context) {
     // Preserve checks for applications accepted before this change.
     for (const [kind, value, entry] of [["email", email, "emailAddress"], ["cin", cin, E.cin]]) {
       if (env.APPLICANTS && await env.APPLICANTS.get(`${kind}:${value}`) && !await env.DECKS.head(await identityKey(kind, value))) {
-        console.log(JSON.stringify({ event: "application-conflict", kind, source: "legacy-index" }));
+        console.log(JSON.stringify({ event: "application-conflict", requestId, kind, source: "legacy-index" }));
         return reply(false, "duplicate", kind === "email" ? "A previous submission is recorded for this email. Sign in with the mobile number originally used, or contact grandstartupchallenge@cars24.com if you did not submit it." : "A previous submission is recorded for this CIN/LLPIN. Check the registration number or contact grandstartupchallenge@cars24.com if your company has not applied.", 409, { entry, reason: "legacy-index" });
       }
     }
@@ -106,7 +108,7 @@ export async function onRequestPost(context) {
           claim = await env.DECKS.put(key, identity, { onlyIf: { etagMatches: existing.etag }, httpMetadata: { contentType: "application/json" } });
         }
         if (!claim) {
-          console.log(JSON.stringify({ event: "application-conflict", kind, source: previous ? "application" : "reservation" }));
+          console.log(JSON.stringify({ event: "application-conflict", requestId, kind, source: previous ? "application" : "reservation" }));
           const taken = kind === "email" ? "This email is already on a submitted application. Sign in with the mobile number used for that application, or contact grandstartupchallenge@cars24.com if this is unexpected." : kind === "cin" ? "An application for this CIN/LLPIN has already been submitted. Check the registration number. If a cofounder submitted it, use that application's mobile number to view its receipt." : "This mobile number is linked to another application. Contact grandstartupchallenge@cars24.com for help.";
           return reply(false, previous ? "duplicate" : "submission-in-progress", previous ? taken : "Your application is still being recorded. Please wait a moment and check its status before retrying.", previous ? 409 : 503, previous && kind !== "phone" ? { entry: kind === "email" ? "emailAddress" : E.cin } : {});
         }
@@ -128,7 +130,7 @@ export async function onRequestPost(context) {
     archiveAttempted = true;
     await env.DECKS.put(applicationKey(id), JSON.stringify(application), { httpMetadata: { contentType: "application/json" }, customMetadata: { submittedAt } });
     recorded = true;
-    console.log(JSON.stringify({ event: "application-recorded", applicationId: id }));
+    console.log(JSON.stringify({ event: "application-recorded", requestId, applicationId: id }));
     const finish = async () => {
       if (env.APPLICANTS) {
         try { await env.APPLICANTS.put(`email:${email}`, submittedAt); await env.APPLICANTS.put(`cin:${cin}`, submittedAt); }
@@ -138,7 +140,7 @@ export async function onRequestPost(context) {
       await sendConfirmation(application, env);
     };
     if (context.waitUntil) context.waitUntil(finish()); else await finish();
-    return reply(true, "ok", "Application received.", 200, { applicationId: id, reference: reference(id), emailed: !!(env.MAIL_URL && env.MAIL_SECRET) });
+    return reply(true, "ok", "Application received.", 200, { applicationId: id, reference: reference(id), submittedAt, emailed: !!(env.MAIL_URL && env.MAIL_SECRET) });
   } catch {
     // A storage acknowledgement can be lost after the write committed. Never
     // delete the deck or identity indexes of an application that may be saved.
@@ -146,8 +148,8 @@ export async function onRequestPost(context) {
       try { recorded = !!await env.DECKS.head(applicationKey(id)); }
       catch { preserve = true; }
     }
-    console.error(JSON.stringify({ event: "application-storage-failed", applicationId: id, recorded }));
-    if (recorded) return reply(true, "ok", "Application received.", 200, { applicationId: id, reference: reference(id) });
+    console.error(JSON.stringify({ event: "application-storage-failed", requestId, applicationId: id, recorded }));
+    if (recorded) return reply(true, "ok", "Application received.", 200, { applicationId: id, reference: reference(id), submittedAt });
     return reply(false, "storage-unavailable", "We could not save the application. Your answers are still saved in this browser; please try again shortly.", 503);
   } finally {
     if (!recorded && !preserve) {
@@ -159,5 +161,7 @@ export async function onRequestPost(context) {
     }
   }
 }
+
+export const onRequestPost = applicationEndpoint("apply", apply);
 
 export const onRequest = () => reply(false, "method-not-allowed", "Use POST.", 405);

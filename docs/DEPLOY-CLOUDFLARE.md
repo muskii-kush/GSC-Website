@@ -1,5 +1,21 @@
 # GSC Cloudflare deployment and Google Sheet restoration
 
+## 11 November: receipt error classification and delayed-save recovery
+
+The old "We could not confirm receipt / check your connection" message did not identify a network fault. The browser also displayed it for HTML security rejections, missing API routes, rate limiting and gateway failures. It stopped after two recovery checks only one second apart, so a save that completed later could be reported as unconfirmed.
+
+This repair preserves the existing build command, complete `out/` deployment, storage bindings, secrets and Sheet export:
+
+- Non-JSON HTTP 401, 403, 404/405, 413, 429 and 5xx responses now identify sign-in, security, service availability, upload size, throttling or server errors separately.
+- The status endpoint reports `202 submission-in-progress` while the verified phone's live reservation has no completed archive. The browser polls up to five times with increasing waits rather than uploading another PDF. A failed status request is never treated as proof that no application exists.
+- "Check submission status" works without the selected PDF, including after the configured application deadline. It confirms only a recorded application belonging to the OTP-verified mobile number. It does not reopen submissions.
+- Expired sign-in and excessive declared body size are rejected before parsing the multipart upload. The browser checks that the selected file remains readable before uploading, after first checking for an earlier receipt.
+- Application and status responses include `x-gsc-request-id`; error messages display this support reference, or Cloudflare's `cf-ray` when the request was rejected before reaching the Worker. Logs correlate the request ID, endpoint, status and duration without recording answers, email, phone or cookies.
+
+For another candidate failure, use their displayed support reference to inspect the corresponding Functions log. For a Cloudflare Ray ID, inspect the site's Security Events. Check Worker resource errors and invocation status if a gateway/resource error is returned. A browser screenshot is sufficient; candidates do not need to collect DevTools logs. Do not infer a stale duplicate marker from a receipt error, or delete indexes without checking the accepted records.
+
+Verification: `npm run test:application` covers the error classes, late receipts, processing reservations, file access failures, authorization and duplicate protection. The packaged Worker was checked for lost-response recovery, private application/PDF access and CSV export. Local Chrome tests with a fake OTP provider and controlled security/delayed-save responses verified the displayed support reference and receipt recovery with zero further PDF uploads. These controlled tests do not establish which infrastructure error affected a particular production request.
+
 ## 19 October: submission retry repair
 
 Deploy the latest `GSC-Website-submission-fix.zip` to the existing project using the steps below. Deploy the complete `out/` folder so the browser code and Worker update together. Keep all existing storage bindings and secrets, including `SESSION_SECRET` and the Sheet configuration.

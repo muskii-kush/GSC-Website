@@ -7,7 +7,7 @@ import {
 import { APPLICATIONS_CLOSE, APPLICATIONS_OPEN, CONTACT, gmailLink } from "@/lib/content";
 import RegistrationAuth from "@/components/RegistrationAuth";
 import { BY_KEY, validateAnswer, visiblePages } from "@/lib/application-validation";
-import { submitApplication } from "@/lib/application-submission";
+import { checkSubmissionStatus, submitApplication, type SubmissionResult } from "@/lib/application-submission";
 
 /**
  * The application, in the site's own design. Answers autosave in this browser
@@ -249,6 +249,43 @@ export default function SiteApplicationForm() {
 
   const back = () => { setStopped(null); setErrors({}); setStep((s) => Math.max(0, s - 1)); toTop(); };
 
+  const showSubmissionResult = (out: SubmissionResult) => {
+    if (out.ok || out.code === "already-submitted") {
+      DECK = null;
+      setReference(out.reference);
+      setEmailed(!!out.emailed);
+      setSubmittedAt(out.submittedAt || new Date().toISOString());
+      setStatus("sent");
+      toTop();
+      return;
+    }
+    if (out.code === "signed-out") {
+      setLoaded(false);
+      setPhone("");
+      setStatus("idle");
+      toTop();
+      return;
+    }
+    if (typeof out.entry === "string") {
+      const at = shown.findIndex((p) => p.questions.some((q) => q.entry === out.entry));
+      if (at >= 0) { setStep(at); setErrors({ [out.entry]: out.message || "Please check this answer." }); focusError(out.entry); }
+    }
+    setFailMsg(out.message || "The application service is unavailable. Your answers are still saved. Please check submission status again shortly.");
+    setStatus("failed");
+  };
+
+  const checkSavedSubmission = async () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setStatus("checking");
+    setFailMsg("");
+    try { showSubmissionResult(await checkSubmissionStatus({ email: normalise("emailAddress", text(answers.emailAddress)), cin: text(answers[E.cin]) })); }
+    catch {
+      setFailMsg("Submission status is unavailable just now. Your answers are still saved. Please try checking again shortly.");
+      setStatus("failed");
+    } finally { inFlight.current = false; }
+  };
+
   const submit = async () => {
     if (inFlight.current) return;
     if (!checkPage() || phase !== "open") return;
@@ -298,7 +335,6 @@ export default function SiteApplicationForm() {
     setStatus("sending");
     setFailMsg("");
     try {
-      const deck = DECK!;
       const company = text(answers[E.company]).replace(/\s+/g, "");
       const founder = text(answers[BY_KEY["f1.name"]]).replace(/\s+/g, "");
       const payload = {
@@ -308,40 +344,18 @@ export default function SiteApplicationForm() {
         fields,
         deckName: `${company || "Company"}_${founder || "Founder"}_PitchDeck.pdf`,
       };
-      const body = new FormData();
-      body.append("payload", JSON.stringify(payload));
-      body.append("deck", deck, payload.deckName);
-      const out = await submitApplication(SUBMIT_URL, body, { email: payload.email, cin: text(answers[E.cin]) }, () => setStatus("checking"));
-      if (!out.ok) {
-        if (out.code === "already-submitted") {
-          DECK = null;
-          setSubmittedAt(out.submittedAt || new Date().toISOString());
-          setReference(out.reference);
-          setStatus("sent");
-          toTop();
-          return;
-        }
-        if (out.code === "signed-out") {
-          setLoaded(false);
-          setPhone("");
-          setStatus("idle");
-          toTop();
-          return;
-        }
-        if (typeof out.entry === "string") {
-          const at = shown.findIndex((p) => p.questions.some((q) => q.entry === out.entry));
-          if (at >= 0) { setStep(at); setErrors({ [out.entry]: out.message || "Please check this answer." }); focusError(out.entry); }
-        }
-        setFailMsg(out.message || "That did not go through. Please try again in a minute. Your answers are still saved.");
-        setStatus("failed");
-        return;
-      }
-      DECK = null;
-      setReference(out.reference);
-      setEmailed(!!out.emailed);
-      setSubmittedAt(out.submittedAt || new Date().toISOString());
-      setStatus("sent");
-      toTop();
+      const out = await submitApplication(SUBMIT_URL, async () => {
+        const deck = DECK;
+        if (!deck) throw new Error("Missing PDF");
+        // A phone browser may lose access to a selected file while a long form is open.
+        // Read only the ends, then stream the original File through FormData.
+        await Promise.all([deck.slice(0, 5).arrayBuffer(), deck.slice(-1).arrayBuffer()]);
+        const body = new FormData();
+        body.append("payload", JSON.stringify(payload));
+        body.append("deck", deck, payload.deckName);
+        return body;
+      }, { email: payload.email, cin: text(answers[E.cin]) }, () => setStatus("checking"));
+      showSubmissionResult(out);
     } catch {
       setFailMsg("We could not read the selected PDF. Your answers are still saved. Please attach the PDF again and try submitting.");
       setStatus("failed");
@@ -467,13 +481,21 @@ export default function SiteApplicationForm() {
               </div>
               {status === "failed" && (
                 <p className="auth-error" role="alert">
-                  {failMsg || "That did not go through. Check your connection and press submit again. Your answers are still saved."}
+                  {failMsg || "Submission status is unavailable just now. Your answers are still saved. Please check again shortly."}
                 </p>
               )}
               {Object.keys(errors).length > 0 && (
                 <p className="auth-error" role="alert">Some answers on this page need attention.</p>
               )}
             </form>
+            {(status === "failed" || status === "checking" || phase === "closed") && (
+              <p className="app-fineprint">
+                <button type="button" className="wizard-save-exit" onClick={checkSavedSubmission} disabled={status === "sending" || status === "checking"}>
+                  {status === "checking" ? "Checking submission status…" : "Check submission status"}
+                </button>
+                {" "}Check an earlier submission without attaching the PDF again.
+              </p>
+            )}
           </>
         )}
       </div>

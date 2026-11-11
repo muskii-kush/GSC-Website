@@ -21,6 +21,13 @@ export function reservationExpired(owner, object) {
   return expires < Date.now();
 }
 
+/** Only the verified phone's own live reservation can report processing status. */
+export async function submissionPending(phone, env) {
+  const object = await env.DECKS.get(await phoneKey(phone));
+  const owner = object && await object.json();
+  return !!(owner?.applicationId && !reservationExpired(owner, object) && !await env.DECKS.head(applicationKey(owner.applicationId)));
+}
+
 /** Locate receipts using existing indexes, including applications from before OTP sign-in.
  * An email, CIN or browser submission ID alone never authorises access to an application.
  */

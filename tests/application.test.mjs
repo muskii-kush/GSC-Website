@@ -444,3 +444,34 @@ test('legacy duplicate messages identify the actual blocked field and preserve a
     assert.equal(result.result.reason, 'legacy-index'); assert.equal(result.bucket.records.size, 0); assert.equal(data.size, 1);
   }
 });
+
+test('status distinguishes a live phone reservation from an absent or expired application', async () => {
+  const bucket=new Bucket(),key=await session.phoneKey(PHONE);
+  await bucket.put(key,JSON.stringify({applicationId:randomUUID(),submittedAt:new Date().toISOString(),leaseExpiresAt:new Date(Date.now()+60000).toISOString()}));
+  const pending=await receiptStatus(bucket);
+  assert.equal(pending.status,202);assert.equal((await pending.json()).code,'submission-in-progress');
+  assert.equal(pending.headers.get('retry-after'),'2');
+  assert.match(pending.headers.get('x-gsc-request-id'),/^[0-9a-f-]{36}$/);
+  assert.equal((await receiptStatus(bucket,{},'9988776655')).status,404);
+  await bucket.put(key,JSON.stringify({applicationId:randomUUID(),submittedAt:'2020-01-01T00:00:00Z'}));
+  assert.equal((await receiptStatus(bucket)).status,404);
+});
+
+test('expired sign-in is rejected before multipart parsing and oversized bodies are rejected before buffering', async () => {
+  let reads=0;
+  const unauthorized={headers:new Headers(),formData:async()=>{reads++;throw new Error('Must not parse');}};
+  const signedOut=await apply.onRequestPost({request:unauthorized,env:SECRET});
+  assert.equal(signedOut.status,401);assert.equal(reads,0);
+  const oversized={headers:new Headers({cookie:await cookieFor(PHONE),'content-length':String(51*1024*1024)}),formData:unauthorized.formData};
+  const tooLarge=await apply.onRequestPost({request:oversized,env:SECRET});
+  assert.equal(tooLarge.status,413);assert.equal((await tooLarge.json()).code,'deck-too-large');assert.equal(reads,0);
+});
+
+test('uncaught PDF read errors produce a structured service error with a support reference', async () => {
+  const payload=fixture(),cookie=await cookieFor(PHONE),original=request(payload,true,cookie),form=await original.formData();
+  const deck=form.get('deck');
+  const broken={size:deck.size,slice:()=>({arrayBuffer:async()=>{throw new Error('Cannot read file');}})};
+  const response=await apply.onRequestPost({request:{headers:original.headers,formData:async()=>({get:key=>key==='deck'?broken:form.get(key)})},env:{...SECRET,DECKS:new Bucket()}});
+  assert.equal(response.status,503);assert.equal((await response.json()).code,'service-unavailable');
+  assert.match(response.headers.get('x-gsc-request-id'),/^[0-9a-f-]{36}$/);
+});

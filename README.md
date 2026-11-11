@@ -53,6 +53,10 @@ pushing the repository is not itself a verified Cloudflare deployment.
 - Submission retries check `/api/application/status` for an existing receipt before
   uploading again and after a lost response. Receipt recovery requires the verified
   mobile number saved on that application; genuine company/email conflicts remain blocked.
+- Processing submissions are polled before another upload is attempted. Candidates can
+  check submission status without reattaching a PDF, including after applications close.
+  Errors distinguish security, rate limits, missing routes and server failures; support
+  references correlate screenshots with Functions logs without exposing application answers.
 - Run `npm run test:application` to verify storage, validation, retries and delivery.
 
 ## Phone verification
