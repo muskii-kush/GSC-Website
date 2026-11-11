@@ -12,7 +12,11 @@ async function verifyOnServer(phone: string, otp: string): Promise<{ submittedAt
   const res = await fetch("/api/auth/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ phone, otp }) });
   if (res.status === 404 && process.env.NODE_ENV !== "production") { await verifyPhoneOtp(phone, otp); return undefined; }
   const out = await res.json().catch(() => null);
-  if (!out?.ok) throw new Error(out?.message || "Could not verify the code. Please try again.");
+  if (!out?.ok) {
+    const rawReference = res.headers.get("x-gsc-request-id") || res.headers.get("cf-ray");
+    const reference = rawReference && /^[a-z0-9-]{1,80}$/i.test(rawReference) ? rawReference : undefined;
+    throw new Error(`${out?.message || "Could not verify the code. Please try again."}${reference ? ` Support reference: ${reference}.` : ""}`);
+  }
   return out.submitted ? { submittedAt: out.submittedAt, reference: out.reference } : undefined;
 }
 

@@ -31,19 +31,23 @@ export async function submissionPending(phone, env) {
 /** Locate receipts using existing indexes, including applications from before OTP sign-in.
  * An email, CIN or browser submission ID alone never authorises access to an application.
  */
-export async function ownApplication(phone, hints, env) {
+export async function ownApplication(phone, hints, env, log) {
   if (!env.DECKS) return null;
-  const keys = [await phoneKey(phone)];
-  if (hints.email) keys.push(await identityKey("email", hints.email));
-  if (hints.cin) keys.push(await identityKey("cin", hints.cin));
-  for (const key of keys) {
-    const index = await env.DECKS.get(key);
-    const owner = index && await index.json();
+  const step = (stage, operation, fields) => log ? log.step(stage, operation, fields) : operation();
+  const keys = [["phone", await phoneKey(phone)]];
+  if (hints.email) keys.push(["email", await identityKey("email", hints.email)]);
+  if (hints.cin) keys.push(["cin", await identityKey("cin", hints.cin)]);
+  for (const [kind, key] of keys) {
+    const index = await step("read-receipt-index", () => env.DECKS.get(key), { kind });
+    const owner = index && await step("parse-receipt-index", () => index.json(), { kind });
     if (!owner?.applicationId) continue;
-    const object = await env.DECKS.get(applicationKey(owner.applicationId));
+    const object = await step("read-receipt-archive", () => env.DECKS.get(applicationKey(owner.applicationId)), { kind });
     if (!object) continue;
-    const app = await object.json();
-    if (applicationPhone(app) === phone) return app;
+    const app = await step("parse-receipt-archive", () => object.json(), { kind });
+    if (applicationPhone(app) === phone) {
+      log?.info("application-receipt-found", { applicationId: app.applicationId, source: kind, recovered: true });
+      return app;
+    }
   }
   return null;
 }

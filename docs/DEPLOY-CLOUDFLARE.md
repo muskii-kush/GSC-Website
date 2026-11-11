@@ -1,5 +1,9 @@
 # GSC Cloudflare deployment and Google Sheet restoration
 
+## Structured error logging
+
+The current release adds stage timings, result codes, safe error categories and correlated background delivery logs. Authenticated failures also save bounded, sanitized diagnostics in the existing private R2 bucket under `diagnostics/<UTC-date>/<support-reference>/`. See [ERROR-LOGGING.md](./ERROR-LOGGING.md) for dashboard navigation, examples, privacy boundaries and interpretation. No new binding, public endpoint or deployment step is required.
+
 ## 11 November: receipt error classification and delayed-save recovery
 
 The old "We could not confirm receipt / check your connection" message did not identify a network fault. The browser also displayed it for HTML security rejections, missing API routes, rate limiting and gateway failures. It stopped after two recovery checks only one second apart, so a save that completed later could be reported as unconfirmed.

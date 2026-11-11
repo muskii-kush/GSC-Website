@@ -11,7 +11,7 @@ import { fixture as makeFixture } from "./application-fixture.mjs";
 
 globalThis.crypto ||= webcrypto;
 const dir = await mkdtemp(join(tmpdir(), "gsc-test-"));
-for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["export", "functions/api/admin/export.js"], ["schema", "lib/application-questions.ts"], ["session", "functions/_lib/session.js"], ["verify", "functions/api/auth/verify.js"], ["mine", "functions/api/application/index.js"], ["mydeck", "functions/api/application/deck.js"], ["status", "functions/api/application/status.js"]]) {
+for (const [name, entry] of [["apply", "functions/api/apply.js"], ["admin", "functions/api/admin/applications.js"], ["export", "functions/api/admin/export.js"], ["schema", "lib/application-questions.ts"], ["session", "functions/_lib/session.js"], ["verify", "functions/api/auth/verify.js"], ["mine", "functions/api/application/index.js"], ["mydeck", "functions/api/application/deck.js"], ["publicdeck", "functions/api/deck/[[path]].js"], ["status", "functions/api/application/status.js"], ["logger", "functions/_lib/logger.js"]]) {
   await build({ entryPoints: [entry], outfile: join(dir, `${name}.mjs`), bundle: true, platform: "node", format: "esm", logLevel: "silent" });
 }
 const apply = await import(pathToFileURL(join(dir, "apply.mjs")));
@@ -23,6 +23,8 @@ const verify = await import(pathToFileURL(join(dir, "verify.mjs")));
 const mine = await import(pathToFileURL(join(dir, "mine.mjs")));
 const mydeck = await import(pathToFileURL(join(dir, "mydeck.mjs")));
 const status = await import(pathToFileURL(join(dir, "status.mjs")));
+const logging = await import(pathToFileURL(join(dir, "logger.mjs")));
+const publicDeck = await import(pathToFileURL(join(dir, "publicdeck.mjs")));
 const SECRET = { SESSION_SECRET: "session-secret" };
 const PHONE = "9176578432";
 const cookieFor = async (phone, env = SECRET) => (await session.sessionCookie(phone, env)).split(";")[0];
@@ -59,6 +61,8 @@ async function submit(payload, bucket = new Bucket(), extra = {}, pdf = true, ph
   return { response, result: await response.json(), bucket };
 }
 const archives = (bucket) => [...bucket.records].filter(([key]) => key.startsWith("applications/")).map(([, object]) => JSON.parse(object.value));
+const primaryKeys = (bucket) => [...bucket.records.keys()].filter((key) => !key.startsWith("diagnostics/"));
+const diagnostics = (bucket) => [...bucket.records].filter(([key]) => key.startsWith("diagnostics/")).map(([, object]) => JSON.parse(object.value));
 
 function parseCsv(text) {
   const rows = []; let row = [], value = "", quoted = false;
@@ -146,7 +150,7 @@ test("complete application and PDF are durable before receipt; no public Google 
 test("missing declarations are rejected before storage", async () => {
   const payload = fixture(); payload.fields = payload.fields.filter(([entry]) => entry !== "entry.1335098423");
   const { response, result, bucket } = await submit(payload);
-  assert.equal(response.status, 422); assert.equal(result.entry, "entry.1335098423"); assert.equal(bucket.records.size, 0);
+  assert.equal(response.status, 422); assert.equal(result.entry, "entry.1335098423"); assert.equal(primaryKeys(bucket).length, 0);
 });
 test("a hidden traction section does not need revenue answers", async () => {
   const payload = fixture();
@@ -159,16 +163,16 @@ test("a hidden traction section does not need revenue answers", async () => {
 test("a started optional founder must be complete", async () => {
   const payload = fixture(); payload.fields.push(["entry.1815689355", "Second Founder"]);
   const { response, bucket } = await submit(payload);
-  assert.equal(response.status, 422); assert.equal(bucket.records.size, 0);
+  assert.equal(response.status, 422); assert.equal(primaryKeys(bucket).length, 0);
 });
 test("invalid PDF content is rejected", async () => {
   const { response, bucket } = await submit(fixture(), new Bucket(), {}, false);
-  assert.equal(response.status, 422); assert.equal(bucket.records.size, 0);
+  assert.equal(response.status, 422); assert.equal(primaryKeys(bucket).length, 0);
 });
 test("archive storage failure returns a failure and cleans up the deck and claims", async () => {
   const bucket = new Bucket(); bucket.failArchive = true;
   const { response, result } = await submit(fixture(), bucket);
-  assert.equal(response.status, 503); assert.equal(result.ok, false); assert.equal(bucket.records.size, 0);
+  assert.equal(response.status, 503); assert.equal(result.ok, false); assert.equal(primaryKeys(bucket).length, 0);
 });
 test("a lost success response can be retried without a second application", async () => {
   const payload = fixture(), bucket = new Bucket();
@@ -417,7 +421,7 @@ test('an active reservation is retained and an interrupted failed request leaves
   await bucket.put(key, JSON.stringify({ applicationId: randomUUID(), submittedAt: new Date().toISOString() }));
   const active = await submit(payload, bucket);
   assert.equal(active.result.code, 'submission-in-progress');
-  assert.equal(bucket.records.size, 1); assert.equal(bucket.records.has(key), true);
+  assert.equal(primaryKeys(bucket).length, 1); assert.equal(bucket.records.has(key), true);
 });
 
 test('a lost R2 archive acknowledgement never deletes an accepted application\'s deck or indexes', async () => {
@@ -441,7 +445,7 @@ test('legacy duplicate messages identify the actual blocked field and preserve a
     const data = new Map([[`${kind}:${value}`, '2026-10-01T00:00:00Z']]);
     const result = await submit(fixture(), new Bucket(), { APPLICANTS: { get: async (key) => data.get(key) || null } });
     assert.equal(result.result.code, 'duplicate'); assert.equal(result.result.entry, entry);
-    assert.equal(result.result.reason, 'legacy-index'); assert.equal(result.bucket.records.size, 0); assert.equal(data.size, 1);
+    assert.equal(result.result.reason, 'legacy-index'); assert.equal(primaryKeys(result.bucket).length, 0); assert.equal(data.size, 1);
   }
 });
 
@@ -474,4 +478,130 @@ test('uncaught PDF read errors produce a structured service error with a support
   const response=await apply.onRequestPost({request:{headers:original.headers,formData:async()=>({get:key=>key==='deck'?broken:form.get(key)})},env:{...SECRET,DECKS:new Bucket()}});
   assert.equal(response.status,503);assert.equal((await response.json()).code,'service-unavailable');
   assert.match(response.headers.get('x-gsc-request-id'),/^[0-9a-f-]{36}$/);
+});
+
+async function captureLogs(run) {
+  const original={log:console.log,warn:console.warn,error:console.error},entries=[];
+  for(const method of ['log','warn','error'])console[method]=(line)=>entries.push({...JSON.parse(line),consoleMethod:method});
+  try { return {value:await run(),entries}; }
+  finally { Object.assign(console,original); }
+}
+
+test('successful submission stages and background delivery share one support reference without applicant data', async () => {
+  const {value,entries}=await captureLogs(()=>submit(fixture(),new Bucket(),{SHEET_KEY:'private-sheet-key'}));
+  const requestId=value.response.headers.get('x-gsc-request-id');
+  assert.equal(value.response.headers.get('x-gsc-result-code'),'ok');
+  assert.ok(entries.length>10);assert.ok(entries.every(entry=>entry.requestId===requestId));
+  for(const stage of ['verify-session','parse-multipart','read-pdf-header','upload-deck','archive-application']) {
+    const completed=entries.find(entry=>entry.event==='application-stage-completed'&&entry.stage===stage);
+    assert.ok(completed,stage);assert.equal(typeof completed.durationMs,'number');
+  }
+  assert.ok(entries.findIndex(entry=>entry.event==='application-recorded')>entries.findIndex(entry=>entry.event==='application-stage-completed'&&entry.stage==='archive-application'));
+  assert.ok(entries.some(entry=>entry.event==='application-background-completed'&&entry.background===true));
+  const serialized=JSON.stringify(entries);
+  for(const privateValue of ['gsc.diagnostic@cars24.com',PHONE,'GSC Diagnostic Private Limited','U72900KA2026PTC123456','session-secret','private-sheet-key','Diagnostic.pdf'])assert.ok(!serialized.includes(privateValue),privateValue);
+  assert.equal(diagnostics(value.bucket).length,0);
+});
+
+test('storage failures retain their failed stage, safe error category and private diagnostic record', async () => {
+  const bucket=new Bucket();bucket.failArchive=true;
+  const {value,entries}=await captureLogs(()=>submit(fixture(),bucket));
+  const failed=entries.find(entry=>entry.event==='application-stage-failed'&&entry.stage==='archive-application');
+  assert.equal(failed.level,'error');assert.equal(failed.errorType,'Error');assert.equal(failed.errorReason,'storage');
+  const completed=entries.find(entry=>entry.event==='application-request-completed');
+  assert.equal(completed.code,'storage-unavailable');assert.equal(completed.status,503);assert.equal(completed.consoleMethod,'error');
+  assert.equal(primaryKeys(bucket).length,0);
+  const [saved]=diagnostics(bucket);
+  assert.equal(saved.requestId,value.response.headers.get('x-gsc-request-id'));assert.equal(saved.status,503);
+  assert.ok(saved.events.some(entry=>entry.stage==='archive-application'&&entry.event==='application-stage-failed'));
+});
+
+test('background failures preserve acceptance and correlate upstream status and timeouts without leaking secrets', async () => {
+  const original=globalThis.fetch;
+  globalThis.fetch=async(url)=>String(url).includes('/mailer/')?Promise.reject(new DOMException('timeout with private-mail-secret and candidate@example.test','TimeoutError')):new Response('<html>private-sheet-secret</html>',{status:502});
+  try {
+    const extra={...MAIL,MAIL_SECRET:'private-mail-secret',APPLICATION_SYNC_URL:'https://script.google.com/macros/s/receiver/exec',APPLICATION_SYNC_SECRET:'private-sheet-secret'};
+    const {value,entries}=await captureLogs(()=>submit(fixture(),new Bucket(),extra));
+    assert.equal(value.result.ok,true);assert.equal(archives(value.bucket).length,1);
+    const sheet=entries.find(entry=>entry.event==='application-delivery-pending');
+    const mail=entries.find(entry=>entry.event==='confirmation-email-failed');
+    assert.equal(sheet.upstreamStatus,502);assert.equal(sheet.errorReason,'invalid-json');
+    assert.equal(mail.errorReason,'timeout');assert.equal(mail.background,true);
+    assert.equal(mail.requestId,value.response.headers.get('x-gsc-request-id'));assert.equal(sheet.requestId,mail.requestId);
+    const stored=diagnostics(value.bucket);
+    assert.ok(stored.some(record=>record.background&&record.code==='accepted-background-failed'&&record.recorded===true));
+    const all=JSON.stringify({entries,stored});
+    for(const secret of ['private-mail-secret','private-sheet-secret','candidate@example.test',PHONE,'gsc.diagnostic@cars24.com'])assert.ok(!all.includes(secret),secret);
+  }finally{globalThis.fetch=original;}
+});
+
+test('validation rejects log the field and code while unauthenticated requests create no diagnostic objects', async () => {
+  const payload=fixture();payload.fields=payload.fields.filter(([entry])=>entry!=='entry.1335098423');
+  const {entries}=await captureLogs(()=>submit(payload));
+  const completed=entries.find(entry=>entry.event==='application-request-completed');
+  assert.equal(completed.consoleMethod,'warn');assert.equal(completed.code,'invalid-answer');assert.equal(completed.field,'entry.1335098423');
+  const bucket=new Bucket();
+  await captureLogs(()=>submit(fixture(),bucket,{},true,''));
+  assert.equal(bucket.records.size,0);
+});
+
+test('logger limits archived events and drops raw errors, payloads, cookies and unknown fields', async () => {
+  const bucket=new Bucket(),requestId=randomUUID();
+  const {entries}=await captureLogs(async()=>{
+    const log=logging.createLogger({endpoint:'apply',requestId,ray:'test-ray-DEL',email:'secret@example.test'});
+    log.allowArchive();
+    for(let index=0;index<80;index++)log.info('application-stage',{fieldCount:index,payload:{password:'private-password'},cookie:'private-cookie',url:'https://private.test/?key=private-key'});
+    log.error('application-stage-failed',new Error('private-error-message secret@example.test private-key'),{stage:'archive-application',field:'secret@example.test'});
+    await logging.saveDiagnostics(log,{DECKS:bucket},{status:503,code:'storage-unavailable'});
+  });
+  const [saved]=diagnostics(bucket);
+  assert.equal(saved.events.length,64);assert.equal(saved.truncated,true);assert.equal(saved.eventCount,81);
+  const all=JSON.stringify({entries,saved});
+  for(const secret of ['secret@example.test','private-password','private-cookie','private.test','private-key','private-error-message'])assert.ok(!all.includes(secret),secret);
+});
+
+test('diagnostic archive failure never replaces the original response or prevents application processing', async () => {
+  const bucket=new Bucket(),put=bucket.put.bind(bucket);
+  bucket.put=async(key,...args)=>{if(key.startsWith('diagnostics/'))throw new Error('R2 log storage unavailable');return put(key,...args);};
+  const payload=fixture();payload.fields=payload.fields.filter(([entry])=>entry!=='entry.1335098423');
+  const {value,entries}=await captureLogs(()=>submit(payload,bucket));
+  assert.equal(value.response.status,422);assert.equal(value.result.code,'invalid-answer');
+  assert.ok(entries.some(entry=>entry.event==='application-diagnostic-save-failed'));
+  const original=globalThis.fetch;
+  globalThis.fetch=async()=>Response.json({ok:false},{status:503});
+  try {
+    const accepted=await captureLogs(()=>submit(fixture(),bucket,MAIL));
+    assert.equal(accepted.value.result.ok,true);assert.equal(archives(bucket).length,1);
+    assert.ok(accepted.entries.some(entry=>entry.event==='application-diagnostic-save-failed'));
+  }finally{globalThis.fetch=original;}
+});
+
+test('CSV stream errors have a persisted support reference without archiving the export URL or key', async () => {
+  const bucket=new Bucket();
+  await captureLogs(()=>submit(fixture(),bucket));
+  const get=bucket.get.bind(bucket);
+  bucket.get=async(key)=>key.startsWith('applications/')?null:get(key);
+  const {value,entries}=await captureLogs(async()=>{
+    const response=await sheetExport.onRequestGet({request:exportRequest(),env:{DECKS:bucket,SHEET_KEY:'sheet-secret'}});
+    await assert.rejects(()=>response.text(),/Application export unavailable/);
+    return response;
+  });
+  const [saved]=diagnostics(bucket);
+  assert.equal(saved.requestId,value.headers.get('x-gsc-request-id'));assert.equal(saved.code,'export-stream-failed');
+  assert.ok(entries.some(entry=>entry.event==='application-export-read-failed'));
+  assert.ok(!JSON.stringify({entries,saved}).includes('sheet-secret'));
+});
+
+test('private diagnostic records cannot be downloaded through the public deck route', async () => {
+  let reads=0;
+  const response=await publicDeck.onRequestGet({request:new Request('https://gsc.cars24.com/api/deck/diagnostics/2026-11-11/reference/request.json'),params:{path:['diagnostics','2026-11-11',randomUUID(),'request.json']},env:{DECKS:{get:()=>{reads++;throw new Error('Must not read diagnostics');}}}});
+  assert.equal(response.status,404);assert.equal(reads,0);
+});
+
+test('OTP rejection logs the provider status and support reference without the code or identifier', async () => {
+  const {value,entries}=await captureLogs(()=>withOtpApi(()=>Response.json({verified:false,error:'Private OTP response for candidate@example.test'},{status:401}),async()=>verify.onRequestPost({request:verifyRequest({phone:PHONE,otp:'84726159'}),env:{DECKS:new Bucket(),...SECRET}})));
+  const rejected=entries.find(entry=>entry.event==='otp-verification-rejected');
+  assert.equal(rejected.upstreamStatus,401);assert.equal(rejected.requestId,value.headers.get('x-gsc-request-id'));
+  const all=JSON.stringify(entries);
+  for(const privateValue of [PHONE,'84726159','candidate@example.test','Private OTP response'])assert.ok(!all.includes(privateValue),privateValue);
 });

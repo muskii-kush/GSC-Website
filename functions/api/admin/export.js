@@ -1,5 +1,7 @@
 import { pages } from "../../../lib/application-questions";
 import { reply } from "../../_lib/applications";
+import { applicationEndpoint } from "../../_lib/request-diagnostics";
+import { saveDiagnostics } from "../../_lib/logger";
 
 const questions = pages.flatMap((page) => page.questions).filter((question) => question.kind !== "file");
 const entries = new Set(questions.map((question) => question.entry));
@@ -34,44 +36,56 @@ function applicationRow(application) {
 
 // Existing Sheet1 IMPORTDATA formula uses this exact route and SHEET_KEY.
 // Every saved application is included, even when optional push delivery is pending.
-export async function onRequestGet({ request, env }) {
-  if (!await authorised(request, env)) return reply(false, "unauthorised", "Not authorised.", 401);
+async function exportApplications(context, requestId, log) {
+  const { request, env } = context;
+  if (!await log.step("authorize-export", () => authorised(request, env))) return reply(false, "unauthorised", "Not authorised.", 401);
+  log.allowArchive();
   if (!env.DECKS) return reply(false, "not-configured", "Storage is not configured.", 503);
   const objects = [];
   try {
-    let cursor;
-    do {
-      const page = await env.DECKS.list({ prefix: "applications/", limit: 100, cursor, include: ["customMetadata"] });
-      objects.push(...page.objects.filter((object) => /^applications\/[^/]+\.json$/.test(object.key)));
-      if (page.truncated && (!page.cursor || page.cursor === cursor)) throw new Error("Invalid storage cursor");
-      cursor = page.truncated ? page.cursor : undefined;
-    } while (cursor);
-  } catch {
-    console.error(JSON.stringify({ event: "application-export-list-failed" }));
+    await log.step("list-export-archives", async () => {
+      let cursor;
+      do {
+        const page = await env.DECKS.list({ prefix: "applications/", limit: 100, cursor, include: ["customMetadata"] });
+        objects.push(...page.objects.filter((object) => /^applications\/[^/]+\.json$/.test(object.key)));
+        if (page.truncated && (!page.cursor || page.cursor === cursor)) throw new Error("Invalid storage cursor");
+        cursor = page.truncated ? page.cursor : undefined;
+      } while (cursor);
+    });
+  } catch (error) {
+    log.error("application-export-list-failed", error);
     return reply(false, "storage-unavailable", "Applications could not be loaded. Please try again.", 503);
   }
   objects.sort((a, b) => String(a.customMetadata?.submittedAt || a.uploaded?.toISOString() || "").localeCompare(String(b.customMetadata?.submittedAt || b.uploaded?.toISOString() || "")) || a.key.localeCompare(b.key));
   const encoder = new TextEncoder();
   let index = -1;
+  let rowCount = 0;
+  log.mark("stream-csv");
   // Read one record at a time so the CSV can grow without buffering all answers.
   const body = new ReadableStream({
     async pull(controller) {
       try {
         if (index === -1) { index = 0; controller.enqueue(encoder.encode(csvRow(headers))); return; }
-        if (index >= objects.length) { controller.close(); return; }
+        if (index >= objects.length) { log.info("application-export-completed", { rowCount }); controller.close(); return; }
         const object = await env.DECKS.get(objects[index++].key);
         if (!object) throw new Error("Application archive unavailable");
         controller.enqueue(encoder.encode(applicationRow(await object.json())));
-      } catch {
-        console.error(JSON.stringify({ event: "application-export-read-failed" }));
+        rowCount++;
+      } catch (error) {
+        log.error("application-export-read-failed", error, { rowCount });
+        const persist = saveDiagnostics(log, env, { status: 500, code: "export-stream-failed", rowCount });
+        if (context.waitUntil) context.waitUntil(persist); else await persist;
         controller.error(new Error("Application export unavailable"));
       }
     },
+    cancel() { log.warn("application-export-cancelled", { rowCount }); },
   });
   return new Response(body, { headers: {
     "content-type": "text/csv; charset=utf-8", "cache-control": "no-store, private",
-    "content-disposition": 'inline; filename="gsc-applications.csv"', "x-content-type-options": "nosniff",
+    "content-disposition": 'inline; filename="gsc-applications.csv"', "x-content-type-options": "nosniff", "x-gsc-result-code": "ok",
   } });
 }
 
-export const onRequest = () => reply(false, "method-not-allowed", "Use GET.", 405);
+export const onRequestGet = applicationEndpoint("export", exportApplications);
+
+export const onRequest = applicationEndpoint("export", () => reply(false, "method-not-allowed", "Use GET.", 405));

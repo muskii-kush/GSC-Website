@@ -2,6 +2,7 @@
 // web app (docs/apps-script/gsc_mailer.gs) running as the GSC Google account, so the email
 // comes from the challenge's own address. Without MAIL_URL and MAIL_SECRET nothing is sent.
 import { applicationKey } from "./applications";
+import { createLogger } from "./logger";
 
 const CONTACT = "grandstartupchallenge@cars24.com";
 
@@ -43,27 +44,33 @@ ${answered.map((a) => `<p style="margin:0 0 14px"><span style="color:#666">${esc
 }
 
 /** Sends the email and records the outcome on the application. Never throws: the application is already safe. */
-export async function sendConfirmation(application, env) {
+export async function sendConfirmation(application, env, logger) {
+  const log = logger || createLogger({ endpoint: "confirmation", applicationId: application.applicationId, background: true });
   if (!env.MAIL_URL || !env.MAIL_SECRET || !application.email) {
     application.confirmation = { status: "not-sent", reason: "not-configured" };
+    log.info("confirmation-email-skipped", { reason: "not-configured", service: "confirmation-email" });
   } else {
+    let upstreamStatus;
     try {
+      log.mark("mail-configuration", { service: "confirmation-email" });
       const url = new URL(env.MAIL_URL);
       if (url.protocol !== "https:" || url.hostname !== "script.google.com" || !/^\/macros\/s\/[^/]+\/exec$/.test(url.pathname)) throw new Error("Invalid mailer URL");
-      const response = await fetch(url, {
+      const response = await log.step("send-confirmation-email", () => fetch(url, {
         method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ secret: env.MAIL_SECRET, applicationId: application.applicationId, ...confirmationEmail(application) }),
         signal: AbortSignal.timeout(15000), redirect: "follow",
-      });
-      const result = await response.json();
-      if (!response.ok || !result.ok) throw new Error("Mailer refused");
+      }), { service: "confirmation-email" });
+      upstreamStatus = response.status;
+      const result = await log.step("parse-mailer-response", () => response.json(), { upstreamStatus });
+      if (!response.ok || !result?.ok) throw new Error("Mailer refused");
       application.confirmation = { status: "sent", at: new Date().toISOString() };
-    } catch {
+      log.info("confirmation-email-sent", { service: "confirmation-email", upstreamStatus, recorded: true });
+    } catch (error) {
       application.confirmation = { status: "not-sent", reason: "mailer-unavailable", attemptedAt: new Date().toISOString() };
-      console.error(JSON.stringify({ event: "confirmation-email-failed", applicationId: application.applicationId }));
+      log.error("confirmation-email-failed", error, { service: "confirmation-email", upstreamStatus, recorded: true });
     }
   }
-  try { await env.DECKS.put(applicationKey(application.applicationId), JSON.stringify(application), { httpMetadata: { contentType: "application/json" } }); }
-  catch { console.error(JSON.stringify({ event: "confirmation-status-failed", applicationId: application.applicationId })); }
+  try { await log.step("save-confirmation-status", () => env.DECKS.put(applicationKey(application.applicationId), JSON.stringify(application), { httpMetadata: { contentType: "application/json" } })); }
+  catch (error) { log.error("confirmation-status-failed", error, { recorded: true }); }
   return application;
 }
