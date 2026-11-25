@@ -433,16 +433,16 @@ export const ourPartners: {
   title: "the people behind the challenge",
   groups: [
     {
+      label: "Host",
+      items: [
+        { name: "Cars24", logo: "/media/cars24.webp", logoClass: "op-cars24", text: "India’s autotech platform for buying, selling and financing cars, and the host of the Grand Startup Challenge." },
+      ],
+    },
+    {
       label: "Government partners",
       items: [
         { name: "DPIIT Startup India", logo: "/media/dpiit.webp", logoClass: "op-dpiit", text: "The Department for Promotion of Industry and Internal Trade, Ministry of Commerce and Industry, which runs Startup India, the government’s flagship programme for startups." },
         { name: "MeitY Startup Hub", logo: "/media/meity.svg", logoClass: "op-meity", text: "The Ministry of Electronics and Information Technology’s national platform for technology startups, incubators and innovation programmes." },
-      ],
-    },
-    {
-      label: "Host",
-      items: [
-        { name: "Cars24", logo: "/media/cars24.webp", logoClass: "op-cars24", text: "India’s autotech platform for buying, selling and financing cars, and the host of the Grand Startup Challenge." },
       ],
     },
     {

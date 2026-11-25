@@ -156,6 +156,6 @@ html[data-theme="light"] .register-auth-icon { box-shadow: none; }
 html[data-theme="light"] .theme-toggle { background: #fff; color: var(--ink); border-color: var(--line); box-shadow: 0 10px 30px rgba(20, 18, 28, .12); }
 html[data-theme="light"] .op-card { background: rgba(255, 255, 255, .85); }
 html[data-theme="light"] .op-logo { box-shadow: 0 0 0 1px var(--line); }
-html[data-theme="light"] .op-label { color: var(--blue, #4736fe); }
+html[data-theme="light"] .op-label { color: #1b7a52; }
 html[data-theme="light"] .banner-note { color: #1b7a52; border-color: rgba(27, 122, 82, .35); background: rgba(27, 122, 82, .08); }
 html[data-theme="light"] .soon-badge { color: #1b7a52; border-color: rgba(27, 122, 82, .35); background: rgba(27, 122, 82, .08); }

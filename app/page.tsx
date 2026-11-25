@@ -123,8 +123,8 @@ export default function Page() {
             <p className="label rise">{ourPartners.eyebrow}</p>
             <Reveal className="h-center" text={ourPartners.title} accent={["behind"]} />
             <div className="op-groups">
-              {ourPartners.groups.map((g) => (
-                <div className={`op-group${g.items.length === 1 ? " op-single" : ""}`} key={g.label}>
+              {ourPartners.groups.map((g, gi) => (
+                <div className={`op-group${gi === ourPartners.groups.length - 1 ? " op-newrow" : ""}`} key={g.label}>
                   <p className="op-label rise">{g.label}</p>
                   <div className="op-grid">
                     {g.items.map((p) => (
