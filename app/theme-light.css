@@ -118,6 +118,7 @@ html[data-theme="light"] .giant-mark { color: rgba(20, 18, 28, .9); }
 html[data-theme="light"] .gm-outline { -webkit-text-stroke: 2px rgba(43, 32, 152, .55) !important; filter: none !important; }
 html[data-theme="light"] .site-foot { border-top-color: var(--line); color: var(--ink-70); }
 html[data-theme="light"] .site-foot .foot-top, html[data-theme="light"] .site-foot .foot-copy { color: var(--ink); }
+html[data-theme="light"] .incubation-label { color: var(--ink); }
 html[data-theme="light"] .foot-logos, html[data-theme="light"] .partners, html[data-theme="light"] .logo-bar { box-shadow: 0 0 0 1px var(--line); }
 
 /* Overlays: briefs, rubric and the application form */

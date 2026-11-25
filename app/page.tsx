@@ -169,6 +169,16 @@ export default function Page() {
 
 
           <p className="giant-mark gm-outline" aria-hidden="true" data-text="GSC’27">GSC&rsquo;27</p>
+          <section className="incubation" aria-labelledby="incubation-title">
+            <p className="incubation-label" id="incubation-title">Our incubation partners</p>
+            <div className="foot-logos inc-logos">
+              <img src={asset("/media/sine-iitb.webp")} alt="SINE IIT Bombay" className="fl-sine" />
+              <span className="fl-div" aria-hidden="true" />
+              <img src={asset("/media/arai-amtif.webp")} alt="ARAI-AMTIF" className="fl-arai" />
+              <span className="fl-div" aria-hidden="true" />
+              <img src={asset("/media/aic-rntu.webp")} alt="AIC-RNTU, Atal Incubation Centre, Rabindranath Tagore University" className="fl-aic" />
+            </div>
+          </section>
           <footer className="footer site-foot">
             <div className="foot-logos" aria-label="DPIIT Startup India, MeitY Startup Hub, Cars24 and Startup Policy Forum">
               <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="fl-dpiit" />

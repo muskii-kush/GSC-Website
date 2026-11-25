@@ -45,12 +45,36 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
     <header className={`nav${scrolled ? " scrolled" : ""}`}>
       <div className="logo-bar">
         <a href={h("#top")} className="lb-inner" aria-label="Grand Startup Challenge home">
-          <span className="lb-left">
-            <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="lb-dpiit" />
-            <img src={asset("/media/meity.svg")} alt="MeitY Startup Hub" className="lb-meity" />
+          <span className="lb-group lb-gov">
+            <span className="lb-cap">Government partners</span>
+            <span className="lb-logos">
+              <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="lb-dpiit" />
+              <img src={asset("/media/meity.svg")} alt="MeitY Startup Hub" className="lb-meity" />
+            </span>
           </span>
-          <img src={asset("/media/cars24.webp")} alt="Cars24" className="lb-cars24" />
-          <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="lb-spf" />
+          <span className="lb-sep" aria-hidden="true" />
+          <span className="lb-group lb-host">
+            <span className="lb-cap" aria-hidden="true">&nbsp;</span>
+            <span className="lb-logos">
+              <img src={asset("/media/cars24.webp")} alt="Cars24" className="lb-cars24" />
+            </span>
+          </span>
+          <span className="lb-sep" aria-hidden="true" />
+          <span className="lb-group lb-ind">
+            <span className="lb-cap">Industry partner</span>
+            <span className="lb-logos">
+              <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="lb-spf" />
+            </span>
+          </span>
+          <span className="lb-sep lb-sep-inc" aria-hidden="true" />
+          <span className="lb-group lb-inc">
+            <span className="lb-cap">Incubation partners</span>
+            <span className="lb-logos">
+              <img src={asset("/media/sine-iitb.webp")} alt="SINE IIT Bombay" className="lb-sine" />
+              <img src={asset("/media/arai-amtif.webp")} alt="ARAI-AMTIF" className="lb-arai" />
+              <img src={asset("/media/aic-rntu.webp")} alt="AIC-RNTU, Atal Incubation Centre, Rabindranath Tagore University" className="lb-aic" />
+            </span>
+          </span>
         </a>
       </div>
       <div className="link-bar">

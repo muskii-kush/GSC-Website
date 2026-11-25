@@ -2004,3 +2004,97 @@ main section.s-closing { padding-top: 0 !important; }
     padding-right: max(clamp(20px, 4vw, 56px), calc((100% - var(--max)) / 2)) !important;
   }
 }
+
+/* ARAI-AMTIF, AIC-RNTU and SINE IIT Bombay (top bar and footer) */
+.lb-arai { height: 28px; } .lb-aic { height: 56px; } .lb-sine { height: 44px; }
+.fl-arai { height: 16px; } .fl-aic { height: 34px; } .fl-sine { height: 28px; }
+@media (max-width: 1100px) {
+  .lb-dpiit { height: 40px; } .lb-meity { height: 34px; } .lb-cars24 { height: 24px; } .lb-spf { height: 40px; }
+  .lb-arai { height: 20px; } .lb-aic { height: 36px; } .lb-sine { height: 32px; }
+}
+@media (max-width: 760px) {
+  .lb-inner { gap: 6px; width: calc(100% - 24px); }
+  .lb-dpiit { height: 20px; } .lb-meity { height: 16px; } .lb-cars24 { height: 10px; } .lb-spf { height: 20px; }
+  .lb-arai { height: 9px; } .lb-aic { height: 19px; } .lb-sine { height: 17px; }
+  .foot-logos { flex-wrap: wrap; justify-content: center; border-radius: 22px; gap: 10px 16px; }
+  .foot-logos .fl-div { display: none; }
+  .fl-arai { height: 13px; } .fl-aic { height: 24px; } .fl-sine { height: 22px; }
+}
+
+/* Incubation partners, just above the footer */
+.incubation { display: flex; align-items: center; justify-content: center; gap: 12px 20px; flex-wrap: wrap; width: min(1240px, calc(100% - 48px)); margin: 6px auto 22px; }
+.incubation-label { margin: 0; font-family: var(--f-body); font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, .85); }
+.inc-logos { gap: 18px; padding: 10px 24px; }
+.inc-logos .fl-arai { height: 20px; } .inc-logos .fl-aic { height: 40px; } .inc-logos .fl-sine { height: 34px; }
+@media (max-width: 760px) {
+  .incubation { flex-direction: column; width: calc(100% - 32px); margin-bottom: 18px; }
+  .inc-logos { flex-wrap: nowrap; gap: 14px; padding: 8px 18px; }
+  .inc-logos .fl-div { display: block; }
+  .inc-logos .fl-arai { height: 14px; } .inc-logos .fl-aic { height: 30px; } .inc-logos .fl-sine { height: 26px; }
+}
+
+/* ══ Top bar: partners grouped and labelled ═════════════════════════════════ */
+.lb-inner { gap: 16px; }
+.lb-group { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
+.lb-cap { font-family: var(--f-label); font-size: 9px; line-height: 1; letter-spacing: .14em; text-transform: uppercase; color: #6b6880; white-space: nowrap; }
+.lb-logos { display: flex; align-items: center; gap: 16px; height: 48px; }
+.lb-sep { align-self: center; width: 1px; height: 40px; background: rgba(0, 0, 0, .12); flex: none; }
+.lb-dpiit { height: 40px; } .lb-meity { height: 34px; } .lb-cars24 { height: 26px; } .lb-spf { height: 40px; }
+.lb-arai { height: 20px; } .lb-aic { height: 44px; } .lb-sine { height: 34px; }
+@media (max-width: 1100px) {
+  .lb-inner { gap: 10px; }
+  .lb-logos { gap: 10px; }
+  .lb-dpiit { height: 32px; } .lb-meity { height: 27px; } .lb-cars24 { height: 20px; } .lb-spf { height: 32px; }
+  .lb-arai { height: 15px; } .lb-aic { height: 34px; } .lb-sine { height: 27px; }
+}
+/* Phones: government, Cars24 and industry on the first row; incubation below */
+@media (max-width: 760px) {
+  .nav { --lb-h: 92px; }
+  .lb-inner { flex-wrap: wrap; justify-content: space-around !important; align-content: center; row-gap: 6px; column-gap: 8px; width: calc(100% - 20px); }
+  .lb-cap { font-size: 7.5px; letter-spacing: .1em; }
+  .lb-logos { gap: 8px; height: 30px; }
+  .lb-sep { height: 26px; }
+  .lb-sep-inc { display: none; }
+  .lb-inc { flex-basis: 100%; flex-direction: row; justify-content: center; gap: 10px; padding-top: 6px; border-top: 1px solid rgba(0, 0, 0, .08); }
+  .lb-inc .lb-logos { gap: 14px; height: 26px; }
+  .lb-dpiit { height: 24px; } .lb-meity { height: 20px; } .lb-cars24 { height: 15px; } .lb-spf { height: 24px; }
+  .lb-arai { height: 11px; } .lb-aic { height: 24px; } .lb-sine { height: 19px; }
+  /* The taller bar pushes content down by the same amount */
+  .banner { padding-top: calc(92px + 48px + 24px) !important; }
+  .more-page { padding-top: 146px; }
+}
+/* Top bar labels: bold and dark enough to read */
+.lb-cap { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; color: #1d1a33; }
+.lb-group { gap: 4px; }
+@media (max-width: 760px) { .lb-cap { font-size: 8.5px; letter-spacing: .06em; } }
+
+/* Top bar: bigger logos, less empty space (desktop and tablet) */
+@media (min-width: 761px) {
+  .nav { --lb-h: 88px; }
+  .lb-logos { height: 60px; gap: 22px; }
+  .lb-dpiit { height: 52px; } .lb-meity { height: 46px; } .lb-cars24 { height: 34px; } .lb-spf { height: 54px; }
+  .lb-sine { height: 46px; } .lb-arai { height: 26px; } .lb-aic { height: 58px; }
+  .lb-sep { height: 52px; }
+  .banner { padding-top: calc(88px + 48px + 32px) !important; }
+  .more-page { padding-top: 156px; }
+}
+@media (min-width: 761px) and (max-width: 1180px) {
+  .nav { --lb-h: 76px; }
+  .lb-logos { height: 48px; gap: 12px; }
+  .lb-dpiit { height: 38px; } .lb-meity { height: 33px; } .lb-cars24 { height: 24px; } .lb-spf { height: 40px; }
+  .lb-sine { height: 33px; } .lb-arai { height: 18px; } .lb-aic { height: 42px; }
+  .lb-sep { height: 40px; }
+  .lb-cap { font-size: 9.5px; }
+  .banner { padding-top: calc(76px + 48px + 28px) !important; }
+  .more-page { padding-top: 144px; }
+}
+/* Phones: logos a touch larger in the two-row bar */
+@media (max-width: 760px) {
+  .nav { --lb-h: 100px; }
+  .lb-logos { height: 34px; }
+  .lb-dpiit { height: 27px; } .lb-meity { height: 23px; } .lb-cars24 { height: 17px; } .lb-spf { height: 28px; }
+  .lb-inc .lb-logos { height: 30px; gap: 16px; }
+  .lb-sine { height: 22px; } .lb-arai { height: 13px; } .lb-aic { height: 28px; }
+  .banner { padding-top: calc(100px + 48px + 24px) !important; }
+  .more-page { padding-top: 154px; }
+}
