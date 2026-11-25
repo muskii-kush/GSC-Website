@@ -12,7 +12,7 @@ export const hero = {
   statement: "build what moves India forward",
   lede:
     "A four-month startup challenge for early-stage startups building across lending and fintech, mobility and road safety, logistics and supply chain, and sovereign AI.",
-  when: { label: "", date: "Last date to apply: 20 November", venue: "Finale in New Delhi, January 2027" },
+  when: { label: "", date: "Applications closed", venue: "Finale in New Delhi, January 2027" },
 };
 
 // Floating chips around the hero statement. Every fact here is repeated elsewhere on the page.
@@ -31,7 +31,7 @@ export const challenge = {
   metrics: [
     { value: "4", label: "Problem tracks", note: "Fintech, mobility and road safety, logistics and supply chain, and sovereign AI" },
     { value: "₹1 Cr", label: "Total prize pool", note: "Shared among the winning startups across all four tracks" },
-    { value: "4 months", label: "Build to deploy", note: "For India’s brightest minds to build, test and deploy" },
+    { value: "1 month", label: "Build to deploy", note: "For India’s brightest minds to build, test and deploy" },
   ],
 };
 
@@ -332,8 +332,7 @@ export const faq = {
     },
     {
       q: "How are applications scored?",
-      a: "Every application first clears eight yes-or-no eligibility checks. It is then read by two independent reviewers and scored on four equally weighted criteria: track fit, product evidence, team and traction. Both are published in full, so you can write your application against them.",
-      link: { label: "Read the eligibility checks and screening rubric", href: "#scoring" },
+      a: "Every application first clears eight yes-or-no eligibility checks. It is then read by two independent reviewers and scored on four equally weighted criteria: track fit, product evidence, team and traction.",
     },
     {
       q: "What do I need to apply?",
@@ -423,3 +422,42 @@ export const closing = {
 };
 
 export const footer = "© Grand Startup Challenge · DPIIT, Startup India × Cars24 × Startup Policy Forum";
+
+/** Our partners: the same organisations as the top logo bar, one line each. */
+export const ourPartners: {
+  eyebrow: string;
+  title: string;
+  groups: { label: string; items: { name: string; logo: string; logoClass: string; text: string }[] }[];
+} = {
+  eyebrow: "Our partners",
+  title: "the people behind the challenge",
+  groups: [
+    {
+      label: "Government partners",
+      items: [
+        { name: "DPIIT Startup India", logo: "/media/dpiit.webp", logoClass: "op-dpiit", text: "The Department for Promotion of Industry and Internal Trade, Ministry of Commerce and Industry, which runs Startup India, the government’s flagship programme for startups." },
+        { name: "MeitY Startup Hub", logo: "/media/meity.svg", logoClass: "op-meity", text: "The Ministry of Electronics and Information Technology’s national platform for technology startups, incubators and innovation programmes." },
+      ],
+    },
+    {
+      label: "Host",
+      items: [
+        { name: "Cars24", logo: "/media/cars24.webp", logoClass: "op-cars24", text: "India’s autotech platform for buying, selling and financing cars, and the host of the Grand Startup Challenge." },
+      ],
+    },
+    {
+      label: "Industry partner",
+      items: [
+        { name: "Startup Policy Forum", logo: "/media/spf.webp", logoClass: "op-spf", text: "An industry body of Indian startups that works with policymakers to shape a better environment for founders." },
+      ],
+    },
+    {
+      label: "Incubation partners",
+      items: [
+        { name: "SINE IIT Bombay", logo: "/media/sine-iitb.webp", logoClass: "op-sine", text: "The Society for Innovation and Entrepreneurship, IIT Bombay’s technology business incubator for deep-tech startups." },
+        { name: "ARAI-AMTIF", logo: "/media/arai-amtif.webp", logoClass: "op-arai", text: "The Automotive Research Association of India’s incubator for mobility startups, giving founders access to ARAI’s testing and engineering expertise." },
+        { name: "AIC-RNTU", logo: "/media/aic-rntu.webp", logoClass: "op-aic", text: "Atal Incubation Centre at Rabindranath Tagore University, supported by the Atal Innovation Mission, NITI Aayog." },
+      ],
+    },
+  ],
+};

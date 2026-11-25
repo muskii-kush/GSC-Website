@@ -42,11 +42,8 @@ export default function FloatingDock() {
     <div className={`dock${shown ? " is-shown" : ""}`} aria-hidden={!shown}>
       <div className="dock-copy">
         <strong>{headline}</strong>
-        <span>Register now or email the team</span>
+        <span>Questions? Email the team</span>
       </div>
-      <a className="dock-btn dock-primary" href="#register" data-register tabIndex={shown ? 0 : -1}>
-        register <span aria-hidden="true">→</span>
-      </a>
       <a
         className="dock-btn dock-icon"
         href={gmailLink()}

@@ -70,11 +70,10 @@ export default function HeroBanner() {
             </>
           )}
         </p>
+        <p className="banner-note">We will announce the shortlisted startups by the end of November.</p>
         <div className="banner-actions">
-          <a className="btn" href="#register" data-register>Register now <span aria-hidden="true">→</span></a>
-          <a className="btn ghost" href="#partners">Partner with us</a>
+          <a className="btn" href="#partners">Our partners</a>
         </div>
-        <a className="elig-link banner-elig" href="#scoring">Check eligibility <span aria-hidden="true">↗</span></a>
       </div>
 
       <div className="banner-side">

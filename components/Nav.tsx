@@ -89,7 +89,6 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
           >
             <span /><span /><span />
           </button>
-          <a className="btn btn-xs" href="#register" data-register>Register <span aria-hidden="true">→</span></a>
         </div>
       </div>
 
@@ -109,12 +108,11 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
         <a href={h("#challenge")} className={cls("#challenge")}>About the event</a>
         <a href={h("#tracks")} className={cls("#tracks")}>Tracks</a>
         <a href={h("#timeline")} className={cls("#timeline")}>Timeline</a>
-        <a href={h("#scoring")}>Eligibility</a>
         <a href={h("#partners")} className={cls("#partners")}>Partners</a>
+        <a className="menu-soon" aria-disabled="true">Mentors <span className="soon-badge">Announcing soon</span></a>
         <a href={h("#faq")} className={cls("#faq")}>FAQ</a>
         <a href="/joining" className={page === "joining" ? "is-current" : undefined}>The room</a>
         <div className="side-menu-foot">
-          <a className="btn" href="#register" data-register>Register now <span aria-hidden="true">→</span></a>
           <a className="side-menu-mail" href={gmailLink()} target="_blank" rel="noopener noreferrer">{CONTACT}</a>
         </div>
       </nav>

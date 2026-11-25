@@ -12,7 +12,7 @@ import DetailDrawer from "@/components/DetailDrawer";
 import Registration from "@/components/Registration";
 import { asset } from "@/lib/asset";
 import {
-  CONTACT, gmailLink, challenge, faq, hero, invites, invitesIntro, timeline, tracks, tracksIntro,
+  CONTACT, gmailLink, challenge, faq, hero, ourPartners, timeline, tracks, tracksIntro,
 } from "@/lib/content";
 
 const TRACK_SHAPES: ShapeName[] = ["base", "expressive", "motion", "soft"];
@@ -98,7 +98,6 @@ export default function Page() {
             <p className="label rise">Timeline</p>
             <Reveal className="h-dare" text={timeline.title} accent={["finale"]} />
             <p className="soft rise">{timeline.lede}</p>
-            <a className="rubric-link rise" href="#scoring">eligibility and scoring <span aria-hidden="true">↗</span></a>
           </div>
           <div className="tl-viewport">
           <ol className="dates">
@@ -119,19 +118,24 @@ export default function Page() {
 
         {/* Chapter two: the way in. The page ends in the brand glow. */}
         <div className="chapter chapter-two">
-          {/* 8. Partner with us. */}
-          <section className="s-invites" id="partners">
-            <Aurora variant="glow" className="aurora-partners" />
-            <p className="label rise">{invitesIntro.eyebrow}</p>
-            <Reveal className="h-center" text={invitesIntro.title} accent={["room"]} />
-            <div className="invite-grid">
-              {invites.map((v) => (
-                <a className="glass invite" href={`#invite/${v.id}`} key={v.id}>
-                  <p className="label accent">{v.label}</p>
-                  <h3>{v.card}</h3>
-                  <p>{v.cardText}</p>
-                  <span className="invite-link">{v.link.toLowerCase()} ↗</span>
-                </a>
+          {/* 8. Our partners: the organisations in the top logo bar. */}
+          <section className="s-ourpartners" id="partners">
+            <p className="label rise">{ourPartners.eyebrow}</p>
+            <Reveal className="h-center" text={ourPartners.title} accent={["behind"]} />
+            <div className="op-groups">
+              {ourPartners.groups.map((g) => (
+                <div className={`op-group${g.items.length === 1 ? " op-single" : ""}`} key={g.label}>
+                  <p className="op-label rise">{g.label}</p>
+                  <div className="op-grid">
+                    {g.items.map((p) => (
+                      <article className="glass op-card rise" key={p.name}>
+                        <div className="op-logo"><img src={asset(p.logo)} alt="" className={p.logoClass} /></div>
+                        <h3>{p.name}</h3>
+                        <p>{p.text}</p>
+                      </article>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </section>
@@ -151,9 +155,6 @@ export default function Page() {
                     <span className="faq-plus" aria-hidden="true" />
                   </summary>
                   <p>{f.a}</p>
-                  {f.link && (
-                    <a className="faq-link" href={f.link.href}>{f.link.label} <span aria-hidden="true">↗</span></a>
-                  )}
                 </details>
               ))}
             </div>

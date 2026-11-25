@@ -2,14 +2,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CONTACT, gmailLink, invites, scoring, tracks } from "@/lib/content";
 
-// Track ids on the site mapped to the track answer in the application form.
-const TRACK_CHOICE: Record<string, string> = {
-  fintech: "Fintech and Lending",
-  mobility: "Mobility and Road Safety",
-  logistics: "Logistics, Fleet and Supply Chain",
-  "sovereign-ai": "Sovereign AI",
-};
-
 type Open = { kind: "track" | "invite" | "scoring"; id: string } | null;
 
 function parse(hash: string): Open {
@@ -147,9 +139,6 @@ export default function DetailDrawer() {
                 <p className="rubric-note">{scoring.screening.note}</p>
               </div>
             )}
-            <div className="rubric-foot">
-              <a className="btn" href="#register" data-register onClick={() => setOpen(null)}>register now <span aria-hidden="true">→</span></a>
-            </div>
           </div>
         </div>
       )}
@@ -208,9 +197,6 @@ export default function DetailDrawer() {
                       );
                     })}
                   </ol>
-                  <a className="btn" href="#register" data-register data-track={TRACK_CHOICE[track.id]} onClick={() => setOpen(null)}>
-                    register for this track <span aria-hidden="true">→</span>
-                  </a>
                 </>
               )}
               {invite && (
