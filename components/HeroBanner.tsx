@@ -1,5 +1,4 @@
 import { Fragment } from "react";
-import Countdown from "@/components/Countdown";
 import StarField from "@/components/StarField";
 import { asset } from "@/lib/asset";
 import { hero } from "@/lib/content";
@@ -76,9 +75,6 @@ export default function HeroBanner() {
         </div>
       </div>
 
-      <div className="banner-side">
-        <Countdown />
-      </div>
     </section>
   );
 }

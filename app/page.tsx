@@ -124,14 +124,17 @@ export default function Page() {
             <Reveal className="h-center" text={ourPartners.title} accent={["behind"]} />
             <div className="op-groups">
               {ourPartners.groups.map((g, gi) => (
-                <div className={`op-group${gi === ourPartners.groups.length - 1 ? " op-newrow" : ""}`} key={g.label}>
+                <div className={`op-group op-n${g.items.length}${gi >= 2 ? " op-newrow" : ""}`} key={g.label}>
                   <p className="op-label rise">{g.label}</p>
                   <div className="op-grid">
                     {g.items.map((p) => (
                       <article className="glass op-card rise" key={p.name}>
-                        <div className="op-logo"><img src={asset(p.logo)} alt="" className={p.logoClass} /></div>
+                        <a className="op-logo" href={p.url} target="_blank" rel="noopener noreferrer" tabIndex={-1} aria-hidden="true"><img src={asset(p.logo)} alt="" className={p.logoClass} /></a>
                         <h3>{p.name}</h3>
                         <p>{p.text}</p>
+                        <a className="op-link" href={p.url} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} website (opens in a new tab)`}>
+                          {p.url.replace(/^https?:\/\/(www\.)?/, "")} <span aria-hidden="true">↗</span>
+                        </a>
                       </article>
                     ))}
                   </div>
@@ -181,7 +184,7 @@ export default function Page() {
             </div>
           </section>
           <footer className="footer site-foot">
-            <div className="foot-logos" aria-label="DPIIT Startup India, MeitY Startup Hub, Cars24 and Startup Policy Forum">
+            <div className="foot-logos" aria-label="DPIIT Startup India, MeitY Startup Hub, Cars24, Startup Policy Forum, Delhivery and ElevenLabs">
               <img src={asset("/media/dpiit.webp")} alt="DPIIT Startup India" className="fl-dpiit" />
               <span className="fl-div" aria-hidden="true" />
               <img src={asset("/media/meity.svg")} alt="MeitY Startup Hub" className="fl-meity" />
@@ -189,6 +192,10 @@ export default function Page() {
               <img src={asset("/media/cars24.webp")} alt="Cars24" className="fl-cars24" />
               <span className="fl-div" aria-hidden="true" />
               <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="fl-spf" />
+              <span className="fl-div" aria-hidden="true" />
+              <img src={asset("/media/delhivery.webp")} alt="Delhivery" className="fl-delhivery" />
+              <span className="fl-div" aria-hidden="true" />
+              <img src={asset("/media/elevenlabs.webp")} alt="ElevenLabs" className="fl-elevenlabs" />
             </div>
             <span className="foot-copy">© 2026 Grand Startup Challenge</span>
             <a className="foot-top" href="#top">Back to top ↑</a>

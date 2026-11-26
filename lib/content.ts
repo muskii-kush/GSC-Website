@@ -427,7 +427,7 @@ export const footer = "© Grand Startup Challenge · DPIIT, Startup India × Car
 export const ourPartners: {
   eyebrow: string;
   title: string;
-  groups: { label: string; items: { name: string; logo: string; logoClass: string; text: string }[] }[];
+  groups: { label: string; items: { name: string; logo: string; logoClass: string; url: string; text: string }[] }[];
 } = {
   eyebrow: "Our partners",
   title: "the people behind the challenge",
@@ -435,28 +435,30 @@ export const ourPartners: {
     {
       label: "Host",
       items: [
-        { name: "Cars24", logo: "/media/cars24.webp", logoClass: "op-cars24", text: "India’s autotech platform for buying, selling and financing cars, and the host of the Grand Startup Challenge." },
+        { name: "Cars24", logo: "/media/cars24.webp", logoClass: "op-cars24", url: "https://www.cars24.com", text: "An AI-native autotech company, using AI to make buying, selling and financing cars simple for millions of Indians, and the host of the Grand Startup Challenge." },
       ],
     },
     {
       label: "Government partners",
       items: [
-        { name: "DPIIT Startup India", logo: "/media/dpiit.webp", logoClass: "op-dpiit", text: "The Department for Promotion of Industry and Internal Trade, Ministry of Commerce and Industry, which runs Startup India, the government’s flagship programme for startups." },
-        { name: "MeitY Startup Hub", logo: "/media/meity.svg", logoClass: "op-meity", text: "The Ministry of Electronics and Information Technology’s national platform for technology startups, incubators and innovation programmes." },
+        { name: "DPIIT Startup India", logo: "/media/dpiit.webp", logoClass: "op-dpiit", url: "https://www.startupindia.gov.in", text: "The Department for Promotion of Industry and Internal Trade, Ministry of Commerce and Industry, which runs Startup India, the government’s flagship programme for startups." },
+        { name: "MeitY Startup Hub", logo: "/media/meity.svg", logoClass: "op-meity", url: "https://msh.meity.gov.in", text: "The Ministry of Electronics and Information Technology’s national platform for technology startups, incubators and innovation programmes." },
       ],
     },
     {
-      label: "Industry partner",
+      label: "Industry partners",
       items: [
-        { name: "Startup Policy Forum", logo: "/media/spf.webp", logoClass: "op-spf", text: "An industry body of Indian startups that works with policymakers to shape a better environment for founders." },
+        { name: "Startup Policy Forum", logo: "/media/spf.webp", logoClass: "op-spf", url: "https://www.indiaspf.org", text: "An industry body of Indian startups that works with policymakers to shape a better environment for founders." },
+        { name: "Delhivery", logo: "/media/delhivery.webp", logoClass: "op-delhivery", url: "https://www.delhivery.com", text: "India’s largest fully integrated logistics company, moving parcels and freight across the country for businesses of every size." },
+        { name: "ElevenLabs", logo: "/media/elevenlabs.webp", logoClass: "op-elevenlabs", url: "https://elevenlabs.io", text: "An AI audio research and deployment company whose voice models power speech, dubbing and voice agents in many languages." },
       ],
     },
     {
       label: "Incubation partners",
       items: [
-        { name: "SINE IIT Bombay", logo: "/media/sine-iitb.webp", logoClass: "op-sine", text: "The Society for Innovation and Entrepreneurship, IIT Bombay’s technology business incubator for deep-tech startups." },
-        { name: "ARAI-AMTIF", logo: "/media/arai-amtif.webp", logoClass: "op-arai", text: "The Automotive Research Association of India’s incubator for mobility startups, giving founders access to ARAI’s testing and engineering expertise." },
-        { name: "AIC-RNTU", logo: "/media/aic-rntu.webp", logoClass: "op-aic", text: "Atal Incubation Centre at Rabindranath Tagore University, supported by the Atal Innovation Mission, NITI Aayog." },
+        { name: "SINE IIT Bombay", logo: "/media/sine-iitb.webp", logoClass: "op-sine", url: "https://www.sineiitb.org", text: "The Society for Innovation and Entrepreneurship, IIT Bombay’s technology business incubator for deep-tech startups." },
+        { name: "ARAI-AMTIF", logo: "/media/arai-amtif.webp", logoClass: "op-arai", url: "https://www.araiindia.com", text: "The Automotive Research Association of India’s incubator for mobility startups, giving founders access to ARAI’s testing and engineering expertise." },
+        { name: "AIC-RNTU", logo: "/media/aic-rntu.webp", logoClass: "op-aic", url: "https://aicrntu.com", text: "Atal Incubation Centre at Rabindranath Tagore University, supported by the Atal Innovation Mission, NITI Aayog." },
       ],
     },
   ],

@@ -52,18 +52,20 @@ export default function Nav({ base = "", page }: { base?: string; page?: "more" 
               <img src={asset("/media/meity.svg")} alt="MeitY Startup Hub" className="lb-meity" />
             </span>
           </span>
-          <span className="lb-sep" aria-hidden="true" />
+          <span className="lb-sep lb-sep-host" aria-hidden="true" />
           <span className="lb-group lb-host">
             <span className="lb-cap" aria-hidden="true">&nbsp;</span>
             <span className="lb-logos">
               <img src={asset("/media/cars24.webp")} alt="Cars24" className="lb-cars24" />
             </span>
           </span>
-          <span className="lb-sep" aria-hidden="true" />
+          <span className="lb-sep lb-sep-ind" aria-hidden="true" />
           <span className="lb-group lb-ind">
-            <span className="lb-cap">Industry partner</span>
+            <span className="lb-cap">Industry partners</span>
             <span className="lb-logos">
               <img src={asset("/media/spf.webp")} alt="Startup Policy Forum" className="lb-spf" />
+              <img src={asset("/media/delhivery.webp")} alt="Delhivery" className="lb-delhivery" />
+              <img src={asset("/media/elevenlabs.webp")} alt="ElevenLabs" className="lb-elevenlabs" />
             </span>
           </span>
           <span className="lb-sep lb-sep-inc" aria-hidden="true" />

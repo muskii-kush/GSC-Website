@@ -2147,3 +2147,237 @@ main section.s-closing { padding-top: 0 !important; }
 .about-stat-n { white-space: normal !important; max-width: 34ch !important; }
 /* Partner cards in the same row share one height */
 @media (min-width: 1101px) { .op-group:not(.op-newrow) .op-grid { flex: 1; } }
+
+/* ══ Phones: tidy-ups ═══════════════════════════════════════════════════════ */
+@media (max-width: 760px) {
+  /* Theme switch: a small round icon that sits above the email bar, not over the text */
+  .theme-toggle { width: 42px; height: 42px; padding: 0 !important; justify-content: center; font-size: 17px !important; letter-spacing: 0 !important; right: 12px !important; bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important; }
+  .theme-toggle-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* Hero: each fact on its own line, no stray dots; the closed notice is already in the copy */
+  .banner-when { flex-direction: column; align-items: flex-start; gap: 6px; font-size: 15px; }
+  .banner-when .dot { display: none; }
+  .banner-side { display: none !important; }
+
+  /* Top bar: slightly larger logos */
+  .lb-dpiit { height: 29px; } .lb-meity { height: 25px; } .lb-cars24 { height: 18px; } .lb-spf { height: 30px; }
+  .lb-sine { height: 24px; } .lb-arai { height: 14px; } .lb-aic { height: 31px; }
+
+  /* Our partners: compact cards, logo beside the name */
+  .op-card { display: grid !important; grid-template-columns: 104px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; align-items: start; padding: 14px !important; border-radius: 20px; }
+  .op-logo { grid-row: 1 / span 2; height: 72px !important; padding: 8px 10px; border-radius: 12px; }
+  .op-card h3 { margin-top: 2px; padding: 0; font-size: 17px; }
+  .op-card p { margin-top: 0; padding: 0; font-size: 13.5px; line-height: 1.55; }
+  .op-dpiit { height: 40px; } .op-meity { height: 38px; } .op-cars24 { height: 22px; } .op-spf { height: 44px; }
+  .op-sine { height: 38px; } .op-arai { height: 20px; } .op-aic { height: 48px; }
+  .op-groups { row-gap: 22px !important; }
+  .op-group { padding-top: 22px !important; gap: 12px; }
+  .op-group:first-child { padding-top: 0 !important; }
+  .op-grid { gap: 10px !important; }
+
+  /* Footer partner strips: logos a little larger */
+  .inc-logos .fl-sine { height: 28px; } .inc-logos .fl-arai { height: 16px; } .inc-logos .fl-aic { height: 34px; }
+  .foot-logos:not(.inc-logos) .fl-dpiit { height: 30px; } .foot-logos:not(.inc-logos) .fl-meity { height: 26px; }
+  .foot-logos:not(.inc-logos) .fl-cars24 { height: 17px; } .foot-logos:not(.inc-logos) .fl-spf { height: 28px; }
+}
+
+/* Our partners on phones: a compact logo grid that fits on one screen */
+@media (max-width: 760px) {
+  .s-ourpartners { --tile: calc((100vw - 32px - 2 * 8px - 14px) / 3); }
+  .op-groups { flex-direction: row !important; flex-wrap: wrap; justify-content: center; column-gap: 14px !important; row-gap: 18px !important; margin-top: 28px !important; }
+  .op-group, .op-group:first-child { flex-basis: auto !important; width: auto !important; align-items: flex-start !important; padding-top: 0 !important; border-top: 0 !important; margin-top: 0 !important; gap: 8px !important; }
+  .op-newrow { flex-basis: 100% !important; align-items: center !important; padding-top: 18px !important; border-top: 1px solid var(--line) !important; }
+  .op-label, .op-newrow .op-label { width: auto !important; font-size: 9.5px; letter-spacing: .14em; }
+  .op-grid, .op-newrow .op-grid { flex-direction: row !important; flex-wrap: nowrap !important; width: auto !important; gap: 8px !important; }
+  .op-card { display: block !important; width: var(--tile) !important; padding: 0 !important; border: 0 !important; background: none !important; border-radius: 0; }
+  .op-card::before { display: none; }
+  .op-logo { height: 64px !important; padding: 8px !important; border-radius: 12px; }
+  .op-card h3, .op-card p { display: none; }
+  .op-dpiit { height: 36px; } .op-meity { height: 34px; } .op-cars24 { height: 18px; } .op-spf { height: 40px; }
+  .op-sine { height: 34px; } .op-arai { height: 17px; } .op-aic { height: 42px; }
+}
+/* Phones: every group on its own left-aligned row, one tile width throughout */
+@media (max-width: 760px) {
+  .s-ourpartners { --tile: calc((100vw - 32px - 2 * 10px) / 3); }
+  .op-groups { flex-direction: column !important; flex-wrap: nowrap; align-items: stretch !important; row-gap: 16px !important; }
+  .op-group, .op-group:first-child, .op-newrow { flex-basis: auto !important; width: 100% !important; align-items: flex-start !important; padding-top: 0 !important; border-top: 0 !important; margin-top: 0 !important; }
+  .op-grid, .op-newrow .op-grid { gap: 10px !important; }
+}
+/* Phones: every row runs the full width (one tile, halves or thirds) so both edges line up */
+@media (max-width: 760px) {
+  .op-grid, .op-newrow .op-grid { display: grid !important; width: 100% !important; gap: 10px !important; }
+  .op-n1 .op-grid { grid-template-columns: 1fr; }
+  .op-n2 .op-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .op-n3 .op-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .op-card { width: auto !important; }
+  .op-logo { height: 68px !important; }
+  .op-groups { row-gap: 18px !important; }
+}
+@media (max-width: 760px) {
+  .op-cars24 { height: 26px; } .op-spf { height: 48px; } .op-dpiit { height: 42px; } .op-meity { height: 40px; }
+  .op-sine { height: 36px; } .op-arai { height: 19px; } .op-aic { height: 46px; }
+}
+/* Narrow phones (≤ 380px): keep the top bar to two rows */
+@media (max-width: 380px) {
+  .lb-inner { column-gap: 5px !important; width: calc(100% - 14px) !important; }
+  .lb-logos { gap: 5px !important; }
+  .lb-cap { font-size: 7.5px !important; letter-spacing: .04em !important; }
+  .lb-sep { margin: 0 -2px; }
+  .lb-dpiit { height: 24px; } .lb-meity { height: 20px; } .lb-cars24 { height: 15px; } .lb-spf { height: 25px; }
+  .lb-sine { height: 22px; } .lb-arai { height: 12px; } .lb-aic { height: 27px; }
+}
+/* Phones: one partner per row, logo tile on the left, name and line on the right */
+@media (max-width: 760px) {
+  .op-n1 .op-grid, .op-n2 .op-grid, .op-n3 .op-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .op-card { display: grid !important; grid-template-columns: 104px minmax(0, 1fr); column-gap: 14px; align-items: center;
+    padding: 12px !important; border: 1px solid rgba(99, 255, 177, .18) !important; border-radius: 18px !important; background: rgba(6, 4, 26, .72) !important; }
+  .op-logo { grid-row: 1 / span 2; align-self: center; height: 76px !important; padding: 8px !important; border-radius: 12px; }
+  .op-card h3 { display: block !important; align-self: end; margin: 0 !important; padding: 0 !important; font-size: 16.5px; line-height: 1.2; }
+  .op-card p { display: block !important; align-self: start; margin: 4px 0 0 !important; padding: 0 !important; font-size: 13px; line-height: 1.5; }
+  .op-cars24 { height: 22px; } .op-spf { height: 50px; } .op-dpiit { height: 40px; } .op-meity { height: 42px; }
+  .op-sine { height: 42px; } .op-arai { height: 21px; } .op-aic { height: 52px; }
+  .op-groups { row-gap: 20px !important; }
+}
+html[data-theme="light"] .op-card { background: rgba(255, 255, 255, .85) !important; }
+
+/* ══ Industry partners: Delhivery and ElevenLabs (2026-11-26) ═══════════════ */
+/* Top bar, desktop and tablet */
+.lb-delhivery { height: 22px; } .lb-elevenlabs { height: 17px; }
+@media (min-width: 761px) and (max-width: 1180px) {
+  .lb-delhivery { height: 16px; } .lb-elevenlabs { height: 12px; }
+}
+/* Footer strip */
+.fl-delhivery { height: 16px; } .fl-elevenlabs { height: 13px; }
+@media (max-width: 760px) { .foot-logos:not(.inc-logos) .fl-delhivery { height: 14px; } .foot-logos:not(.inc-logos) .fl-elevenlabs { height: 11px; } }
+
+/* Phones: three centred rows with equal margins on both sides —
+   government + Cars24, then industry partners, then incubation partners */
+@media (max-width: 760px) {
+  .nav { --lb-h: 140px; }
+  .lb-inner { flex-wrap: wrap; justify-content: center !important; align-content: center; column-gap: 14px !important; row-gap: 6px; width: calc(100% - 24px) !important; }
+  .lb-sep-ind, .lb-sep-inc { display: none; }
+  .lb-ind, .lb-inc { flex-basis: 100%; flex-direction: row; justify-content: center; align-items: center; gap: 10px; padding-top: 6px; border-top: 1px solid rgba(0, 0, 0, .08); }
+  .lb-ind .lb-logos, .lb-inc .lb-logos { height: 30px; gap: 14px; }
+  .lb-delhivery { height: 14px; } .lb-elevenlabs { height: 11px; } .lb-spf { height: 28px; }
+  .banner { padding-top: calc(140px + 48px + 24px) !important; }
+  .more-page { padding-top: 194px; }
+}
+@media (max-width: 380px) {
+  .lb-inner { column-gap: 10px !important; width: calc(100% - 16px) !important; }
+  .lb-ind .lb-logos, .lb-inc .lb-logos { gap: 10px !important; }
+  .lb-delhivery { height: 12px; } .lb-elevenlabs { height: 10px; } .lb-spf { height: 25px; }
+}
+
+/* Our partners: host + government on the first row, then industry and incubation rows of three */
+.s-ourpartners { --op-card: calc((min(1240px, 100vw - 48px) - 2 * var(--op-gap) - var(--op-sep)) / 3); }
+.op-newrow + .op-newrow { margin-top: 40px; }
+.op-delhivery { height: 30px; } .op-elevenlabs { height: 24px; }
+a.op-logo { text-decoration: none; transition: transform .25s var(--ease); }
+a.op-logo:hover { transform: translateY(-2px); }
+.op-link { align-self: flex-start; margin: auto 6px 0; padding-top: 16px; display: inline-flex; gap: 6px; font-family: var(--f-label); font-size: 12px; letter-spacing: .06em; color: var(--mint); text-decoration: none; }
+.op-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 1100px) {
+  .s-ourpartners { --op-card: calc((min(1240px, 100vw - 48px) - var(--op-gap)) / 2); }
+  .op-newrow + .op-newrow { margin-top: 0; }
+}
+@media (max-width: 760px) {
+  .op-logo { grid-row: 1 / span 3 !important; }
+  .op-link { grid-column: 2; display: inline-flex !important; margin: 6px 0 0 !important; padding: 0; font-size: 11.5px; }
+  .op-delhivery { height: 15px; } .op-elevenlabs { height: 12px; }
+}
+/* Tablets: incubation partners move to a second centred row */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .nav { --lb-h: 124px; }
+  .lb-inner { flex-wrap: wrap; justify-content: center !important; align-content: center; column-gap: 20px; row-gap: 8px; }
+  .lb-sep-inc { display: none; }
+  .lb-inc { flex-basis: 100%; flex-direction: row; justify-content: center; align-items: center; gap: 14px; padding-top: 8px; border-top: 1px solid rgba(0, 0, 0, .08); }
+  .lb-inc .lb-logos { height: 38px; }
+  .banner { padding-top: calc(124px + 48px + 28px) !important; }
+  .more-page { padding-top: 192px; }
+}
+/* Desktop: rows of three are exactly as wide as the host + government row, so the edges line up */
+@media (min-width: 1101px) {
+  .op-newrow .op-grid { gap: calc((var(--op-gap) + var(--op-sep)) / 2); }
+  .op-newrow .op-label { width: calc(3 * var(--op-card) + var(--op-gap) + var(--op-sep)); }
+}
+/* Phones: the top bar in exactly two centred rows —
+   government + Cars24 on top; industry + incubation partners below */
+@media (max-width: 760px) {
+  .nav { --lb-h: 104px; }
+  .lb-inner { display: flex !important; flex-wrap: wrap; justify-content: center !important; align-content: center; align-items: center; column-gap: 12px !important; row-gap: 5px !important; width: calc(100% - 20px) !important; }
+  .lb-inner::before { content: ""; order: 4; flex-basis: 100%; height: 1px; background: rgba(0, 0, 0, .08); }
+  .lb-gov { order: 1; } .lb-sep-host { order: 2; } .lb-host { order: 3; }
+  .lb-sep-ind { display: none !important; }
+  .lb-ind { order: 5; } .lb-sep-inc { order: 6; display: block !important; } .lb-inc { order: 7; }
+  .lb-ind, .lb-inc { flex-basis: auto; flex-direction: column; justify-content: center; gap: 4px; padding-top: 0; border-top: 0; }
+  .lb-sep { height: 30px; margin: 0; }
+  .lb-logos, .lb-ind .lb-logos, .lb-inc .lb-logos { height: 30px; gap: 8px !important; }
+  .lb-cap { font-size: 8px !important; letter-spacing: .05em !important; }
+  .lb-dpiit { height: 26px; } .lb-meity { height: 23px; } .lb-cars24 { height: 17px; }
+  .lb-spf { height: 24px; } .lb-delhivery { height: 11px; } .lb-elevenlabs { height: 9px; }
+  .lb-sine { height: 20px; } .lb-arai { height: 11px; } .lb-aic { height: 22px; }
+  .banner { padding-top: calc(104px + 48px + 24px) !important; }
+  .more-page { padding-top: 158px; }
+}
+@media (max-width: 380px) {
+  .lb-inner { column-gap: 9px !important; width: calc(100% - 14px) !important; }
+  .lb-logos, .lb-ind .lb-logos, .lb-inc .lb-logos { gap: 6px !important; }
+  .lb-cap { font-size: 7.5px !important; letter-spacing: .03em !important; }
+  .lb-spf { height: 22px; } .lb-delhivery { height: 10px; } .lb-elevenlabs { height: 8px; }
+  .lb-sine { height: 18px; } .lb-arai { height: 10px; } .lb-aic { height: 20px; }
+}
+@media (max-width: 340px) {
+  .lb-inner { column-gap: 6px !important; width: calc(100% - 12px) !important; }
+  .lb-logos, .lb-ind .lb-logos, .lb-inc .lb-logos { gap: 4px !important; }
+  .lb-cap { font-size: 6.5px !important; letter-spacing: .02em !important; }
+  .lb-dpiit { height: 22px; } .lb-meity { height: 19px; } .lb-cars24 { height: 14px; }
+  .lb-spf { height: 18px; } .lb-delhivery { height: 8px; } .lb-elevenlabs { height: 6.5px; }
+  .lb-sine { height: 15px; } .lb-arai { height: 8px; } .lb-aic { height: 16px; }
+}
+
+/* ══ Less blank space at the top (2026-11-26) ═══════════════════════════════
+   The dark strip under the logo bar held only the menu button. It is now
+   transparent with the button on the right, over the empty side of the hero;
+   the strip comes back once the page is scrolled. */
+.nav:not(.scrolled) .link-bar { background: transparent !important; border-bottom-color: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+html[data-theme="light"] .nav:not(.scrolled) .link-bar { background: transparent !important; border-bottom-color: transparent !important; backdrop-filter: none !important; }
+.link-inner { justify-content: flex-end !important; }
+.menu-btn { margin-left: 0 !important; margin-right: -10px; }
+@media (min-width: 1181px) { .banner { padding-top: calc(88px + 24px) !important; } }
+@media (min-width: 761px) and (max-width: 1180px) { .banner { padding-top: calc(124px + 24px) !important; } }
+/* Phones: bigger logos, tighter bar */
+@media (max-width: 760px) {
+  .nav { --lb-h: 100px; }
+  .lb-inner { row-gap: 4px !important; column-gap: 9px !important; }
+  .lb-group { gap: 2px !important; }
+  .lb-gov .lb-logos, .lb-host .lb-logos { height: 36px !important; gap: 10px !important; }
+  .lb-dpiit { height: 34px; } .lb-meity { height: 30px; } .lb-cars24 { height: 23px; }
+  .lb-sep-host { height: 34px !important; }
+  .lb-ind .lb-logos, .lb-inc .lb-logos { height: 30px !important; gap: 6px !important; }
+  .lb-sep-inc { height: 28px !important; }
+  .lb-spf { height: 26px; } .lb-delhivery { height: 11.5px; } .lb-elevenlabs { height: 9.5px; }
+  .lb-sine { height: 21px; } .lb-arai { height: 11px; } .lb-aic { height: 24px; }
+  .banner { padding-top: calc(100px + 20px) !important; }
+  .more-page { padding-top: 154px; }
+}
+@media (max-width: 380px) {
+  .lb-inner { column-gap: 7px !important; }
+  .lb-ind .lb-logos, .lb-inc .lb-logos { gap: 5px !important; }
+  .lb-dpiit { height: 31px; } .lb-meity { height: 27px; } .lb-cars24 { height: 21px; }
+  .lb-spf { height: 23px; } .lb-delhivery { height: 10px; } .lb-elevenlabs { height: 8.5px; }
+  .lb-sine { height: 18px; } .lb-arai { height: 9.5px; } .lb-aic { height: 21px; }
+}
+@media (max-width: 340px) {
+  .lb-inner { column-gap: 5px !important; width: calc(100% - 10px) !important; }
+  .lb-ind .lb-logos, .lb-inc .lb-logos { gap: 4px !important; }
+  .lb-dpiit { height: 27px; } .lb-meity { height: 23px; } .lb-cars24 { height: 18px; }
+  .lb-spf { height: 19px; } .lb-delhivery { height: 8px; } .lb-elevenlabs { height: 7px; }
+  .lb-sine { height: 15px; } .lb-arai { height: 8px; } .lb-aic { height: 17px; }
+}
+/* Laptops up to 1440px: the one-row bar scales with the screen, so it stays full
+   edge to edge without overlapping */
+@media (min-width: 1181px) and (max-width: 1440px) {
+  .lb-logos { gap: min(22px, 1.497vw); height: min(60px, 4.082vw); }
+  .lb-sep { height: min(52px, 3.537vw); }
+  .lb-dpiit { height: min(52px, 3.537vw); } .lb-meity { height: min(46px, 3.129vw); } .lb-cars24 { height: min(34px, 2.313vw); } .lb-spf { height: min(54px, 3.673vw); } .lb-delhivery { height: min(22px, 1.497vw); } .lb-elevenlabs { height: min(17px, 1.156vw); } .lb-sine { height: min(46px, 3.129vw); } .lb-arai { height: min(26px, 1.769vw); } .lb-aic { height: min(58px, 3.946vw); }
+}
